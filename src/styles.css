@@ -1,1 +1,147 @@
-/* You can add global styles to this file, and also import other style files */
+@import '@fontsource/inter/400.css';
+@import '@fontsource/inter/500.css';
+@import '@fontsource/inter/600.css';
+@import '@fontsource/inter/700.css';
+
+@import '@fontsource/noto-sans-arabic/400.css';
+@import '@fontsource/noto-sans-arabic/500.css';
+@import '@fontsource/noto-sans-arabic/600.css';
+@import '@fontsource/noto-sans-arabic/700.css';
+
+@import 'primeicons/primeicons.css';
+
+@layer tailwind-base, primeng, tailwind-utilities;
+
+@layer tailwind-base {
+  @tailwind base;
+}
+
+@layer tailwind-utilities {
+  @tailwind components;
+  @tailwind utilities;
+}
+
+:root {
+  color-scheme: light;
+
+  --app-background: #f8fafc;
+  --app-surface: #ffffff;
+  --app-surface-muted: #f1f5f9;
+
+  --app-text: #0f172a;
+  --app-text-muted: #475569;
+  --app-border: #e2e8f0;
+}
+
+html.app-dark {
+  color-scheme: dark;
+
+  --app-background: #0b1120;
+  --app-surface: #111827;
+  --app-surface-muted: #1e293b;
+
+  --app-text: #f1f5f9;
+  --app-text-muted: #94a3b8;
+  --app-border: #334155;
+}
+
+html {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  background: var(--app-background);
+  color: var(--app-text);
+  font-family: 'Inter', sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+html[lang='ar'] body {
+  font-family: 'Noto Sans Arabic', sans-serif;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+a,
+button,
+input,
+select,
+textarea {
+  -webkit-tap-highlight-color: transparent;
+}
+
+a:focus-visible,
+button:focus-visible,
+select:focus-visible {
+  outline: 2px solid var(--p-primary-color);
+  outline-offset: 4px;
+}
+
+::selection {
+  background: #c7d2fe;
+  color: #1e1b4b;
+}
+
+.app-container {
+  width: min(100% - 2rem, 1280px);
+  margin-inline: auto;
+}
+
+.app-panel {
+  border: 1px solid var(--app-border);
+  border-radius: 1rem;
+  background: var(--app-surface);
+  padding: 1.5rem;
+  box-shadow: 0 12px 40px -24px rgb(15 23 42 / 0.25);
+}
+
+.app-muted {
+  color: var(--app-text-muted);
+}
+
+.app-label {
+  display: block;
+  margin-block-end: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.app-control {
+  min-height: 2.75rem;
+  border: 1px solid var(--app-border);
+  border-radius: 0.75rem;
+  padding-inline: 0.75rem;
+  background: var(--app-surface);
+  color: var(--app-text);
+}
+
+.app-nav-link {
+  border-radius: 0.75rem;
+  padding: 0.65rem 0.9rem;
+  color: var(--app-text-muted);
+  transition: background-color 150ms ease, color 150ms ease;
+}
+
+.app-nav-link:hover,
+.app-nav-link.active {
+  background: var(--app-surface-muted);
+  color: var(--p-primary-color);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

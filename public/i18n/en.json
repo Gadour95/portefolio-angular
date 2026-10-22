@@ -1,0 +1,83 @@
+{
+  "app": {
+    "name": "SIW E-Commerce"
+  },
+  "nav": {
+    "main": "Main navigation",
+    "showcase": "Design system",
+    "adminPreview": "Admin preview",
+    "toggle": "Open or close the menu"
+  },
+  "preferences": {
+    "language": "Language",
+    "theme": "Appearance",
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System"
+  },
+  "footer": {
+    "description": "A clean, modern and intuitive shopping experience."
+  },
+  "admin": {
+    "title": "Administration",
+    "previewNotice": "Visual preview only. Authentication and business features will be added later."
+  },
+  "demo": {
+    "eyebrow": "SIW — Interface foundations",
+    "title": "A refined experience, down to every detail.",
+    "description": "A shared visual foundation for the catalog, customer area and administration. Three languages, two color schemes and a responsive interface.",
+    "themeCard": "Light and dark",
+    "languageCard": "French, English and Arabic",
+    "responsiveCard": "Mobile, tablet and desktop",
+    "buttons": "Buttons and interactions",
+    "primary": "Primary action",
+    "secondary": "Secondary",
+    "outlined": "Outlined",
+    "dialogButton": "Open a dialog",
+    "disabled": "Disabled",
+    "form": "Form and validation",
+    "phone": "Phone number",
+    "phoneHelp": "Enter exactly 8 digits.",
+    "phoneError": "The phone number must contain exactly 8 digits.",
+    "validate": "Validate",
+    "statuses": "Order statuses",
+    "statusHelp": "Each status has an explicit label and an indicative color.",
+    "table": "Table and pagination",
+    "fakeData": "Sample data used to review visual components.",
+    "reference": "Reference",
+    "quantity": "Quantity",
+    "status": "Status",
+    "loading": "Loading state",
+    "emptyTitle": "No results",
+    "emptyText": "Items will appear here when available.",
+    "dialogTitle": "A consistent interface",
+    "dialogText": "This dialog uses the same theme, typography and reading direction as the rest of the application.",
+    "close": "Close",
+    "notificationTitle": "Success",
+    "notificationText": "The demonstration works. No data was sent to the backend."
+  },
+  "statuses": {
+    "PENDING": "Pending",
+    "APPROVED": "Approved",
+    "REJECTED": "Rejected",
+    "SHIPPED": "Shipped",
+    "DELIVERED": "Delivered",
+    "CANCELLED": "Cancelled"
+  },
+  "auth": {
+  "login": "Sign in",
+  "logout": "Sign out",
+  "cart": "Cart",
+  "orders": "My orders",
+  "administration": "Administration",
+  "dashboard": "Dashboard",
+  "backHome": "Back to home",
+  "forbiddenTitle": "Access denied",
+  "forbiddenText": "You do not have the required role to access this resource.",
+  "sessionTitle": "Authentication required",
+  "sessionExpired": "The request could not be authenticated. Sign in again if your session has expired.",
+  "errorTitle": "Authentication error",
+  "actionError": "Unable to complete this action. Check that the authentication server is available.",
+  "protectedPlaceholder": "Access to this page is protected. Its business features will be developed in a later step."
+}
+}

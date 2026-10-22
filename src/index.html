@@ -1,13 +1,62 @@
 <!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <title>ECommerceSiwProject</title>
-  <base href="/">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="icon" type="image/x-icon" href="favicon.ico">
-</head>
-<body>
-  <app-root></app-root>
-</body>
+<html lang="fr" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>SIW E-Commerce</title>
+
+    <base href="/">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <meta
+      name="description"
+      content="SIW E-Commerce — Une expérience de shopping moderne."
+    >
+
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+
+    <script>
+      (function () {
+        try {
+          var theme = localStorage.getItem('siw-theme');
+          var validTheme =
+            theme === 'light' || theme === 'dark' || theme === 'system';
+
+          if (!validTheme) {
+            theme = 'system';
+          }
+
+          var dark =
+            theme === 'dark' ||
+            (
+              theme === 'system' &&
+              window.matchMedia('(prefers-color-scheme: dark)').matches
+            );
+
+          document.documentElement.classList.toggle('app-dark', dark);
+
+          var language = localStorage.getItem('siw-language');
+
+          if (
+            language === 'fr' ||
+            language === 'en' ||
+            language === 'ar'
+          ) {
+            document.documentElement.lang = language;
+            document.documentElement.dir =
+              language === 'ar' ? 'rtl' : 'ltr';
+          }
+        } catch (error) {
+          document.documentElement.classList.toggle(
+            'app-dark',
+            window.matchMedia('(prefers-color-scheme: dark)').matches
+          );
+        }
+      })();
+    </script>
+  </head>
+
+  <body>
+    <app-root></app-root>
+  </body>
 </html>

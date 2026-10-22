@@ -1,0 +1,83 @@
+{
+  "app": {
+    "name": "SIW E-Commerce"
+  },
+  "nav": {
+    "main": "Navigation principale",
+    "showcase": "Design system",
+    "adminPreview": "Aperçu administration",
+    "toggle": "Ouvrir ou fermer le menu"
+  },
+  "preferences": {
+    "language": "Langue",
+    "theme": "Apparence",
+    "light": "Clair",
+    "dark": "Sombre",
+    "system": "Système"
+  },
+  "footer": {
+    "description": "Une expérience e-commerce sobre, moderne et intuitive."
+  },
+  "admin": {
+    "title": "Administration",
+    "previewNotice": "Prévisualisation visuelle uniquement. L’authentification et les fonctionnalités métier seront ajoutées ensuite."
+  },
+  "demo": {
+    "eyebrow": "SIW — Fondations de l’interface",
+    "title": "Une expérience soignée, dans chaque détail.",
+    "description": "Une base visuelle commune au catalogue, à l’espace client et à l’administration. Trois langues, deux apparences et une interface responsive.",
+    "themeCard": "Clair et sombre",
+    "languageCard": "Français, anglais et arabe",
+    "responsiveCard": "Mobile, tablette et ordinateur",
+    "buttons": "Boutons et interactions",
+    "primary": "Action principale",
+    "secondary": "Secondaire",
+    "outlined": "Avec contour",
+    "dialogButton": "Ouvrir une fenêtre",
+    "disabled": "Désactivé",
+    "form": "Formulaire et validation",
+    "phone": "Numéro de téléphone",
+    "phoneHelp": "Saisissez exactement 8 chiffres.",
+    "phoneError": "Le numéro doit contenir exactement 8 chiffres.",
+    "validate": "Valider",
+    "statuses": "Statuts des commandes",
+    "statusHelp": "Chaque statut possède un libellé explicite et une couleur indicative.",
+    "table": "Tableau et pagination",
+    "fakeData": "Données fictives pour vérifier les composants visuels.",
+    "reference": "Référence",
+    "quantity": "Quantité",
+    "status": "Statut",
+    "loading": "État de chargement",
+    "emptyTitle": "Aucun résultat",
+    "emptyText": "Les éléments apparaîtront ici lorsqu’ils seront disponibles.",
+    "dialogTitle": "Une interface cohérente",
+    "dialogText": "Cette fenêtre utilise le même thème, la même typographie et la même direction de lecture que le reste de l’application.",
+    "close": "Fermer",
+    "notificationTitle": "Opération réussie",
+    "notificationText": "La démonstration fonctionne. Aucune donnée n’a été envoyée au backend."
+  },
+  "statuses": {
+    "PENDING": "En attente",
+    "APPROVED": "Approuvée",
+    "REJECTED": "Rejetée",
+    "SHIPPED": "Expédiée",
+    "DELIVERED": "Livrée",
+    "CANCELLED": "Annulée"
+  },
+  "auth": {
+  "login": "Se connecter",
+  "logout": "Se déconnecter",
+  "cart": "Panier",
+  "orders": "Mes commandes",
+  "administration": "Administration",
+  "dashboard": "Tableau de bord",
+  "backHome": "Retour à l’accueil",
+  "forbiddenTitle": "Accès refusé",
+  "forbiddenText": "Vous ne disposez pas du rôle nécessaire pour accéder à cette ressource.",
+  "sessionTitle": "Authentification nécessaire",
+  "sessionExpired": "La requête n’a pas pu être authentifiée. Reconnectez-vous si votre session a expiré.",
+  "errorTitle": "Erreur d’authentification",
+  "actionError": "Impossible de terminer cette action. Vérifiez la disponibilité du serveur d’authentification.",
+  "protectedPlaceholder": "L’accès à cette page est protégé. Son contenu métier sera développé dans une prochaine étape."
+}
+}

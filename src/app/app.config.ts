@@ -1,8 +1,134 @@
-import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
+import {
+  ApplicationConfig,
+  inject,
+  provideAppInitializer,
+  provideZoneChangeDetection
+} from '@angular/core';
+
+import {
+  provideHttpClient,
+  withInterceptors
+} from '@angular/common/http';
+
 import { provideRouter } from '@angular/router';
+
+import {
+  provideAnimationsAsync
+} from '@angular/platform-browser/animations/async';
+
+import { provideKeycloak } from 'keycloak-angular';
+
+import { providePrimeNG } from 'primeng/config';
+import { MessageService } from 'primeng/api';
+
+import {
+  provideTranslateService
+} from '@ngx-translate/core';
+
+import {
+  provideTranslateHttpLoader
+} from '@ngx-translate/http-loader';
+
+import {
+  environment
+} from '../environments/environment';
 
 import { routes } from './app.routes';
 
+import {
+  SiwPreset
+} from './core/theme/siw.preset';
+
+import {
+  ThemeService
+} from './core/services/theme.service';
+
+import {
+  LanguageService
+} from './core/services/language.service';
+
+import {
+  authInterceptor
+} from './core/interceptors/auth.interceptor';
+
+import {
+  apiErrorInterceptor
+} from './core/interceptors/api-error.interceptor';
+
 export const appConfig: ApplicationConfig = {
-  providers: [provideZoneChangeDetection({ eventCoalescing: true }), provideRouter(routes)]
+  providers: [
+    provideZoneChangeDetection({
+      eventCoalescing: true
+    }),
+
+    provideKeycloak({
+      config: {
+        url: environment.keycloak.url,
+        realm: environment.keycloak.realm,
+        clientId: environment.keycloak.clientId
+      },
+
+      initOptions: {
+        onLoad: 'check-sso',
+
+        pkceMethod: 'S256',
+
+        silentCheckSsoRedirectUri:
+          `${window.location.origin}/silent-check-sso.html`,
+
+        silentCheckSsoFallback: true,
+
+        checkLoginIframe: false
+      }
+    }),
+
+    provideRouter(routes),
+
+    provideHttpClient(
+      withInterceptors([
+        apiErrorInterceptor,
+        authInterceptor
+      ])
+    ),
+
+    provideAnimationsAsync(),
+
+    providePrimeNG({
+      ripple: true,
+
+      theme: {
+        preset: SiwPreset,
+
+        options: {
+          darkModeSelector: '.app-dark',
+
+          cssLayer: {
+            name: 'primeng',
+            order:
+              'tailwind-base, primeng, tailwind-utilities'
+          }
+        }
+      }
+    }),
+
+    provideTranslateService({
+      fallbackLang: 'fr',
+
+      loader: provideTranslateHttpLoader({
+        prefix: '/i18n/',
+        suffix: '.json'
+      })
+    }),
+
+    MessageService,
+
+    provideAppInitializer(() => {
+      const themeService = inject(ThemeService);
+      const languageService = inject(LanguageService);
+
+      themeService.init();
+
+      return languageService.init();
+    })
+  ]
 };
