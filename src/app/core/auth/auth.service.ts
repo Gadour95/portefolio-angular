@@ -65,13 +65,8 @@ export class AuthService {
       return [];
     }
 
-    const clientRoles =
-      this.keycloak.resourceAccess?.[
-        environment.keycloak.rolesClientId
-      ]?.roles ?? [];
-
     return Object.values(APP_ROLES).filter(role =>
-      clientRoles.includes(role)
+      this.keycloak.hasRealmRole(role)
     );
   });
 

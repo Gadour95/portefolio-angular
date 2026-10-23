@@ -1,0 +1,442 @@
+<div class="space-y-6">
+  <section>
+    <h1 class="text-2xl font-bold tracking-tight sm:text-3xl">
+      {{ 'adminSubCategories.title' | translate }}
+    </h1>
+
+    <p class="mt-2 app-muted">
+      {{ 'adminSubCategories.subtitle' | translate }}
+    </p>
+  </section>
+
+  <p-toolbar styleClass="rounded-2xl">
+    <ng-template #start>
+      <div class="flex flex-wrap items-center gap-3">
+        <p-iconfield>
+          <p-inputicon styleClass="pi pi-search" />
+
+          <input
+            pInputText
+            type="search"
+            class="w-full sm:w-64"
+            [formControl]="searchControl"
+            [placeholder]="'adminSubCategories.search' | translate"
+            [attr.aria-label]="'adminSubCategories.search' | translate"
+          />
+        </p-iconfield>
+
+        <p-select
+          inputId="sub-category-parent-filter"
+          [options]="allCategories()"
+          optionLabel="name"
+          optionValue="id"
+          [formControl]="categoryFilterControl"
+          [filter]="true"
+          filterBy="name"
+          [showClear]="true"
+          [loading]="categoriesLoading()"
+          [placeholder]="'adminSubCategories.allCategories' | translate"
+          [ariaLabel]="'adminSubCategories.category' | translate"
+          styleClass="w-full sm:w-56"
+          appendTo="body"
+        />
+
+        <p-select
+          inputId="sub-category-deletion"
+          [options]="deletionOptions()"
+          optionLabel="label"
+          optionValue="value"
+          [formControl]="deletionControl"
+          [ariaLabel]="'adminCategories.filter' | translate"
+          styleClass="w-full sm:w-44"
+          appendTo="body"
+        />
+      </div>
+    </ng-template>
+
+    <ng-template #end>
+      <div class="flex items-center gap-2">
+        <p-button
+          icon="pi pi-refresh"
+          severity="secondary"
+          [outlined]="true"
+          [disabled]="vm().loading"
+          [ariaLabel]="'adminCategories.refresh' | translate"
+          [pTooltip]="'adminCategories.refresh' | translate"
+          (onClick)="reload()"
+        />
+
+        <p-button
+          icon="pi pi-plus"
+          [label]="'adminSubCategories.new' | translate"
+          [disabled]="
+            categoriesLoading() ||
+            !!categoriesError() ||
+            activeCategories().length === 0
+          "
+          (onClick)="openCreate()"
+        />
+      </div>
+    </ng-template>
+  </p-toolbar>
+
+  @if (categoriesError(); as error) {
+    <p-message severity="error" styleClass="w-full">
+      {{ error }}
+    </p-message>
+  }
+
+  @if (
+    !categoriesLoading() &&
+    !categoriesError() &&
+    activeCategories().length === 0
+  ) {
+    <p-message severity="warn" styleClass="w-full">
+      {{ 'adminSubCategories.noActiveCategory' | translate }}
+    </p-message>
+  }
+
+  <div class="flex justify-end">
+    <p-button
+      icon="pi pi-sync"
+      severity="secondary"
+      [text]="true"
+      [label]="'adminSubCategories.refreshCategories' | translate"
+      [loading]="categoriesLoading()"
+      [disabled]="categoriesLoading()"
+      (onClick)="loadCategories()"
+    />
+  </div>
+
+  @if (query().deletion !== 'ACTIVE') {
+    <p-message severity="info" styleClass="w-full">
+      {{ 'adminSubCategories.readOnlyNotice' | translate }}
+    </p-message>
+  }
+
+  @if (vm().error; as error) {
+    <p-message severity="error" styleClass="w-full">
+      {{ error }}
+    </p-message>
+  }
+
+  <p-card styleClass="overflow-hidden rounded-2xl">
+    <p-table
+      [value]="vm().data?.content ?? []"
+      [loading]="vm().loading"
+      dataKey="id"
+      size="small"
+      [rowHover]="true"
+      [tableStyle]="{ 'min-width': '48rem' }"
+    >
+      <ng-template #header>
+        <tr>
+          <th class="w-1/4">
+            {{ 'adminCategories.name' | translate }}
+          </th>
+
+          <th class="w-1/4">
+            {{ 'adminSubCategories.category' | translate }}
+          </th>
+
+          <th>
+            {{ 'adminCategories.description' | translate }}
+          </th>
+
+          @if (query().deletion === 'ACTIVE') {
+            <th class="w-32">
+              {{ 'adminCategories.actions' | translate }}
+            </th>
+          }
+        </tr>
+      </ng-template>
+
+      <ng-template #body let-subCategory>
+        <tr>
+          <td>
+            <span class="font-semibold">
+              {{ subCategory.name }}
+            </span>
+          </td>
+
+          <td>
+            {{ parentName(subCategory) }}
+          </td>
+
+          <td>
+            <p class="max-w-xl whitespace-pre-wrap break-words app-muted">
+              {{ subCategory.description || '—' }}
+            </p>
+          </td>
+
+          @if (query().deletion === 'ACTIVE') {
+            <td>
+              <div class="flex items-center gap-1">
+                <p-button
+                  icon="pi pi-pencil"
+                  severity="secondary"
+                  [text]="true"
+                  [rounded]="true"
+                  [disabled]="
+                    deletingId() !== null ||
+                    categoriesLoading() ||
+                    !!categoriesError() ||
+                    activeCategories().length === 0
+                  "
+                  [ariaLabel]="'adminCategories.edit' | translate"
+                  [pTooltip]="'adminCategories.edit' | translate"
+                  (onClick)="openEdit(subCategory)"
+                />
+
+                <p-button
+                  icon="pi pi-trash"
+                  severity="danger"
+                  [text]="true"
+                  [rounded]="true"
+                  [loading]="deletingId() === subCategory.id"
+                  [disabled]="
+                    deletingId() !== null &&
+                    deletingId() !== subCategory.id
+                  "
+                  [ariaLabel]="'adminCategories.delete' | translate"
+                  [pTooltip]="'adminCategories.delete' | translate"
+                  (onClick)="confirmDelete(subCategory)"
+                />
+              </div>
+            </td>
+          }
+        </tr>
+      </ng-template>
+
+      <ng-template #emptymessage>
+        <tr>
+          <td
+            [attr.colspan]="query().deletion === 'ACTIVE' ? 4 : 3"
+          >
+            <div class="flex flex-col items-center gap-3 py-12 text-center">
+              <i
+                class="pi pi-sitemap text-4xl app-muted"
+                aria-hidden="true"
+              ></i>
+
+              <p class="font-semibold">
+                {{ 'adminSubCategories.empty' | translate }}
+              </p>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+
+    @if (vm().data; as page) {
+      <div class="mt-4 border-t border-[var(--app-border)] pt-4">
+        <p class="mb-2 text-sm app-muted">
+          {{
+            'adminSubCategories.total'
+              | translate: { count: page.totalElements }
+          }}
+        </p>
+
+        <p-paginator
+          [first]="query().page * query().size"
+          [rows]="query().size"
+          [totalRecords]="page.totalElements"
+          [rowsPerPageOptions]="[10, 20, 50, 100]"
+          (onPageChange)="changePage($event)"
+        />
+      </div>
+    }
+  </p-card>
+</div>
+
+<p-dialog
+  [visible]="dialogVisible()"
+  (visibleChange)="dialogVisible.set($event)"
+  [header]="
+    (editingId()
+      ? 'adminSubCategories.editTitle'
+      : 'adminSubCategories.createTitle') | translate
+  "
+  [modal]="true"
+  [draggable]="false"
+  [resizable]="false"
+  [closable]="!saving()"
+  [closeOnEscape]="!saving()"
+  [dismissableMask]="false"
+  [style]="{
+    width: '38rem',
+    maxWidth: 'calc(100vw - 2rem)'
+  }"
+>
+  <form
+    [formGroup]="form"
+    (ngSubmit)="save()"
+    class="space-y-5 pt-2"
+  >
+    @if (formError(); as error) {
+      <p-message severity="error" styleClass="w-full">
+        {{ error }}
+      </p-message>
+    }
+
+    <div>
+      <label for="sub-category-name" class="app-label">
+        {{ 'adminCategories.name' | translate }}
+        <span class="text-red-500" aria-hidden="true">*</span>
+      </label>
+
+      <input
+        pInputText
+        id="sub-category-name"
+        formControlName="name"
+        class="w-full"
+        autocomplete="off"
+        [readonly]="saving()"
+        [class.ng-invalid]="
+          (form.controls.name.invalid && form.controls.name.touched) ||
+          !!serverFieldErrors()['name']
+        "
+        [class.ng-dirty]="
+          form.controls.name.touched ||
+          !!serverFieldErrors()['name']
+        "
+        [attr.aria-invalid]="
+          (form.controls.name.invalid && form.controls.name.touched) ||
+          !!serverFieldErrors()['name']
+        "
+      />
+
+      @if (
+        form.controls.name.invalid &&
+        form.controls.name.touched
+      ) {
+        <p-message
+          severity="error"
+          variant="simple"
+          styleClass="mt-2"
+        >
+          {{ 'adminCategories.nameRequired' | translate }}
+        </p-message>
+      }
+
+      @if (serverFieldErrors()['name']; as error) {
+        <p-message
+          severity="error"
+          variant="simple"
+          styleClass="mt-2"
+        >
+          {{ error }}
+        </p-message>
+      }
+    </div>
+
+    <div>
+      <label for="sub-category-parent" class="app-label">
+        {{ 'adminSubCategories.category' | translate }}
+        <span class="text-red-500" aria-hidden="true">*</span>
+      </label>
+
+      <p-select
+        inputId="sub-category-parent"
+        formControlName="categoryId"
+        [options]="activeCategories()"
+        optionLabel="name"
+        optionValue="id"
+        [filter]="true"
+        filterBy="name"
+        [loading]="categoriesLoading()"
+        [readonly]="saving()"
+        [placeholder]="'adminSubCategories.selectCategory' | translate"
+        styleClass="w-full"
+        appendTo="body"
+        [class.ng-invalid]="
+          (form.controls.categoryId.invalid &&
+           form.controls.categoryId.touched) ||
+          !!serverFieldErrors()['categoryId']
+        "
+        [class.ng-dirty]="
+          form.controls.categoryId.touched ||
+          !!serverFieldErrors()['categoryId']
+        "
+      />
+
+      <p class="mt-2 text-sm app-muted">
+        {{ 'adminSubCategories.activeParentsOnly' | translate }}
+      </p>
+
+      @if (
+        form.controls.categoryId.invalid &&
+        form.controls.categoryId.touched
+      ) {
+        <p-message
+          severity="error"
+          variant="simple"
+          styleClass="mt-2"
+        >
+          {{ 'adminSubCategories.categoryRequired' | translate }}
+        </p-message>
+      }
+
+      @if (serverFieldErrors()['categoryId']; as error) {
+        <p-message
+          severity="error"
+          variant="simple"
+          styleClass="mt-2"
+        >
+          {{ error }}
+        </p-message>
+      }
+    </div>
+
+    <div>
+      <label for="sub-category-description" class="app-label">
+        {{ 'adminCategories.description' | translate }}
+      </label>
+
+      <textarea
+        pTextarea
+        id="sub-category-description"
+        formControlName="description"
+        rows="5"
+        class="w-full"
+        [autoResize]="true"
+        [readonly]="saving()"
+      ></textarea>
+
+      @if (serverFieldErrors()['description']; as error) {
+        <p-message
+          severity="error"
+          variant="simple"
+          styleClass="mt-2"
+        >
+          {{ error }}
+        </p-message>
+      }
+    </div>
+  </form>
+
+  <ng-template #footer>
+    <p-button
+      [label]="'adminCategories.cancel' | translate"
+      severity="secondary"
+      [text]="true"
+      [disabled]="saving()"
+      (onClick)="closeDialog()"
+    />
+
+    <p-button
+      icon="pi pi-check"
+      [label]="'adminCategories.save' | translate"
+      [loading]="saving()"
+      [disabled]="saving()"
+      (onClick)="save()"
+    />
+  </ng-template>
+</p-dialog>
+
+<p-confirmdialog
+  [style]="{
+    width: '30rem',
+    maxWidth: 'calc(100vw - 2rem)'
+  }"
+/>

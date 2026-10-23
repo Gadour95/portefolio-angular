@@ -11,7 +11,7 @@ import {
 
 const loadPlaceholder = () =>
   import(
-    './core/features/access/protected-placeholder.component'
+    './features/access/protected-placeholder.component'
   ).then(component =>
     component.ProtectedPlaceholderComponent
   );
@@ -85,7 +85,7 @@ export const routes: Routes = [
 
         loadComponent: () =>
           import(
-            './core/features/access/forbidden.component'
+            './features/access/forbidden.component'
           ).then(component =>
             component.ForbiddenComponent
           )
@@ -126,7 +126,113 @@ export const routes: Routes = [
         },
 
         loadComponent: loadPlaceholder
-      }
+      },
+
+      {
+        path: 'categories',
+
+        data: {
+          roles: [APP_ROLES.ADMIN]
+        },
+
+        loadComponent: () =>
+          import(
+            './features/admin/categories/pages/category-list/category-list.component'
+          ).then(component =>
+            component.CategoryListComponent
+          )
+      },
+
+      {
+        path: 'sub-categories',
+
+        data: {
+          roles: [APP_ROLES.ADMIN]
+        },
+
+        loadComponent: () =>
+          import(
+            './features/admin/sub-categories/pages/sub-category-list/sub-category-list.component'
+          ).then(component =>
+            component.SubCategoryListComponent
+          )
+      },
+
+      {
+        path: 'products',
+
+        data: {
+          roles: [APP_ROLES.ADMIN]
+        },
+
+        loadComponent: () =>
+          import(
+            './features/admin/products/pages/product-list/product-list.component'
+          ).then(component =>
+            component.ProductListComponent
+          )
+      },
+      {
+        path: 'products/new',
+
+        data: {
+          roles: [APP_ROLES.ADMIN]
+        },
+
+        loadComponent: () =>
+          import(
+            './features/admin/products/pages/product-editor/product-editor.component'
+          ).then(component =>
+            component.ProductEditorComponent
+          )
+      },
+
+      {
+        path: 'products/:id/edit',
+
+        data: {
+          roles: [APP_ROLES.ADMIN]
+        },
+
+        loadComponent: () =>
+          import(
+            './features/admin/products/pages/product-editor/product-editor.component'
+          ).then(component =>
+            component.ProductEditorComponent
+          )
+      },
+      {
+        path: 'products/:id/media',
+
+        data: {
+          roles: [APP_ROLES.ADMIN]
+        },
+
+        loadComponent: () =>
+          import(
+            './features/admin/products/pages/product-media/product-media.component'
+          ).then(component =>
+            component.ProductMediaComponent
+          )
+      },
+      {
+        path: 'orders',
+
+        data: {
+          roles: [APP_ROLES.ADMIN]
+        },
+
+        loadComponent: () =>
+          import(
+            './features/admin/orders/pages/order-list/order-list.component'
+          ).then(component =>
+            component.OrderListComponent
+          )
+      },
+      
+      
+      
+
     ]
   },
 
