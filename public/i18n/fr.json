@@ -87,7 +87,8 @@
   "catalog": "Catalogue",
   "categories": "Catégories",
   "subCategories": "Sous-catégories",
-  "products": "Produits"
+  "products": "Produits",
+  "sales": "Ventes"
 },
 "adminCategories": {
   "title": "Catégories",
@@ -346,5 +347,39 @@
     "deliver": "La commande a été marquée comme livrée.",
     "archive": "La commande a été archivée."
   }
+},
+"adminStatistics": {
+  "title": "Tableau de bord",
+  "global": "Vue globale",
+  "subtitle": "Suivez les principaux indicateurs de vente calculés par votre backend.",
+  "salesDefinition": "Les ventes correspondent aux commandes approuvées, expédiées ou livrées. Cette vue présente les KPIs globaux, sans filtre de période.",
+  "retry": "Réessayer",
+  "financialChart": "Chiffre d’affaires, coût et marge",
+  "chartHelp": "Comparaison de trois indicateurs monétaires. Les barres ne représentent pas des catégories à additionner.",
+  "noFinancialValues": "Aucune valeur financière non nulle à représenter.",
+  "indicator": "Indicateur",
+  "value": "Valeur",
+  "readingGuide": "Comprendre les indicateurs",
+  "ordersHelp": "Nombre de commandes comptabilisées dans les statistiques de ventes, pas le nombre de toutes les commandes.",
+  "customersHelp": "Nombre de clients représentés dans les ventes, pas le nombre d’utilisateurs enregistrés dans Keycloak.",
+  "marginHelp": "Indicateur calculé : marge divisée par chiffre d’affaires, multipliée par 100. Il est indéfini lorsque le chiffre d’affaires est nul. Il ne représente pas un bénéfice net.",
+  "currencyNotice": "Les montants sont affichés sans symbole monétaire tant que la devise du projet n’est pas explicitement configurée.",
+  "shortcuts": "Accès rapides",
+  "lastLoaded": "Dernier chargement",
+  "contractMismatch": "La réponse des statistiques ne correspond pas au contrat attendu. Les sept champs KPI doivent être des nombres.",
+  "kpis": {
+    "totalRevenue": "Chiffre d’affaires",
+    "totalCost": "Coût des ventes",
+    "totalMargin": "Marge",
+    "averageOrderValue": "Panier moyen",
+    "totalOrders": "Commandes comptabilisées",
+    "totalCustomers": "Clients acheteurs",
+    "totalDiscount": "Remises cumulées",
+    "marginRatio": "Marge / chiffre d’affaires"
+  }
+},
+"header": {
+  "account": "Mon compte",
+  "preferenceError": "Impossible de modifier la préférence. Veuillez réessayer."
 }
 }

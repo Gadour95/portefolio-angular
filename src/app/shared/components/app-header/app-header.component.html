@@ -1,117 +1,161 @@
 <header
-  class="sticky top-0 z-40 border-b border-[var(--app-border)]
-         bg-[var(--app-surface)]"
+  class="sticky top-0 z-40 border-b
+         border-[var(--app-border)]
+         bg-[var(--app-surface)]
+         shadow-[0_4px_24px_-20px_rgba(15,23,42,0.45)]"
 >
-<div class="border-t border-[var(--app-border)]">
-  <div class="app-container py-3">
-    <app-auth-actions />
-  </div>
-</div>
+  <div
+    class="app-container flex min-h-20
+           items-center justify-between gap-3"
+  >
+    <!-- Identité -->
 
-  <div class="app-container flex min-h-20 items-center justify-between gap-4">
     <a
-      routerLink="/"
+      [routerLink]="homePath()"
       class="flex shrink-0 items-center gap-3"
-      (click)="closeMenu()"
       [attr.aria-label]="'app.name' | translate"
     >
       <span
-        class="flex h-11 w-11 items-center justify-center rounded-xl
-               bg-gradient-to-br from-indigo-600 to-blue-600 text-white
+        class="flex h-11 w-11 items-center justify-center
+               rounded-2xl bg-gradient-to-br
+               from-indigo-600 to-blue-600 text-white
                shadow-lg shadow-indigo-600/20"
       >
-        <i class="pi pi-shopping-bag text-xl" aria-hidden="true"></i>
+        <i
+          class="pi pi-shopping-bag text-xl"
+          aria-hidden="true"
+        ></i>
       </span>
 
-      <span class="text-lg font-bold tracking-tight">
-        SIW<span class="text-primary">.</span>
+      <span class="hidden flex-col sm:inline-flex">
+        <span class="text-xl font-bold leading-6 tracking-tight">
+          SIW<span class="text-primary">.</span>
+        </span>
+
+        <span class="text-[11px] font-medium tracking-wide app-muted">
+          E-COMMERCE
+        </span>
       </span>
     </a>
 
-    <nav class="hidden items-center gap-2 md:flex"
-         [attr.aria-label]="'nav.main' | translate">
-      <a
-        routerLink="/"
-        routerLinkActive="active"
-        [routerLinkActiveOptions]="{ exact: true }"
-        class="app-nav-link"
-      >
-        {{ 'nav.showcase' | translate }}
-      </a>
+    <!-- Actions -->
 
-      <a
-        routerLink="/admin-preview"
-        routerLinkActive="active"
-        class="app-nav-link"
-      >
-        {{ 'nav.adminPreview' | translate }}
-      </a>
-    </nav>
+    <div class="flex items-center gap-1 sm:gap-2">
+      <!-- Langue -->
 
-    <div class="flex items-center gap-2">
-      <label for="language" class="sr-only">
-        {{ 'preferences.language' | translate }}
-      </label>
-
-      <select
-        id="language"
-        class="app-control max-w-28 text-sm"
-        [value]="languageService.current()"
-        (change)="changeLanguage($event)"
-      >
-        <option value="fr">Français</option>
-        <option value="en">English</option>
-        <option value="ar">العربية</option>
-      </select>
-
-      <label for="theme" class="sr-only">
-        {{ 'preferences.theme' | translate }}
-      </label>
-
-      <select
-        id="theme"
-        class="app-control max-w-28 text-sm"
-        [value]="themeService.mode()"
-        (change)="changeTheme($event)"
-      >
-        <option value="light">{{ 'preferences.light' | translate }}</option>
-        <option value="dark">{{ 'preferences.dark' | translate }}</option>
-        <option value="system">{{ 'preferences.system' | translate }}</option>
-      </select>
-
-      <button
+      <p-button
         type="button"
-        class="app-control flex items-center justify-center md:hidden"
-        [attr.aria-label]="'nav.toggle' | translate"
-        [attr.aria-expanded]="mobileMenuOpen()"
-        aria-controls="mobile-navigation"
-        (click)="toggleMenu()"
-      >
-        <i
-          [class]="mobileMenuOpen() ? 'pi pi-times' : 'pi pi-bars'"
-          aria-hidden="true"
-        ></i>
-      </button>
+        icon="pi pi-language"
+        severity="secondary"
+        styleClass="siw-icon-button"
+        [ariaLabel]="'preferences.language' | translate"
+        [pTooltip]="'preferences.language' | translate"
+        tooltipPosition="bottom"
+        (onClick)="togglePopup(languageMenu, $event)"
+      />
+
+      <!-- Apparence -->
+
+      <p-button
+        type="button"
+        [icon]="themeIcon()"
+        severity="secondary"
+        styleClass="siw-icon-button"
+        [ariaLabel]="'preferences.theme' | translate"
+        [pTooltip]="'preferences.theme' | translate"
+        tooltipPosition="bottom"
+        (onClick)="togglePopup(themeMenu, $event)"
+      />
+
+      <!-- Panier : nécessite CLIENT -->
+
+      @if (auth.isClient()) {
+        <p-button
+          type="button"
+          icon="pi pi-shopping-cart"
+          severity="secondary"
+          styleClass="siw-icon-button"
+          [ariaLabel]="'auth.cart' | translate"
+          [pTooltip]="'auth.cart' | translate"
+          tooltipPosition="bottom"
+          (onClick)="openCart()"
+        />
+      }
+
+      <span
+        class="mx-1 h-6 w-px bg-[var(--app-border)]"
+        aria-hidden="true"
+      ></span>
+
+      <!-- Compte ou connexion -->
+
+      @if (auth.authenticated()) {
+        <p-button
+          type="button"
+          icon="pi pi-user"
+          severity="secondary"
+          styleClass="siw-icon-button siw-account-button"
+          [ariaLabel]="accountLabel()"
+          [pTooltip]="accountLabel()"
+          tooltipPosition="bottom"
+          [disabled]="authBusy()"
+          (onClick)="togglePopup(accountMenu, $event)"
+        />
+      } @else {
+        <p-button
+          type="button"
+          icon="pi pi-sign-in"
+          severity="secondary"
+          styleClass="siw-icon-button siw-account-button"
+          [ariaLabel]="'auth.login' | translate"
+          [pTooltip]="'auth.login' | translate"
+          tooltipPosition="bottom"
+          [loading]="authBusy()"
+          [disabled]="authBusy()"
+          (onClick)="login()"
+        />
+      }
     </div>
   </div>
 
-  @if (mobileMenuOpen()) {
-    <nav
-      id="mobile-navigation"
-      class="app-container flex flex-col gap-2 pb-4 md:hidden"
-      [attr.aria-label]="'nav.main' | translate"
-    >
-      <a routerLink="/" class="app-nav-link" (click)="closeMenu()">
-        {{ 'nav.showcase' | translate }}
-      </a>
-
-      <a
-        routerLink="/admin-preview"
-        class="app-nav-link"
-        (click)="closeMenu()"
-      >
-        {{ 'nav.adminPreview' | translate }}
-      </a>
-    </nav>
-  }
+  <div
+    class="h-px bg-gradient-to-r
+           from-transparent via-indigo-500/30 to-transparent"
+    aria-hidden="true"
+  ></div>
 </header>
+
+<!-- Menus déroulants -->
+
+<p-menu
+  #languageMenu
+  id="siw-language-menu"
+  [model]="languageItems()"
+  [popup]="true"
+  [baseZIndex]="1100"
+  [ariaLabel]="'preferences.language' | translate"
+  appendTo="body"
+  styleClass="siw-popup-menu"
+/>
+
+<p-menu
+  #themeMenu
+  id="siw-theme-menu"
+  [model]="themeItems()"
+  [popup]="true"
+  [baseZIndex]="1100"
+  [ariaLabel]="'preferences.theme' | translate"
+  appendTo="body"
+  styleClass="siw-popup-menu"
+/>
+
+<p-menu
+  #accountMenu
+  id="siw-account-menu"
+  [model]="accountItems()"
+  [popup]="true"
+  [baseZIndex]="1100"
+  [ariaLabel]="'header.account' | translate"
+  appendTo="body"
+  styleClass="siw-popup-menu"
+/>

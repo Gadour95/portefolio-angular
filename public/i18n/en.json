@@ -87,7 +87,8 @@
   "catalog": "Catalog",
   "categories": "Categories",
   "subCategories": "Subcategories",
-  "products": "Products"
+  "products": "Products",
+  "sales": "Sales"
 },
 "adminCategories": {
   "title": "Categories",
@@ -346,5 +347,39 @@
     "deliver": "The order was marked as delivered.",
     "archive": "The order was archived."
   }
+},
+"adminStatistics": {
+  "title": "Dashboard",
+  "global": "Global view",
+  "subtitle": "Monitor the main sales indicators calculated by your backend.",
+  "salesDefinition": "Sales correspond to approved, shipped or delivered orders. This view shows global KPIs without a date filter.",
+  "retry": "Try again",
+  "financialChart": "Revenue, cost and margin",
+  "chartHelp": "Comparison of three monetary indicators. The bars are not categories to be added together.",
+  "noFinancialValues": "No non-zero financial values to display.",
+  "indicator": "Indicator",
+  "value": "Value",
+  "readingGuide": "Understanding the indicators",
+  "ordersHelp": "Number of orders included in sales statistics, not the number of all orders.",
+  "customersHelp": "Number of customers represented in sales, not the number of users registered in Keycloak.",
+  "marginHelp": "Calculated indicator: margin divided by revenue, multiplied by 100. It is undefined when revenue is zero. It does not represent net profit.",
+  "currencyNotice": "Amounts are displayed without a currency symbol until the project currency is explicitly configured.",
+  "shortcuts": "Quick access",
+  "lastLoaded": "Last loaded",
+  "contractMismatch": "The statistics response does not match the expected contract. All seven KPI fields must be numbers.",
+  "kpis": {
+    "totalRevenue": "Revenue",
+    "totalCost": "Cost of sales",
+    "totalMargin": "Margin",
+    "averageOrderValue": "Average order value",
+    "totalOrders": "Counted orders",
+    "totalCustomers": "Buying customers",
+    "totalDiscount": "Total discounts",
+    "marginRatio": "Margin / revenue"
+  }
+},
+"header": {
+  "account": "My account",
+  "preferenceError": "Unable to change the preference. Please try again."
 }
 }

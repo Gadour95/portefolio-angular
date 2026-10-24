@@ -4,7 +4,15 @@ import {
   inject
 } from '@angular/core';
 
-import { RouterOutlet } from '@angular/router';
+import {
+  NgTemplateOutlet
+} from '@angular/common';
+
+import {
+  RouterLink,
+  RouterLinkActive,
+  RouterOutlet
+} from '@angular/router';
 
 import {
   TranslatePipe,
@@ -33,6 +41,9 @@ import {
   standalone: true,
 
   imports: [
+    NgTemplateOutlet,
+    RouterLink,
+    RouterLinkActive,
     RouterOutlet,
     TranslatePipe,
     ButtonModule,
@@ -48,6 +59,7 @@ import {
 
       <div class="app-container py-4 lg:hidden">
         <p-button
+          type="button"
           icon="pi pi-bars"
           severity="secondary"
           [outlined]="true"
@@ -57,21 +69,42 @@ import {
       </div>
 
       <div
-        class="app-container grid flex-1 gap-6 py-6
+        class="app-container grid flex-1 items-start gap-6 py-6
                lg:grid-cols-[250px_minmax(0,1fr)]"
       >
         <aside
-          class="hidden h-fit rounded-2xl border
+          class="hidden rounded-2xl border
                  border-[var(--app-border)]
                  bg-[var(--app-surface)] p-3 lg:block"
         >
-          <p class="px-3 pb-3 pt-2 text-sm font-semibold app-muted">
-            {{ 'adminNav.title' | translate }}
-          </p>
+          <div
+            class="mb-3 flex items-center gap-3
+                   border-b border-[var(--app-border)] px-3 pb-4 pt-2"
+          >
+            <span
+              class="flex h-10 w-10 items-center justify-center
+                     rounded-xl bg-indigo-50 text-indigo-600
+                     dark:bg-indigo-500/10 dark:text-indigo-300"
+            >
+              <i
+                class="pi pi-shield text-lg"
+                aria-hidden="true"
+              ></i>
+            </span>
 
-          <p-menu
-            [model]="menuItems()"
-            styleClass="w-full border-0 bg-transparent"
+            <div>
+              <p class="font-semibold">
+                {{ 'adminNav.title' | translate }}
+              </p>
+
+              <p class="mt-0.5 text-xs app-muted">
+                SIW E-Commerce
+              </p>
+            </div>
+          </div>
+
+          <ng-container
+            [ngTemplateOutlet]="navigation"
           />
         </aside>
 
@@ -87,12 +120,51 @@ import {
       [(visible)]="drawerVisible"
       [position]="drawerPosition()"
       [header]="'adminNav.title' | translate"
+      [blockScroll]="true"
+      styleClass="!w-80"
     >
-      <p-menu
-        [model]="menuItems()"
-        styleClass="w-full border-0 bg-transparent"
+      <ng-container
+        [ngTemplateOutlet]="navigation"
       />
     </p-drawer>
+
+    <ng-template #navigation>
+      <p-menu
+        [model]="menuItems()"
+        [ariaLabel]="'adminNav.navigation' | translate"
+        styleClass="siw-sidebar-menu"
+      >
+        <ng-template #item let-item>
+          <a
+            [routerLink]="item.routerLink"
+            routerLinkActive="siw-sidebar-link-active"
+            [routerLinkActiveOptions]="
+              item.routerLinkActiveOptions || { exact: false }
+            "
+            #activeLink="routerLinkActive"
+            [attr.aria-current]="
+              activeLink.isActive ? 'page' : null
+            "
+            class="p-menu-item-link siw-sidebar-link"
+            (click)="closeDrawer()"
+          >
+            <i
+              [class]="item.icon"
+              aria-hidden="true"
+            ></i>
+
+            <span>{{ item.label }}</span>
+
+            @if (activeLink.isActive) {
+              <span
+                class="ms-auto h-1.5 w-1.5 rounded-full bg-current"
+                aria-hidden="true"
+              ></span>
+            }
+          </a>
+        </ng-template>
+      </p-menu>
+    </ng-template>
   `
 })
 export class AdminLayoutComponent {
@@ -110,12 +182,23 @@ export class AdminLayoutComponent {
 
     return [
       {
-        label: this.translate.instant('adminNav.dashboard'),
-        icon: 'pi pi-chart-bar',
-        routerLink: '/admin/dashboard',
-        command: () => {
-          this.drawerVisible = false;
-        }
+        label: this.translate.instant('adminNav.title'),
+
+        items: [
+          {
+            label: this.translate.instant(
+              'adminNav.dashboard'
+            ),
+
+            icon: 'pi pi-chart-bar',
+
+            routerLink: '/admin/dashboard',
+
+            routerLinkActiveOptions: {
+              exact: true
+            }
+          }
+        ]
       },
 
       {
@@ -126,37 +209,40 @@ export class AdminLayoutComponent {
             label: this.translate.instant(
               'adminNav.categories'
             ),
-            icon: 'pi pi-folder',
-            routerLink: '/admin/categories',
 
-            command: () => {
-              this.drawerVisible = false;
-            }
+            icon: 'pi pi-folder',
+
+            routerLink: '/admin/categories'
           },
 
           {
             label: this.translate.instant(
               'adminNav.subCategories'
             ),
-            icon: 'pi pi-sitemap',
-            routerLink: '/admin/sub-categories',
 
-            command: () => {
-              this.drawerVisible = false;
-            }
+            icon: 'pi pi-sitemap',
+
+            routerLink: '/admin/sub-categories'
           },
 
           {
             label: this.translate.instant(
               'adminNav.products'
             ),
-            icon: 'pi pi-box',
-            routerLink: '/admin/products',
 
-            command: () => {
-              this.drawerVisible = false;
-            }
-          },
+            icon: 'pi pi-box',
+
+            routerLink: '/admin/products'
+          }
+        ]
+      },
+
+      {
+        label: this.translate.instant(
+          'adminNav.sales'
+        ),
+
+        items: [
           {
             label: this.translate.instant(
               'adminOrders.title'
@@ -164,15 +250,14 @@ export class AdminLayoutComponent {
 
             icon: 'pi pi-shopping-bag',
 
-            routerLink: '/admin/orders',
-
-            command: () => {
-              this.drawerVisible = false;
-            }
+            routerLink: '/admin/orders'
           }
-
         ]
       }
     ];
   });
+
+  closeDrawer(): void {
+    this.drawerVisible = false;
+  }
 }

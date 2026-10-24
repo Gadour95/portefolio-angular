@@ -23,6 +23,7 @@
     "@ngx-translate/core": "^17.0.0",
     "@ngx-translate/http-loader": "^17.0.0",
     "@primeng/themes": "^19.1.4",
+    "chart.js": "^4.6.1",
     "keycloak-angular": "^19.0.2",
     "keycloak-js": "^26.2.4",
     "primeicons": "^7.0.0",
