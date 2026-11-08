@@ -10,7 +10,10 @@ import {
   withInterceptors
 } from '@angular/common/http';
 
-import { provideRouter } from '@angular/router';
+import {
+  provideRouter,
+  withInMemoryScrolling
+} from '@angular/router';
 
 import {
   provideAnimationsAsync
@@ -52,6 +55,10 @@ import {
 } from './core/interceptors/auth.interceptor';
 
 import {
+  languageInterceptor
+} from './core/interceptors/language.interceptor';
+
+import {
   apiErrorInterceptor
 } from './core/interceptors/api-error.interceptor';
 
@@ -82,10 +89,16 @@ export const appConfig: ApplicationConfig = {
       }
     }),
 
-    provideRouter(routes),
+    provideRouter(
+      routes,
+      withInMemoryScrolling({
+        anchorScrolling: 'enabled'
+      })
+    ),
 
     provideHttpClient(
       withInterceptors([
+        languageInterceptor,
         apiErrorInterceptor,
         authInterceptor
       ])

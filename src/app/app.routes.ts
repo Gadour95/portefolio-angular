@@ -1,23 +1,12 @@
 import { Routes } from '@angular/router';
 
-import {
-  authChildGuard,
-  authGuard
-} from './core/guards/auth.guard';
-
-import {
-  APP_ROLES
-} from './core/auth/app-role';
-import { homeGuard } from './core/guards/home.guard';
-
-const loadPlaceholder = () =>
-  import(
-    './features/access/protected-placeholder.component'
-  ).then(component =>
-    component.ProtectedPlaceholderComponent
-  );
+import { authGuard } from './core/guards/auth.guard';
 
 export const routes: Routes = [
+  // ----------------------------------------------------------
+  // Site public
+  // ----------------------------------------------------------
+
   {
     path: '',
 
@@ -33,7 +22,115 @@ export const routes: Routes = [
         path: '',
         pathMatch: 'full',
 
-        canActivate: [homeGuard],
+        loadComponent: () =>
+          import(
+            './features/portfolio/pages/home/home.component'
+          ).then(component =>
+            component.HomeComponent
+          )
+      },
+
+      {
+        path: 'projects',
+
+        loadComponent: () =>
+          import(
+            './features/portfolio/pages/projects/projects.component'
+          ).then(component =>
+            component.ProjectsComponent
+          )
+      },
+
+      {
+        path: 'projects/:slug',
+
+        loadComponent: () =>
+          import(
+            './features/portfolio/pages/project-detail/project-detail.component'
+          ).then(component =>
+            component.ProjectDetailComponent
+          )
+      },
+
+      {
+        path: 'timeline',
+
+        loadComponent: () =>
+          import(
+            './features/portfolio/pages/timeline/timeline.component'
+          ).then(component =>
+            component.TimelineComponent
+          )
+      },
+
+      {
+        path: 'skills',
+
+        loadComponent: () =>
+          import(
+            './features/portfolio/pages/skills/skills.component'
+          ).then(component =>
+            component.SkillsComponent
+          )
+      },
+
+      {
+        path: 'technologies',
+
+        loadComponent: () =>
+          import(
+            './features/portfolio/pages/technologies/technologies.component'
+          ).then(component =>
+            component.TechnologiesComponent
+          )
+      },
+
+      {
+        path: 'services',
+
+        loadComponent: () =>
+          import(
+            './features/portfolio/pages/services/services.component'
+          ).then(component =>
+            component.ServicesComponent
+          )
+      },
+
+      {
+        path: 'reviews',
+
+        loadComponent: () =>
+          import(
+            './features/portfolio/pages/reviews/reviews.component'
+          ).then(component =>
+            component.ReviewsComponent
+          )
+      },
+
+      {
+        path: 'contact',
+
+        loadComponent: () =>
+          import(
+            './features/portfolio/pages/contact/contact.component'
+          ).then(component =>
+            component.ContactComponent
+          )
+      },
+
+      {
+        path: 'cv',
+
+        loadComponent: () =>
+          import(
+            './features/portfolio/pages/cv/cv.component'
+          ).then(component =>
+            component.CvComponent
+          )
+      },
+
+      {
+        path: 'design-system',
 
         loadComponent: () =>
           import(
@@ -41,46 +138,6 @@ export const routes: Routes = [
           ).then(component =>
             component.DesignSystemComponent
           )
-      },
-
-      {
-        path: 'cart',
-
-        canActivate: [authGuard],
-
-        data: {
-          roles: [APP_ROLES.CLIENT],
-          titleKey: 'auth.cart'
-        },
-
-        loadComponent: loadPlaceholder
-      },
-
-      {
-        path: 'orders',
-
-        canActivate: [authGuard],
-
-        data: {
-          roles: [APP_ROLES.CLIENT],
-          titleKey: 'auth.orders'
-        },
-
-        loadComponent: loadPlaceholder
-      },
-
-      {
-        path: 'auth-check',
-
-        canActivate: [authGuard],
-
-        data: {
-          roles: [APP_ROLES.CLIENT]
-        },
-
-        loadComponent: () =>
-          import('./features/access/api-check.component')
-            .then(component => component.ApiCheckComponent)
       },
 
       {
@@ -96,156 +153,165 @@ export const routes: Routes = [
     ]
   },
 
-  {
-  path: 'admin',
-
-  canActivate: [authGuard],
-  canActivateChild: [authChildGuard],
-
-  data: {
-    roles: [APP_ROLES.ADMIN]
-  },
-
-  loadComponent: () =>
-    import(
-      './layouts/admin-layout/admin-layout.component'
-    ).then(component =>
-      component.AdminLayoutComponent
-    ),
-
-  children: [
-    {
-      path: '',
-      pathMatch: 'full',
-      redirectTo: 'dashboard'
-    },
-
-    {
-      path: 'dashboard',
-
-      data: {
-        roles: [APP_ROLES.ADMIN]
-      },
-
-      loadComponent: () =>
-        import(
-          './features/admin/statistics/pages/dashboard/dashboard.component'
-        ).then(component =>
-          component.DashboardComponent
-        )
-    },
-
-    {
-      path: 'categories',
-
-      data: {
-        roles: [APP_ROLES.ADMIN]
-      },
-
-      loadComponent: () =>
-        import(
-          './features/admin/categories/pages/category-list/category-list.component'
-        ).then(component =>
-          component.CategoryListComponent
-        )
-    },
-
-    {
-      path: 'sub-categories',
-
-      data: {
-        roles: [APP_ROLES.ADMIN]
-      },
-
-      loadComponent: () =>
-        import(
-          './features/admin/sub-categories/pages/sub-category-list/sub-category-list.component'
-        ).then(component =>
-          component.SubCategoryListComponent
-        )
-    },
-
-    {
-      path: 'products/new',
-
-      data: {
-        roles: [APP_ROLES.ADMIN]
-      },
-
-      loadComponent: () =>
-        import(
-          './features/admin/products/pages/product-editor/product-editor.component'
-        ).then(component =>
-          component.ProductEditorComponent
-        )
-    },
-
-    {
-      path: 'products/:id/edit',
-
-      data: {
-        roles: [APP_ROLES.ADMIN]
-      },
-
-      loadComponent: () =>
-        import(
-          './features/admin/products/pages/product-editor/product-editor.component'
-        ).then(component =>
-          component.ProductEditorComponent
-        )
-    },
-
-    {
-      path: 'products/:id/media',
-
-      data: {
-        roles: [APP_ROLES.ADMIN]
-      },
-
-      loadComponent: () =>
-        import(
-          './features/admin/products/pages/product-media/product-media.component'
-        ).then(component =>
-          component.ProductMediaComponent
-        )
-    },
-
-    {
-      path: 'products',
-
-      data: {
-        roles: [APP_ROLES.ADMIN]
-      },
-
-      loadComponent: () =>
-        import(
-          './features/admin/products/pages/product-list/product-list.component'
-        ).then(component =>
-          component.ProductListComponent
-        )
-    },
-
-    {
-      path: 'orders',
-
-      data: {
-        roles: [APP_ROLES.ADMIN]
-      },
-
-      loadComponent: () =>
-        import(
-          './features/admin/orders/pages/order-list/order-list.component'
-        ).then(component =>
-          component.OrderListComponent
-        )
-    }
-  ]
-},
+  // ----------------------------------------------------------
+  // Administration
+  // ----------------------------------------------------------
 
   {
-    path: 'admin-preview',
-    redirectTo: 'admin/dashboard',
-    pathMatch: 'full'
+    path: 'admin',
+
+    canActivate: [authGuard],
+
+    data: {
+      roles: ['ADMIN']
+    },
+
+    loadComponent: () =>
+      import(
+        './layouts/admin-layout/admin-layout.component'
+      ).then(component =>
+        component.AdminLayoutComponent
+      ),
+
+    children: [
+      {
+        path: '',
+        pathMatch: 'full',
+        redirectTo: 'dashboard'
+      },
+
+      {
+        path: 'dashboard',
+
+        loadComponent: () =>
+          import(
+            './features/admin/dashboard/dashboard.component'
+          ).then(component =>
+            component.DashboardComponent
+          )
+      },
+
+      {
+        path: 'about',
+
+        loadComponent: () =>
+          import(
+            './features/admin/about/about-admin.component'
+          ).then(component =>
+            component.AboutAdminComponent
+          )
+      },
+
+      {
+        path: 'timeline',
+
+        loadComponent: () =>
+          import(
+            './features/admin/timeline/timeline-admin.component'
+          ).then(component =>
+            component.TimelineAdminComponent
+          )
+      },
+
+      {
+        path: 'technologies',
+
+        loadComponent: () =>
+          import(
+            './features/admin/technologies/technologies-admin.component'
+          ).then(component =>
+            component.TechnologiesAdminComponent
+          )
+      },
+
+      {
+        path: 'skills',
+
+        loadComponent: () =>
+          import(
+            './features/admin/skills/skills-admin.component'
+          ).then(component =>
+            component.SkillsAdminComponent
+          )
+      },
+
+      {
+        path: 'categories',
+
+        loadComponent: () =>
+          import(
+            './features/admin/categories/categories-admin.component'
+          ).then(component =>
+            component.CategoriesAdminComponent
+          )
+      },
+
+      {
+        path: 'services',
+
+        loadComponent: () =>
+          import(
+            './features/admin/services/services-admin.component'
+          ).then(component =>
+            component.ServicesAdminComponent
+          )
+      },
+
+      {
+        path: 'projects',
+
+        loadComponent: () =>
+          import(
+            './features/admin/projects/projects-admin.component'
+          ).then(component =>
+            component.ProjectsAdminComponent
+          )
+      },
+
+      {
+        path: 'projects/new',
+
+        loadComponent: () =>
+          import(
+            './features/admin/project-form/project-form.component'
+          ).then(component =>
+            component.ProjectFormComponent
+          )
+      },
+
+      {
+        path: 'projects/:id/edit',
+
+        loadComponent: () =>
+          import(
+            './features/admin/project-form/project-form.component'
+          ).then(component =>
+            component.ProjectFormComponent
+          )
+      },
+
+      {
+        path: 'reviews',
+
+        loadComponent: () =>
+          import(
+            './features/admin/reviews/reviews-admin.component'
+          ).then(component =>
+            component.ReviewsAdminComponent
+          )
+      },
+
+      {
+        path: 'messages',
+
+        loadComponent: () =>
+          import(
+            './features/admin/messages/messages-admin.component'
+          ).then(component =>
+            component.MessagesAdminComponent
+          )
+      }
+    ]
   },
 
   {

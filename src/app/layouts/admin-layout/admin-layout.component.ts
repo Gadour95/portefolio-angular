@@ -98,7 +98,7 @@ import {
               </p>
 
               <p class="mt-0.5 text-xs app-muted">
-                SIW E-Commerce
+                Portefolio
               </p>
             </div>
           </div>
@@ -182,7 +182,9 @@ export class AdminLayoutComponent {
 
     return [
       {
-        label: this.translate.instant('adminNav.title'),
+        label: this.translate.instant(
+          'adminNav.overview'
+        ),
 
         items: [
           {
@@ -202,55 +204,107 @@ export class AdminLayoutComponent {
       },
 
       {
-        label: this.translate.instant('adminNav.catalog'),
+        label: this.translate.instant(
+          'adminNav.content'
+        ),
 
         items: [
+          {
+            label: this.translate.instant(
+              'adminNav.about'
+            ),
+
+            icon: 'pi pi-user',
+
+            routerLink: '/admin/about'
+          },
+
+          {
+            label: this.translate.instant(
+              'adminNav.timeline'
+            ),
+
+            icon: 'pi pi-history',
+
+            routerLink: '/admin/timeline'
+          },
+
+          {
+            label: this.translate.instant(
+              'adminNav.technologies'
+            ),
+
+            icon: 'pi pi-desktop',
+
+            routerLink: '/admin/technologies'
+          },
+
           {
             label: this.translate.instant(
               'adminNav.categories'
             ),
 
-            icon: 'pi pi-folder',
+            icon: 'pi pi-tags',
 
             routerLink: '/admin/categories'
           },
 
           {
             label: this.translate.instant(
-              'adminNav.subCategories'
+              'adminNav.skills'
             ),
 
-            icon: 'pi pi-sitemap',
+            icon: 'pi pi-chart-line',
 
-            routerLink: '/admin/sub-categories'
+            routerLink: '/admin/skills'
           },
 
           {
             label: this.translate.instant(
-              'adminNav.products'
+              'adminNav.services'
             ),
 
-            icon: 'pi pi-box',
+            icon: 'pi pi-briefcase',
 
-            routerLink: '/admin/products'
+            routerLink: '/admin/services'
+          },
+
+          {
+            label: this.translate.instant(
+              'adminNav.projects'
+            ),
+
+            icon: 'pi pi-folder',
+
+            routerLink: '/admin/projects'
           }
         ]
       },
 
       {
         label: this.translate.instant(
-          'adminNav.sales'
+          'adminNav.moderation'
         ),
 
         items: [
           {
             label: this.translate.instant(
-              'adminOrders.title'
+              'adminNav.reviews'
             ),
 
-            icon: 'pi pi-shopping-bag',
+            icon: 'pi pi-star',
 
-            routerLink: '/admin/orders'
+            routerLink: '/admin/reviews'
+          },
+
+          {
+            label: this.translate.instant(
+              'adminNav.messages'
+            ),
+
+            icon: 'pi pi-envelope',
+
+            routerLink: '/admin/messages'
           }
         ]
       }

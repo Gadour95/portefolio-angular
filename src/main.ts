@@ -1,7 +1,30 @@
-import { bootstrapApplication } from '@angular/platform-browser';
+import {
+  bootstrapApplication
+} from '@angular/platform-browser';
 
-import { AppComponent } from './app/app.component';
-import { appConfig } from './app/app.config';
+import {
+  registerLocaleData
+} from '@angular/common';
 
-bootstrapApplication(AppComponent, appConfig)
-  .catch(error => console.error(error));
+import localeFr from '@angular/common/locales/fr';
+import localeAr from '@angular/common/locales/ar';
+import localeEn from '@angular/common/locales/en';
+
+import {
+  AppComponent
+} from './app/app.component';
+
+import {
+  appConfig
+} from './app/app.config';
+
+registerLocaleData(localeFr, 'fr');
+registerLocaleData(localeAr, 'ar');
+registerLocaleData(localeEn, 'en-US');
+
+bootstrapApplication(
+  AppComponent,
+  appConfig
+).catch(error => {
+  console.error(error);
+});

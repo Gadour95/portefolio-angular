@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 
 import {
   TranslatePipe,
@@ -15,34 +15,10 @@ import {
 @Component({
   selector: 'app-auth-actions',
   standalone: true,
-  imports: [RouterLink, TranslatePipe],
+  imports: [TranslatePipe],
 
   template: `
     <div class="flex flex-wrap items-center gap-2">
-      @if (auth.isClient()) {
-        <a routerLink="/cart" class="app-nav-link">
-          <i
-            class="pi pi-shopping-cart me-2"
-            aria-hidden="true"
-          ></i>
-
-          {{ 'auth.cart' | translate }}
-        </a>
-
-        <a routerLink="/orders" class="app-nav-link">
-          {{ 'auth.orders' | translate }}
-        </a>
-      }
-
-      @if (auth.isAdmin()) {
-        <a
-          routerLink="/admin/dashboard"
-          class="app-nav-link"
-        >
-          {{ 'auth.administration' | translate }}
-        </a>
-      }
-
       @if (auth.authenticated()) {
         <span class="px-2 text-sm font-medium">
           <i

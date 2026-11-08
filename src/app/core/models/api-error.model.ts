@@ -1,9 +1,7 @@
-export interface ApiFieldError {
-  field: string;
-  error: string;
-}
-
 export interface ApiError {
-  message?: string;
-  fieldErrors?: ApiFieldError[];
+  timestamp: string;
+  status: number;
+  error: string;
+  message: string;
+  validationErrors: Record<string, string> | null;
 }

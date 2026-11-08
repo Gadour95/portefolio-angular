@@ -4,43 +4,127 @@
          bg-[var(--app-surface)]
          shadow-[0_4px_24px_-20px_rgba(15,23,42,0.45)]"
 >
-  <div
-    class="app-container flex min-h-20
-           items-center justify-between gap-3"
-  >
-    <!-- Identité -->
-
+  <div class="app-container siw-header-content">
     <a
-      [routerLink]="homePath()"
-      class="flex shrink-0 items-center gap-3"
+      routerLink="/"
+      class="siw-header-brand"
       [attr.aria-label]="'app.name' | translate"
     >
-      <span
-        class="flex h-11 w-11 items-center justify-center
-               rounded-2xl bg-gradient-to-br
-               from-indigo-600 to-blue-600 text-white
-               shadow-lg shadow-indigo-600/20"
-      >
+      <span class="siw-header-brand-icon">
         <i
-          class="pi pi-shopping-bag text-xl"
+          class="pi pi-briefcase"
           aria-hidden="true"
         ></i>
       </span>
 
-      <span class="hidden flex-col sm:inline-flex">
-        <span class="text-xl font-bold leading-6 tracking-tight">
-          SIW<span class="text-primary">.</span>
+      <span class="siw-header-brand-copy">
+        <span class="siw-header-brand-name">
+          Portefolio<span class="text-primary">.</span>
         </span>
 
-        <span class="text-[11px] font-medium tracking-wide app-muted">
-          E-COMMERCE
+        <span class="siw-header-brand-caption">
+          {{ 'app.tagline' | translate }}
         </span>
       </span>
     </a>
 
-    <!-- Actions -->
+    <nav
+      class="siw-main-nav"
+      [attr.aria-label]="'nav.main' | translate"
+    >
+      <a
+        routerLink="/"
+        routerLinkActive="siw-main-nav-link-active"
+        [routerLinkActiveOptions]="{ exact: true }"
+        class="siw-main-nav-link"
+      >
+        {{ 'nav.home' | translate }}
+      </a>
 
-    <div class="flex items-center gap-1 sm:gap-2">
+      <a
+        routerLink="/projects"
+        routerLinkActive="siw-main-nav-link-active"
+        class="siw-main-nav-link"
+      >
+        {{ 'nav.projects' | translate }}
+      </a>
+
+      <a
+        routerLink="/timeline"
+        routerLinkActive="siw-main-nav-link-active"
+        class="siw-main-nav-link"
+      >
+        {{ 'nav.timeline' | translate }}
+      </a>
+
+      <a
+        routerLink="/skills"
+        routerLinkActive="siw-main-nav-link-active"
+        class="siw-main-nav-link"
+      >
+        {{ 'nav.skills' | translate }}
+      </a>
+
+      <a
+        routerLink="/technologies"
+        routerLinkActive="siw-main-nav-link-active"
+        class="siw-main-nav-link"
+      >
+        {{ 'nav.technologies' | translate }}
+      </a>
+
+      <a
+        routerLink="/services"
+        routerLinkActive="siw-main-nav-link-active"
+        class="siw-main-nav-link"
+      >
+        {{ 'nav.services' | translate }}
+      </a>
+
+      <a
+        routerLink="/reviews"
+        routerLinkActive="siw-main-nav-link-active"
+        class="siw-main-nav-link"
+      >
+        {{ 'nav.reviews' | translate }}
+      </a>
+
+      <a
+        routerLink="/"
+        fragment="about"
+        class="siw-main-nav-link"
+      >
+        {{ 'nav.about' | translate }}
+      </a>
+
+      <a
+        routerLink="/contact"
+        routerLinkActive="siw-main-nav-link-active"
+        class="siw-main-nav-link"
+      >
+        {{ 'nav.contact' | translate }}
+      </a>
+
+      <a
+        routerLink="/cv"
+        routerLinkActive="siw-main-nav-link-active"
+        class="siw-main-nav-link"
+      >
+        {{ 'nav.cv' | translate }}
+      </a>
+
+      @if (auth.isAdmin()) {
+        <a
+          routerLink="/admin/dashboard"
+          routerLinkActive="siw-main-nav-link-active"
+          class="siw-main-nav-link"
+        >
+          {{ 'nav.admin' | translate }}
+        </a>
+      }
+    </nav>
+
+    <div class="siw-header-actions">
       <!-- Langue -->
 
       <p-button
@@ -67,20 +151,7 @@
         (onClick)="togglePopup(themeMenu, $event)"
       />
 
-      <!-- Panier : nécessite CLIENT -->
-
-      @if (auth.isClient()) {
-        <p-button
-          type="button"
-          icon="pi pi-shopping-cart"
-          severity="secondary"
-          styleClass="siw-icon-button"
-          [ariaLabel]="'auth.cart' | translate"
-          [pTooltip]="'auth.cart' | translate"
-          tooltipPosition="bottom"
-          (onClick)="openCart()"
-        />
-      }
+      <!-- Séparation -->
 
       <span
         class="mx-1 h-6 w-px bg-[var(--app-border)]"
@@ -118,6 +189,8 @@
     </div>
   </div>
 
+  <!-- Ligne décorative -->
+
   <div
     class="h-px bg-gradient-to-r
            from-transparent via-indigo-500/30 to-transparent"
@@ -125,7 +198,7 @@
   ></div>
 </header>
 
-<!-- Menus déroulants -->
+<!-- Menu des langues -->
 
 <p-menu
   #languageMenu
@@ -138,6 +211,8 @@
   styleClass="siw-popup-menu"
 />
 
+<!-- Menu d’apparence -->
+
 <p-menu
   #themeMenu
   id="siw-theme-menu"
@@ -148,6 +223,8 @@
   appendTo="body"
   styleClass="siw-popup-menu"
 />
+
+<!-- Menu du compte -->
 
 <p-menu
   #accountMenu

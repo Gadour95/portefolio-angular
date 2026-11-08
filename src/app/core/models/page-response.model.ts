@@ -8,4 +8,7 @@ export interface PageResponse<T> {
   last: boolean;
 }
 
-export type DeletionFilter = 'ACTIVE' | 'DELETED' | 'ALL';
+export interface PageQuery {
+  page?: number;
+  size?: number;
+}

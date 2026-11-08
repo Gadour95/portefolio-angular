@@ -301,3 +301,1241 @@ select:focus-visible {
     color: var(--p-primary-color);
   }
 }
+
+@layer tailwind-utilities {
+  /* Cartes produits */
+
+  .siw-product-card.p-card {
+    display: flex;
+    height: 100%;
+    flex-direction: column;
+    overflow: hidden;
+    border: 1px solid var(--app-border);
+    border-radius: 1rem;
+    background: var(--app-surface);
+    box-shadow: 0 8px 24px -20px rgb(15 23 42 / 0.3);
+    transition:
+      border-color 160ms ease,
+      box-shadow 160ms ease;
+  }
+
+  .siw-product-card.p-card:hover {
+    border-color: var(--p-primary-color);
+    box-shadow: 0 16px 36px -24px rgb(15 23 42 / 0.4);
+  }
+
+  .siw-product-card .p-card-body {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+  }
+
+  .siw-product-card .p-card-content {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+  }
+
+  /* Lignes produits */
+
+  .siw-product-row.p-card {
+    overflow: hidden;
+    border: 1px solid var(--app-border);
+    border-radius: 1rem;
+    background: var(--app-surface);
+    box-shadow: 0 8px 24px -20px rgb(15 23 42 / 0.3);
+  }
+
+  /* Bouton secondaire : consultation */
+
+  .siw-product-secondary-action.p-button {
+    width: 2.75rem;
+    min-width: 2.75rem;
+    height: 2.75rem;
+    padding: 0;
+    border-radius: 0.75rem;
+  }
+
+  /* Bouton principal : ajout ou connexion */
+
+  .siw-product-primary-action.p-button {
+    width: 100%;
+    min-height: 2.75rem;
+    border-radius: 0.75rem;
+    font-weight: 600;
+  }
+
+  .siw-product-primary-action .p-button-label {
+    white-space: nowrap;
+  }
+}
+
+@layer tailwind-utilities {
+  .siw-order-timeline .p-timeline-event-opposite {
+    display: none;
+  }
+
+  .siw-order-timeline .p-timeline-event-content {
+    min-width: 0;
+  }
+}
+
+@layer tailwind-utilities {
+  .siw-header-content {
+    display: flex;
+    min-height: 5rem;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.35rem 1.25rem;
+    padding-block: 0.5rem;
+  }
+
+  .siw-header-brand {
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: center;
+    gap: 0.75rem;
+    color: var(--app-text);
+    text-decoration: none;
+  }
+
+  .siw-header-brand-icon {
+    display: inline-grid;
+    width: 2.75rem;
+    height: 2.75rem;
+    place-items: center;
+    border-radius: 0.9rem;
+    background: linear-gradient(135deg, #4f46e5, #2563eb);
+    color: #fff;
+    font-size: 1.15rem;
+    box-shadow: 0 8px 18px -10px rgb(79 70 229 / 0.7);
+  }
+
+  .siw-header-brand-copy {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .siw-header-brand-name {
+    font-size: 1.2rem;
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: -0.04em;
+  }
+
+  .siw-header-brand-caption {
+    margin-block-start: 0.15rem;
+    color: var(--app-text-muted);
+    font-size: 0.6rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+  }
+
+  .siw-main-nav {
+    display: flex;
+    min-width: 0;
+    flex: 0 1 auto;
+    align-items: center;
+    gap: 0.2rem;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .siw-main-nav::-webkit-scrollbar {
+    display: none;
+  }
+
+  .siw-main-nav-link {
+    display: inline-flex;
+    min-height: 2.6rem;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    gap: 0.45rem;
+    padding: 0.55rem 0.7rem;
+    border-radius: 0.7rem;
+    color: var(--app-text-muted);
+    font-size: 0.84rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition:
+      background-color 150ms ease,
+      color 150ms ease;
+  }
+
+  .siw-main-nav-link:hover,
+  .siw-main-nav-link-active {
+    background: var(--app-surface-muted);
+    color: var(--p-primary-color);
+  }
+
+  .siw-header-actions {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    gap: 0.25rem;
+  }
+
+  @media (max-width: 1200px) and (min-width: 901px) {
+    .siw-main-nav {
+      gap: 0.1rem;
+    }
+
+    .siw-main-nav-link {
+      padding-inline: 0.55rem;
+      font-size: 0.8rem;
+    }
+  }
+
+  @media (max-width: 900px) {
+    .siw-main-nav {
+      order: 3;
+      width: 100%;
+      overflow-x: auto;
+      border-block-start: 1px solid var(--app-border);
+      scrollbar-width: none;
+    }
+
+    .siw-main-nav::-webkit-scrollbar {
+      display: none;
+    }
+
+    .siw-main-nav-link {
+      padding-inline: 0.75rem;
+    }
+
+    .siw-header-content {
+      row-gap: 0.3rem;
+    }
+  }
+
+  @media (max-width: 420px) {
+    .siw-header-content {
+      width: calc(100% - 1.25rem);
+    }
+
+    .siw-header-brand {
+      gap: 0.45rem;
+    }
+
+    .siw-header-brand-icon {
+      width: 2.4rem;
+      height: 2.4rem;
+    }
+
+    .siw-header-actions {
+      gap: 0;
+    }
+
+    .siw-header-actions .siw-icon-button.p-button {
+      width: 2.25rem;
+      height: 2.25rem;
+    }
+  }
+}
+
+@layer tailwind-utilities {
+  /* =========================================
+     Accueil : structure générale
+     ========================================= */
+
+  .siw-home {
+    display: flex;
+    flex-direction: column;
+    gap: clamp(3rem, 5vw, 5rem);
+    padding-block: 2rem 4rem;
+  }
+
+  .siw-home-section,
+  .siw-home-taxonomy {
+    display: flex;
+    flex-direction: column;
+    gap: 1.75rem;
+  }
+
+  .siw-home-taxonomy {
+    gap: clamp(3rem, 5vw, 4.5rem);
+  }
+
+  #home-products,
+  #home-taxonomy,
+  #home-categories,
+  #home-sub-categories,
+  #home-contact {
+    scroll-margin-block-start: 6rem;
+  }
+
+  .siw-home-section-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 1.5rem;
+  }
+
+  .siw-home-heading {
+    min-width: 0;
+  }
+
+  .siw-home-heading h2,
+  .siw-home-discovery h2,
+  .siw-home-final h2 {
+    margin: 0;
+    font-size: clamp(1.5rem, 2.5vw, 2rem);
+    font-weight: 700;
+    line-height: 1.3;
+    letter-spacing: -0.035em;
+    overflow-wrap: anywhere;
+  }
+
+  .siw-home-heading > p:last-child {
+    max-width: 42rem;
+    margin: 0.65rem 0 0;
+    font-size: 0.925rem;
+    line-height: 1.8;
+  }
+
+  .siw-home-overline {
+    margin: 0 0 0.65rem;
+    color: var(--p-primary-color);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .siw-home-section-actions {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    gap: 0.65rem;
+  }
+
+  /* =========================================
+     Suppression des fonds derrière les cartes
+     ========================================= */
+
+  .siw-home .p-dataview {
+    --p-dataview-border-width: 0;
+    --p-dataview-content-background: transparent;
+    --p-dataview-content-border-width: 0;
+    --p-dataview-content-padding: 0;
+
+    border: 0;
+    background: transparent;
+  }
+
+  .siw-home .p-dataview-content {
+    padding: 0;
+    border: 0;
+    background: transparent;
+  }
+
+  .siw-home .siw-home-paginator.p-paginator {
+    --p-paginator-background: transparent;
+
+    margin-block-start: 1.5rem;
+    padding: 0.75rem 0 0;
+    border: 0;
+    border-block-start: 1px solid var(--app-border);
+    border-radius: 0;
+    background: transparent;
+  }
+
+  /* =========================================
+     Hero
+     ========================================= */
+
+  .siw-home-hero {
+    position: relative;
+    isolation: isolate;
+    display: grid;
+    grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+    align-items: center;
+    gap: 3rem;
+    overflow: hidden;
+    padding: clamp(2rem, 5vw, 4rem);
+    border: 1px solid rgb(255 255 255 / 0.12);
+    border-radius: 1.75rem;
+    background: linear-gradient(
+      135deg,
+      #3730a3 0%,
+      #4338ca 55%,
+      #2563eb 100%
+    );
+    color: #ffffff;
+  }
+
+  .siw-home-hero-glow {
+    position: absolute;
+    z-index: -1;
+    inset-block-start: -8rem;
+    inset-inline-end: -5rem;
+    width: 28rem;
+    height: 28rem;
+    border-radius: 50%;
+    background: rgb(255 255 255 / 0.12);
+    filter: blur(65px);
+    pointer-events: none;
+  }
+
+  .siw-home-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-block-end: 1.5rem;
+    padding: 0.5rem 0.8rem;
+    border: 1px solid rgb(255 255 255 / 0.2);
+    border-radius: 999px;
+    background: rgb(255 255 255 / 0.08);
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+  }
+
+  .siw-home-status-dot {
+    width: 0.4rem;
+    height: 0.4rem;
+    border-radius: 50%;
+    background: currentColor;
+  }
+
+  .siw-home-hero h1 {
+    max-width: 16ch;
+    margin: 0;
+    font-size: clamp(2.1rem, 4vw, 3.5rem);
+    font-weight: 700;
+    line-height: 1.12;
+    letter-spacing: -0.045em;
+    overflow-wrap: anywhere;
+    text-wrap: balance;
+  }
+
+  .siw-home-hero-description {
+    max-width: 35rem;
+    margin: 1.4rem 0 0;
+    color: #e0e7ff;
+    line-height: 1.9;
+  }
+
+  .siw-home-hero-actions,
+  .siw-home-hero-tags {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.85rem;
+    margin-block-start: 1.75rem;
+  }
+
+  .siw-home-hero-tags {
+    gap: 0.8rem 1.25rem;
+    margin-block-start: 2rem;
+    color: #e0e7ff;
+    font-size: 0.78rem;
+  }
+
+  .siw-home-hero-tags > span {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .siw-home-hero-aside {
+    padding: 2rem;
+    border: 1px solid rgb(255 255 255 / 0.2);
+    border-radius: 1.4rem;
+    background: rgb(255 255 255 / 0.09);
+  }
+
+  .siw-home-hero-aside-icon {
+    display: grid;
+    width: 3.5rem;
+    height: 3.5rem;
+    margin-block-end: 1.5rem;
+    place-items: center;
+    border: 1px solid rgb(255 255 255 / 0.2);
+    border-radius: 1rem;
+    background: rgb(255 255 255 / 0.1);
+    font-size: 1.4rem;
+  }
+
+  .siw-home-hero-aside .siw-home-overline {
+    color: #e0e7ff;
+  }
+
+  .siw-home-hero-aside h2 {
+    margin: 0;
+    font-size: 1.6rem;
+    font-weight: 600;
+    line-height: 1.35;
+    letter-spacing: -0.025em;
+  }
+
+  .siw-home-hero-aside > p:not(.siw-home-overline) {
+    margin: 1rem 0 0;
+    color: #e0e7ff;
+    font-size: 0.9rem;
+    line-height: 1.85;
+  }
+
+  .siw-home-hero-aside-divider {
+    height: 1px;
+    margin-block: 1.5rem;
+    background: rgb(255 255 255 / 0.18);
+  }
+
+  .siw-home-hero-aside-link {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    color: #ffffff;
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .siw-home-hero {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.4rem;
+    overflow: visible;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: var(--app-text);
+  }
+
+  .siw-home-carousel {
+    width: 100%;
+  }
+
+  .siw-home-carousel-stage {
+    position: relative;
+    isolation: isolate;
+    width: 100%;
+    height: clamp(17rem, 49vw, 39rem);
+    overflow: hidden;
+    border: 1px solid var(--app-border);
+    border-radius: clamp(1rem, 2vw, 1.75rem);
+    background: #eef4ff;
+    box-shadow: 0 22px 55px -35px rgb(15 23 42 / 0.42);
+  }
+
+  .siw-home-carousel-slide {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    visibility: hidden;
+    transition:
+      opacity 500ms ease,
+      visibility 500ms ease;
+  }
+
+  .siw-home-carousel-slide-active {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .siw-home-carousel-slide img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+  }
+
+  .siw-home-carousel-control {
+    position: absolute;
+    z-index: 1;
+    inset-block-start: 50%;
+    display: grid;
+    width: 2.75rem;
+    height: 2.75rem;
+    place-items: center;
+    transform: translateY(-50%);
+    border: 1px solid rgb(255 255 255 / 0.8);
+    border-radius: 50%;
+    background: rgb(255 255 255 / 0.88);
+    color: #1e3a8a;
+    box-shadow: 0 4px 16px rgb(15 23 42 / 0.15);
+    cursor: pointer;
+    transition:
+      background-color 150ms ease,
+      transform 150ms ease;
+  }
+
+  .siw-home-carousel-control:hover {
+    transform: translateY(-50%) scale(1.06);
+    background: #fff;
+  }
+
+  .siw-home-carousel-previous {
+    inset-inline-start: 1rem;
+  }
+
+  .siw-home-carousel-next {
+    inset-inline-end: 1rem;
+  }
+
+  .siw-home-carousel-indicators {
+    position: absolute;
+    z-index: 1;
+    inset-inline-start: 50%;
+    inset-block-end: 1rem;
+    display: flex;
+    gap: 0.5rem;
+    padding: 0.45rem 0.6rem;
+    transform: translateX(-50%);
+    border: 1px solid rgb(255 255 255 / 0.6);
+    border-radius: 999px;
+    background: rgb(15 23 42 / 0.28);
+    backdrop-filter: blur(8px);
+  }
+
+  .siw-home-carousel-indicator {
+    width: 0.55rem;
+    height: 0.55rem;
+    padding: 0;
+    border: 0;
+    border-radius: 999px;
+    background: rgb(255 255 255 / 0.65);
+    cursor: pointer;
+    transition:
+      width 180ms ease,
+      background-color 180ms ease;
+  }
+
+  .siw-home-carousel-indicator-active {
+    width: 1.45rem;
+    background: #fff;
+  }
+
+  .siw-home-hero-cta {
+    min-width: 13rem;
+    box-shadow: 0 8px 20px -12px rgb(79 70 229 / 0.8);
+  }
+
+  /* =========================================
+     Boutons et liens
+     ========================================= */
+
+  .siw-home-button {
+    display: inline-flex;
+    min-height: 2.9rem;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    padding: 0.8rem 1.15rem;
+    border: 1px solid transparent;
+    border-radius: 0.8rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    line-height: 1.4;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+    transition:
+      background-color 160ms ease,
+      border-color 160ms ease,
+      box-shadow 160ms ease;
+  }
+
+  .siw-home-button-light {
+    background: #ffffff;
+    color: #3730a3;
+  }
+
+  .siw-home-button-light:hover {
+    background: #eef2ff;
+  }
+
+  .siw-home-button-ghost {
+    border-color: rgb(255 255 255 / 0.25);
+    background: transparent;
+    color: #ffffff;
+  }
+
+  .siw-home-button-ghost:hover {
+    background: rgb(255 255 255 / 0.1);
+  }
+
+  .siw-home-button-primary {
+    background: var(--p-primary-color);
+    color: var(--p-primary-inverse-color);
+  }
+
+  .siw-home-button-primary:hover {
+    background: var(--p-primary-hover-color);
+  }
+
+  .siw-home-button-outline {
+    border-color: var(--app-border);
+    background: var(--app-surface);
+    color: var(--app-text);
+  }
+
+  .siw-home-button-outline:hover {
+    border-color: var(--p-primary-color);
+    color: var(--p-primary-color);
+  }
+
+  .siw-home-text-link {
+    display: inline-flex;
+    min-height: 2.75rem;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.25rem;
+    border: 0;
+    background: transparent;
+    color: var(--p-primary-color);
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .siw-home-text-link:hover {
+    text-decoration: underline;
+    text-underline-offset: 0.3rem;
+  }
+
+  /* =========================================
+     Repères
+     ========================================= */
+
+  .siw-home-highlights {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1.75rem;
+    padding-block-end: 2rem;
+    border-block-end: 1px solid var(--app-border);
+  }
+
+  .siw-home-highlight {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .siw-home-icon,
+  .siw-home-taxonomy-icon {
+    display: inline-grid;
+    width: 3rem;
+    height: 3rem;
+    flex-shrink: 0;
+    place-items: center;
+    border: 1px solid var(--app-border);
+    border-radius: 0.9rem;
+    background: var(--app-surface-muted);
+    color: var(--p-primary-color);
+    font-size: 1.15rem;
+  }
+
+  .siw-home-highlight h2 {
+    margin: 0;
+    font-size: 0.9rem;
+    font-weight: 600;
+  }
+
+  .siw-home-highlight p {
+    margin: 0.4rem 0 0;
+    color: var(--app-text-muted);
+    font-size: 0.82rem;
+    line-height: 1.75;
+  }
+
+  /* =========================================
+     Grilles et cartes
+     ========================================= */
+
+  .siw-home-products-grid,
+  .siw-home-taxonomy-grid {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 1rem;
+  }
+
+  .siw-home-loading-card {
+    min-width: 0;
+    padding: 1.25rem;
+    border: 1px solid var(--app-border);
+    border-radius: 1rem;
+    background: var(--app-surface);
+  }
+
+  .siw-home .siw-product-card.p-card {
+    border: 1px solid var(--app-border);
+    box-shadow: 0 3px 10px -6px rgb(15 23 42 / 0.2);
+  }
+
+  .siw-home .siw-product-card.p-card:hover {
+    border-color: var(--p-primary-color);
+    box-shadow: 0 12px 26px -18px rgb(15 23 42 / 0.35);
+  }
+
+  .siw-home-taxonomy-card {
+    position: relative;
+    display: flex;
+    min-width: 0;
+    min-height: 11.5rem;
+    flex-direction: column;
+    gap: 1.25rem;
+    overflow: hidden;
+    padding: 1.35rem;
+    border: 1px solid var(--app-border);
+    border-radius: 1rem;
+    background: var(--app-surface);
+    box-shadow: 0 3px 10px -6px rgb(15 23 42 / 0.2);
+  }
+
+  .siw-home-taxonomy-card-body {
+    min-width: 0;
+  }
+
+  .siw-home-taxonomy-label {
+    margin: 0 0 0.45rem;
+    color: var(--app-text-muted);
+    font-size: 0.7rem;
+    line-height: 1.5;
+  }
+
+  .siw-home-taxonomy-card h3 {
+    margin: 0;
+    color: var(--app-text);
+    font-size: 1rem;
+    font-weight: 600;
+    line-height: 1.55;
+    overflow-wrap: anywhere;
+  }
+
+  .siw-home-taxonomy-accent {
+    position: absolute;
+    inset-block-end: 0;
+    inset-inline-start: 1.35rem;
+    width: 2rem;
+    height: 3px;
+    border-start-start-radius: 999px;
+    border-start-end-radius: 999px;
+    background: var(--p-primary-color);
+    opacity: 0.65;
+  }
+
+  .siw-home-empty {
+    display: flex;
+    min-height: 10rem;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    padding: 2rem;
+    border: 1px dashed var(--app-border);
+    border-radius: 1rem;
+    color: var(--app-text-muted);
+    text-align: center;
+  }
+
+  .siw-home-empty > i {
+    font-size: 1.8rem;
+  }
+
+  .siw-home-empty p {
+    margin: 0;
+  }
+
+  /* =========================================
+     Bloc éditorial
+     ========================================= */
+
+  .siw-home-discovery {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2rem;
+    padding: clamp(1.5rem, 3vw, 2.5rem);
+    border: 1px solid var(--app-border);
+    border-inline-start: 4px solid var(--p-primary-color);
+    border-radius: 1.2rem;
+    background: var(--app-surface);
+  }
+
+  .siw-home-discovery > div {
+    max-width: 43rem;
+  }
+
+  .siw-home-discovery .app-muted {
+    margin: 0.8rem 0 0;
+    font-size: 0.925rem;
+    line-height: 1.85;
+  }
+
+  .siw-home-discovery > button {
+    flex-shrink: 0;
+  }
+
+  .siw-home-contact {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2rem;
+    padding: clamp(1.5rem, 4vw, 3rem);
+    border: 1px solid var(--app-border);
+    border-radius: 1.4rem;
+    background:
+      radial-gradient(
+        circle at 100% 0,
+        rgb(99 102 241 / 0.13),
+        transparent 42%
+      ),
+      var(--app-surface);
+    box-shadow: 0 14px 40px -35px rgb(15 23 42 / 0.5);
+  }
+
+  .siw-home-contact-copy {
+    max-width: 42rem;
+  }
+
+  .siw-home-contact-copy h2 {
+    margin: 0;
+    font-size: clamp(1.4rem, 2.5vw, 2rem);
+    font-weight: 700;
+    line-height: 1.3;
+    letter-spacing: -0.035em;
+    text-wrap: balance;
+  }
+
+  .siw-home-contact-copy > p:last-child {
+    margin: 0.8rem 0 0;
+    color: var(--app-text-muted);
+    font-size: 0.925rem;
+    line-height: 1.8;
+  }
+
+  .siw-home-contact-details {
+    display: grid;
+    gap: 0.8rem;
+    margin-block-start: 1.5rem;
+    font-style: normal;
+  }
+
+  .siw-home-contact-details > a {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    color: var(--app-text);
+    font-size: 0.9rem;
+    line-height: 1.6;
+    text-decoration: none;
+  }
+
+  .siw-home-contact-details > a:hover {
+    color: var(--p-primary-color);
+  }
+
+  .siw-home-contact-details > a > i:first-child {
+    width: 1.2rem;
+    flex-shrink: 0;
+    color: var(--p-primary-color);
+    text-align: center;
+  }
+
+  .siw-home-contact-details > a > span {
+    display: grid;
+    min-width: 0;
+    gap: 0.1rem;
+  }
+
+  .siw-home-contact-detail-label {
+    color: var(--app-text-muted);
+    font-size: 0.72rem;
+    font-weight: 600;
+  }
+
+  .siw-home-contact-details > a > i:last-child:not(:first-child) {
+    color: var(--app-text-muted);
+    font-size: 0.75rem;
+  }
+
+  .siw-home-contact-actions {
+    display: flex;
+    flex-shrink: 0;
+    flex-wrap: wrap;
+    gap: 0.65rem;
+  }
+
+  /* =========================================
+     Parcours
+     ========================================= */
+
+  .siw-home-steps {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 2rem;
+  }
+
+  .siw-home-step {
+    padding-block-start: 1.5rem;
+    border-block-start: 1px solid var(--app-border);
+  }
+
+  .siw-home-step-number {
+    display: inline-block;
+    margin-block-end: 1rem;
+    color: var(--p-primary-color);
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+  }
+
+  .siw-home-step h3 {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 600;
+  }
+
+  .siw-home-step p {
+    margin: 0.7rem 0 0;
+    color: var(--app-text-muted);
+    font-size: 0.875rem;
+    line-height: 1.85;
+  }
+
+  /* =========================================
+     FAQ
+     ========================================= */
+
+  .siw-home-faq-section {
+    display: grid;
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+    gap: 3rem;
+  }
+
+  .siw-home-faq-item {
+    border-block-end: 1px solid var(--app-border);
+  }
+
+  .siw-home-faq-item:first-child {
+    border-block-start: 1px solid var(--app-border);
+  }
+
+  .siw-home-faq-item summary {
+    display: flex;
+    min-height: 4.5rem;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    padding-block: 1.2rem;
+    font-size: 0.925rem;
+    font-weight: 600;
+    line-height: 1.6;
+    list-style: none;
+    cursor: pointer;
+  }
+
+  .siw-home-faq-item summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .siw-home-faq-item summary:focus-visible {
+    outline: 2px solid var(--p-primary-color);
+    outline-offset: 4px;
+    border-radius: 0.25rem;
+  }
+
+  .siw-home-faq-item summary i {
+    flex-shrink: 0;
+    color: var(--p-primary-color);
+    font-size: 0.8rem;
+    transition: transform 160ms ease;
+  }
+
+  .siw-home-faq-item[open] summary i {
+    transform: rotate(45deg);
+  }
+
+  .siw-home-faq-item > p {
+    margin: 0;
+    padding-block-end: 1.5rem;
+    padding-inline-end: 2rem;
+    color: var(--app-text-muted);
+    font-size: 0.875rem;
+    line-height: 1.9;
+  }
+
+  /* =========================================
+     Appel final
+     ========================================= */
+
+  .siw-home-final {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.15rem;
+    padding: 3rem 1.5rem 0;
+    border-block-start: 1px solid var(--app-border);
+    text-align: center;
+  }
+
+  .siw-home-final p {
+    max-width: 35rem;
+    margin: 0;
+    line-height: 1.85;
+  }
+
+  .siw-home-final .siw-home-button {
+    margin-block-start: 0.4rem;
+  }
+
+  /* =========================================
+     RTL et typographie arabe
+     ========================================= */
+
+  html[dir='rtl'] .siw-home .siw-directional-icon {
+    transform: scaleX(-1);
+  }
+
+  html[lang='ar'] .siw-home h1,
+  html[lang='ar'] .siw-home h2,
+  html[lang='ar'] .siw-home-overline,
+  html[lang='ar'] .siw-home-eyebrow {
+    letter-spacing: normal;
+  }
+
+  html[lang='ar'] .siw-home-hero h1 {
+    line-height: 1.5;
+  }
+
+  /* =========================================
+     Responsive
+     ========================================= */
+
+  @media (max-width: 1199px) {
+    .siw-home-products-grid,
+    .siw-home-taxonomy-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .siw-home-hero {
+      gap: 2rem;
+    }
+  }
+
+  @media (max-width: 959px) {
+    .siw-home-hero,
+    .siw-home-faq-section {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .siw-home-hero h1 {
+      max-width: 22ch;
+    }
+
+    .siw-home-highlights {
+      gap: 1.25rem;
+    }
+
+    .siw-home-highlight {
+      flex-direction: column;
+    }
+
+    .siw-home-discovery {
+      align-items: flex-start;
+      flex-direction: column;
+    }
+
+    .siw-home-contact {
+      align-items: flex-start;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+  }
+
+  @media (max-width: 639px) {
+    .siw-home {
+      gap: 2.75rem;
+      padding-block-start: 1rem;
+    }
+
+    .siw-home-hero {
+      padding: 1.75rem 1.25rem;
+      border-radius: 1.25rem;
+    }
+
+    .siw-home-hero {
+      padding: 0;
+      border: 0;
+    }
+
+    .siw-home-carousel-stage {
+      height: clamp(16rem, 68vw, 26rem);
+      border-radius: 1rem;
+    }
+
+    .siw-home-carousel-control {
+      width: 2.35rem;
+      height: 2.35rem;
+    }
+
+    .siw-home-carousel-previous {
+      inset-inline-start: 0.65rem;
+    }
+
+    .siw-home-carousel-next {
+      inset-inline-end: 0.65rem;
+    }
+
+    .siw-home-hero-aside {
+      padding: 1.35rem;
+    }
+
+    .siw-home-highlights,
+    .siw-home-steps {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .siw-home-highlight {
+      flex-direction: row;
+    }
+
+    .siw-home-products-grid,
+    .siw-home-taxonomy-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .siw-home-section-header {
+      align-items: flex-start;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+
+    .siw-home-section-actions {
+      margin-inline-start: auto;
+    }
+
+    .siw-home-taxonomy-card {
+      min-height: 10.5rem;
+      padding: 1rem;
+    }
+
+    .siw-home-taxonomy-accent {
+      inset-inline-start: 1rem;
+    }
+
+    .siw-home-faq-section {
+      gap: 1.5rem;
+    }
+
+    .siw-home-contact-actions,
+    .siw-home-contact-actions .siw-home-button {
+      width: 100%;
+    }
+  }
+
+  @media (max-width: 379px) {
+    .siw-home-products-grid,
+    .siw-home-taxonomy-grid {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+}

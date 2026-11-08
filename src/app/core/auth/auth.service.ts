@@ -66,7 +66,7 @@ export class AuthService {
     }
 
     return Object.values(APP_ROLES).filter(role =>
-      this.keycloak.hasRealmRole(role)
+      this.hasKeycloakRole(role)
     );
   });
 
@@ -95,6 +95,10 @@ export class AuthService {
     return this.keycloak.logout({
       redirectUri: `${window.location.origin}/`
     });
+  }
+
+  accountManagementUrl(): string {
+    return this.keycloak.createAccountUrl();
   }
 
   async getValidToken(): Promise<string | null> {
@@ -126,6 +130,40 @@ export class AuthService {
 
       throw error;
     }
+  }
+
+  /**
+   * Le backend accepte le rôle ADMIN depuis les rôles de realm
+   * ou depuis resource_access.<rolesClientId>.roles.
+   */
+  private hasKeycloakRole(role: AppRole): boolean {
+    if (this.keycloak.hasRealmRole(role)) {
+      return true;
+    }
+
+    const resourceAccess =
+      this.keycloak.tokenParsed?.['resource_access'];
+
+    if (!resourceAccess || typeof resourceAccess !== 'object') {
+      return false;
+    }
+
+    const clientAccess = (
+      resourceAccess as Record<string, unknown>
+    )[environment.keycloak.rolesClientId];
+
+    if (!clientAccess || typeof clientAccess !== 'object') {
+      return false;
+    }
+
+    const clientRoles = (
+      clientAccess as Record<string, unknown>
+    )['roles'];
+
+    return (
+      Array.isArray(clientRoles) &&
+      clientRoles.includes(role)
+    );
   }
 
   private internalRedirectUrl(path: string): string {

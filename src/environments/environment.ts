@@ -1,12 +1,16 @@
 export const environment = {
   production: true,
 
-  apiUrl: '/api-backend',
+  // Base de l'API backend (sans slash final).
+  apiUrl: '/api/v1',
+
+  // Base des médias servis par le backend (sans slash final).
+  mediaUrl: '/media',
 
   keycloak: {
-    url: 'https://auth.example.com',
-    realm: 'ecommerce-siw',
-    clientId: 'frontend-admin',
-    rolesClientId: 'ecommerce-spring'
+    url: 'http://localhost:8080',
+    realm: 'portfolio-abdelkader',
+    clientId: 'portfolio-frontend',
+    rolesClientId: 'portfolio-spring'
   }
 };

@@ -14,13 +14,14 @@ import {
 } from 'rxjs';
 
 import { AuthService } from '../auth/auth.service';
-import { isBackendRequest } from '../http/backend-url';
+import { isAdminApiRequest } from '../http/backend-url';
 
 export const authInterceptor: HttpInterceptorFn = (
   request,
   next
 ) => {
-  if (!isBackendRequest(request.url)) {
+  // Les endpoints publics ne doivent pas déclencher Keycloak.
+  if (!isAdminApiRequest(request.url)) {
     return next(request);
   }
 

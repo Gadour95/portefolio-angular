@@ -6,7 +6,7 @@
   },
   "newProjectRoot": "projects",
   "projects": {
-    "e-commerce-siw-project": {
+    "portefolio": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:class": {
@@ -41,7 +41,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "dist/e-commerce-siw-project",
+            "outputPath": "dist/portefolio",
             "index": "src/index.html",
             "browser": "src/main.ts",
             "polyfills": [
@@ -64,7 +64,7 @@
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "500kB",
+                  "maximumWarning": "750kB",
                   "maximumError": "1MB"
                 },
                 {
@@ -93,10 +93,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "e-commerce-siw-project:build:production"
+              "buildTarget": "portefolio:build:production"
             },
             "development": {
-              "buildTarget": "e-commerce-siw-project:build:development"
+              "buildTarget": "portefolio:build:development"
             }
           },
           "defaultConfiguration": "development"

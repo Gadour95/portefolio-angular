@@ -12,7 +12,7 @@ import { TranslatePipe } from '@ngx-translate/core';
                gap-3 py-6 text-sm sm:flex-row"
       >
         <span class="font-semibold">
-          © {{ year }} SIW E-Commerce
+          © {{ year }} Portefolio
         </span>
 
         <span class="app-muted text-center">

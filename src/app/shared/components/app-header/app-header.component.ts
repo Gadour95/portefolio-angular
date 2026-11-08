@@ -10,7 +10,8 @@ import {
 import {
   NavigationEnd,
   Router,
-  RouterLink
+  RouterLink,
+  RouterLinkActive
 } from '@angular/router';
 
 import {
@@ -54,12 +55,14 @@ import {
   ThemeService
 } from '../../../core/services/theme.service';
 
+
 @Component({
   selector: 'app-header',
   standalone: true,
 
   imports: [
     RouterLink,
+    RouterLinkActive,
     TranslatePipe,
     ButtonModule,
     MenuModule,
@@ -89,12 +92,6 @@ export class AppHeaderComponent {
   private accountMenu?: Menu;
 
   readonly authBusy = signal(false);
-
-  readonly homePath = computed(() =>
-    this.auth.isAdmin()
-      ? '/admin/dashboard'
-      : '/'
-  );
 
   readonly themeIcon = computed(() => {
     switch (this.themeService.mode()) {
@@ -224,33 +221,15 @@ export class AppHeaderComponent {
 
     const items: MenuItem[] = [];
 
-    if (this.auth.isAdmin()) {
-      items.push({
-        label: this.translate.instant(
-          'auth.dashboard'
-        ),
+    items.push({
+      label: this.translate.instant(
+        'auth.manageAccount'
+      ),
 
-        icon: 'pi pi-chart-bar',
-
-        command: () => {
-          this.navigate('/admin/dashboard');
-        }
-      });
-    }
-
-    if (this.auth.isClient()) {
-      items.push({
-        label: this.translate.instant(
-          'auth.orders'
-        ),
-
-        icon: 'pi pi-shopping-bag',
-
-        command: () => {
-          this.navigate('/orders');
-        }
-      });
-    }
+      icon: 'pi pi-external-link',
+      url: this.auth.accountManagementUrl(),
+      target: '_blank'
+    });
 
     if (items.length > 0) {
       items.push({
@@ -331,17 +310,6 @@ export class AppHeaderComponent {
     this.themeService.setMode(mode);
   }
 
-  navigate(path: string): void {
-    this.hideMenus();
-    void this.router.navigateByUrl(path);
-  }
-
-  openCart(): void {
-    if (this.auth.isClient()) {
-      this.navigate('/cart');
-    }
-  }
-
   async login(): Promise<void> {
     if (this.authBusy()) {
       return;
@@ -351,7 +319,6 @@ export class AppHeaderComponent {
     this.authBusy.set(true);
 
     try {
-      // Le guard de l’accueil choisira la destination après connexion.
       await this.auth.login('/');
     } catch {
       this.notifyError(
@@ -392,7 +359,7 @@ export class AppHeaderComponent {
       severity: 'error',
 
       summary: this.translate.instant(
-        'adminCategories.error'
+        'common.error'
       ),
 
       detail: this.translate.instant(key),
