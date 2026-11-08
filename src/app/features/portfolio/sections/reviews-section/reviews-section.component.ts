@@ -1,7 +1,9 @@
 import {
   Component,
+  effect,
   inject,
-  signal
+  signal,
+  untracked
 } from '@angular/core';
 
 import {
@@ -17,10 +19,13 @@ import {
 
 import { MessageService } from 'primeng/api';
 
-import { resolveMediaUrl } from '../../../../core/http/media-url';
+import {
+  resolveMediaUrl
+} from '../../../../core/http/media-url';
 
 import { Review } from '../../../../core/models/review.model';
 
+import { LanguageService } from '../../../../core/services/language.service';
 import { ReviewService } from '../../../../core/services/review.service';
 
 type ReviewControlName =
@@ -30,72 +35,47 @@ type ReviewControlName =
   | 'description';
 
 @Component({
-  selector: 'app-reviews',
+  selector: 'app-reviews-section',
   standalone: true,
   imports: [ReactiveFormsModule, TranslatePipe],
 
   template: `
-    <div class="app-container space-y-10 py-10 sm:py-14">
-      <header class="max-w-3xl">
+    <section id="reviews" class="scroll-mt-32">
+      <div class="max-w-2xl">
         <p
           class="text-xs font-bold uppercase tracking-[0.14em]
                  text-[var(--p-primary-color)]"
         >
-          {{ 'nav.reviews' | translate }}
+          {{ 'home.reviewsEyebrow' | translate }}
         </p>
 
-        <h1
-          class="mt-2 text-3xl font-bold tracking-[-0.04em] sm:text-4xl"
+        <h2
+          class="mt-2 text-2xl font-bold tracking-[-0.035em] sm:text-3xl"
         >
           {{ 'publicPages.reviews.title' | translate }}
-        </h1>
+        </h2>
 
         <p class="mt-3 leading-7 text-[var(--app-text-muted)]">
           {{ 'publicPages.reviews.subtitle' | translate }}
         </p>
-      </header>
+      </div>
 
       <div
-        class="grid items-start gap-8
-               lg:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)]"
+        class="mt-8 grid items-start gap-6
+               lg:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)]"
       >
         <!-- Liste des avis -->
-        <section class="space-y-5">
+        <div class="space-y-4">
           @if (loading()) {
             @for (item of [1, 2, 3]; track item) {
               <div
-                class="h-40 animate-pulse rounded-2xl
+                class="h-48 animate-pulse rounded-3xl
                        bg-[var(--app-surface-muted)]"
               ></div>
             }
-          } @else if (error()) {
-            <div
-              class="rounded-2xl border border-[var(--app-border)]
-                     bg-[var(--app-surface)] p-8 text-center"
-            >
-              <p class="text-sm text-[var(--app-text-muted)]">
-                {{ 'common.loadingError' | translate }}
-              </p>
-
-              <button
-                type="button"
-                class="mt-5 inline-flex min-h-10 items-center gap-2
-                       rounded-xl bg-[var(--p-primary-color)] px-4 py-2
-                       text-sm font-semibold
-                       text-[var(--p-primary-inverse-color)]"
-                (click)="loadPage(page())"
-              >
-                <i
-                  class="pi pi-refresh text-xs"
-                  aria-hidden="true"
-                ></i>
-
-                {{ 'common.retry' | translate }}
-              </button>
-            </div>
           } @else if (!reviews().length) {
             <div
-              class="rounded-2xl border border-dashed
+              class="rounded-3xl border border-dashed
                      border-[var(--app-border)] bg-[var(--app-surface)]
                      p-10 text-center"
             >
@@ -111,22 +91,53 @@ type ReviewControlName =
           } @else {
             @for (review of reviews(); track review.id) {
               <article
-                class="rounded-2xl border border-[var(--app-border)]
-                       bg-[var(--app-surface)] p-6"
+                class="group relative overflow-hidden rounded-3xl border
+                       border-[var(--app-border)] bg-[var(--app-surface)]
+                       p-6 transition hover:border-[var(--p-primary-color)]/40
+                       hover:shadow-[0_20px_50px_-38px_rgba(79,70,229,0.55)]
+                       sm:p-7"
               >
-                <div class="flex items-start gap-4">
+                <span
+                  class="pointer-events-none absolute -top-4 end-4
+                         select-none font-serif text-[6.5rem] leading-none
+                         text-[var(--p-primary-color)]/10"
+                  aria-hidden="true"
+                >
+                  ”
+                </span>
+
+                <span
+                  class="inline-grid h-9 w-9 place-items-center rounded-xl
+                         bg-[var(--p-primary-color)]/10
+                         text-[var(--p-primary-color)]"
+                  aria-hidden="true"
+                >
+                  <i class="pi pi-comment text-sm"></i>
+                </span>
+
+                <p
+                  class="relative mt-4 text-[0.95rem] leading-8
+                         text-[var(--app-text-muted)]"
+                >
+                  {{ review.description }}
+                </p>
+
+                <div
+                  class="mt-5 flex flex-wrap items-center gap-3
+                         border-t border-[var(--app-border)] pt-5"
+                >
                   @if (reviewImage(review); as image) {
                     <img
                       [src]="image"
                       [alt]="review.fullName"
-                      class="h-12 w-12 shrink-0 rounded-full object-cover"
+                      class="h-11 w-11 shrink-0 rounded-full object-cover"
                       loading="lazy"
                     />
                   } @else {
                     <span
-                      class="inline-grid h-12 w-12 shrink-0 place-items-center
+                      class="inline-grid h-11 w-11 shrink-0 place-items-center
                              rounded-full bg-[var(--app-surface-muted)]
-                             text-base font-bold
+                             text-sm font-bold
                              text-[var(--p-primary-color)]"
                     >
                       {{ initials(review.fullName) }}
@@ -134,30 +145,23 @@ type ReviewControlName =
                   }
 
                   <div class="min-w-0 flex-1">
-                    <div
-                      class="flex flex-wrap items-baseline justify-between
-                             gap-x-3 gap-y-1"
-                    >
-                      <h2 class="text-base font-semibold">
-                        {{ review.fullName }}
-                      </h2>
-
-                      <time
-                        class="text-xs text-[var(--app-text-muted)]"
-                        [attr.datetime]="review.createdAt"
-                      >
-                        {{ formatDate(review.createdAt) }}
-                      </time>
-                    </div>
+                    <p class="truncate text-sm font-semibold">
+                      {{ review.fullName }}
+                    </p>
 
                     @if (review.jobTitle) {
-                      <p class="text-sm text-[var(--app-text-muted)]">
+                      <p
+                        class="truncate text-xs
+                               text-[var(--app-text-muted)]"
+                      >
                         {{ review.jobTitle }}
                       </p>
                     }
+                  </div>
 
+                  <div class="flex flex-col items-end gap-1">
                     <div
-                      class="mt-2 flex items-center gap-0.5"
+                      class="flex items-center gap-0.5"
                       [attr.aria-label]="
                         ('publicPages.reviews.rating' | translate) +
                         ': ' +
@@ -167,7 +171,7 @@ type ReviewControlName =
                     >
                       @for (star of stars; track star) {
                         <i
-                          class="pi pi-star-fill text-sm"
+                          class="pi pi-star-fill text-[0.7rem]"
                           [style.color]="
                             star <= review.rating
                               ? '#f59e0b'
@@ -177,83 +181,39 @@ type ReviewControlName =
                         ></i>
                       }
                     </div>
+
+                    <time
+                      class="text-[0.68rem] text-[var(--app-text-muted)]"
+                      [attr.datetime]="review.createdAt"
+                    >
+                      {{ formatDate(review.createdAt) }}
+                    </time>
                   </div>
                 </div>
-
-                <p class="mt-4 text-sm leading-7 app-muted">
-                  {{ review.description }}
-                </p>
               </article>
             }
-
-            @if (totalPages() > 1) {
-              <nav
-                class="flex flex-col items-center justify-between gap-3
-                       border-t border-[var(--app-border)] pt-5
-                       sm:flex-row"
-                [attr.aria-label]="'common.page' | translate"
-              >
-                <p class="text-sm text-[var(--app-text-muted)]">
-                  {{ 'common.page' | translate }}
-                  {{ page() + 1 }}
-                  {{ 'common.of' | translate }}
-                  {{ totalPages() }}
-                </p>
-
-                <div class="flex items-center gap-2">
-                  <button
-                    type="button"
-                    class="inline-flex min-h-10 items-center gap-2
-                           rounded-xl border border-[var(--app-border)]
-                           px-4 py-2 text-sm font-semibold transition
-                           hover:border-[var(--p-primary-color)]
-                           hover:text-[var(--p-primary-color)]
-                           disabled:cursor-not-allowed disabled:opacity-50"
-                    [disabled]="page() === 0"
-                    (click)="goToPage(page() - 1)"
-                  >
-                    <i
-                      class="pi pi-angle-left text-xs rtl:rotate-180"
-                      aria-hidden="true"
-                    ></i>
-
-                    {{ 'common.previous' | translate }}
-                  </button>
-
-                  <button
-                    type="button"
-                    class="inline-flex min-h-10 items-center gap-2
-                           rounded-xl border border-[var(--app-border)]
-                           px-4 py-2 text-sm font-semibold transition
-                           hover:border-[var(--p-primary-color)]
-                           hover:text-[var(--p-primary-color)]
-                           disabled:cursor-not-allowed disabled:opacity-50"
-                    [disabled]="page() >= totalPages() - 1"
-                    (click)="goToPage(page() + 1)"
-                  >
-                    {{ 'common.next' | translate }}
-
-                    <i
-                      class="pi pi-angle-right text-xs rtl:rotate-180"
-                      aria-hidden="true"
-                    ></i>
-                  </button>
-                </div>
-              </nav>
-            }
           }
-        </section>
+        </div>
 
         <!-- Formulaire -->
-        <section
-          class="rounded-2xl border border-[var(--app-border)]
-                 bg-[var(--app-surface)] p-6 lg:sticky lg:top-24"
+        <aside
+          class="rounded-3xl border border-[var(--app-border)]
+                 bg-[var(--app-surface)] p-6 lg:sticky lg:top-32 sm:p-7"
         >
-          <h2 class="text-lg font-bold">
-            {{ 'publicPages.reviews.formTitle' | translate }}
-          </h2>
+          <span
+            class="inline-grid h-10 w-10 place-items-center rounded-xl
+                   bg-[var(--p-primary-color)]/10
+                   text-[var(--p-primary-color)]"
+            aria-hidden="true"
+          >
+            <i class="pi pi-pencil text-sm"></i>
+          </span>
 
-          <p class="mt-2 text-sm leading-6 app-muted">
+          <h3 class="mt-4 text-lg font-bold">
+            {{ 'publicPages.reviews.formTitle' | translate }}
+          </h3>
+
+          <p class="mt-1.5 text-sm leading-6 app-muted">
             {{ 'publicPages.reviews.formText' | translate }}
           </p>
 
@@ -291,16 +251,13 @@ type ReviewControlName =
           }
 
           <form
-            class="mt-6 space-y-5"
+            class="mt-5 space-y-4"
             [formGroup]="form"
             (ngSubmit)="submit()"
             novalidate
           >
             <div>
-              <label
-                class="app-label"
-                for="review-full-name"
-              >
+              <label class="app-label" for="review-full-name">
                 {{ 'publicPages.reviews.fullName' | translate }}
               </label>
 
@@ -323,10 +280,7 @@ type ReviewControlName =
             </div>
 
             <div>
-              <label
-                class="app-label"
-                for="review-job-title"
-              >
+              <label class="app-label" for="review-job-title">
                 {{ 'publicPages.reviews.jobTitle' | translate }}
               </label>
 
@@ -383,16 +337,13 @@ type ReviewControlName =
             </div>
 
             <div>
-              <label
-                class="app-label"
-                for="review-description"
-              >
+              <label class="app-label" for="review-description">
                 {{ 'publicPages.reviews.description' | translate }}
               </label>
 
               <textarea
                 id="review-description"
-                rows="5"
+                rows="4"
                 class="app-control w-full py-2"
                 formControlName="description"
                 [style.borderColor]="
@@ -408,10 +359,7 @@ type ReviewControlName =
             </div>
 
             <div>
-              <label
-                class="app-label"
-                for="review-image"
-              >
+              <label class="app-label" for="review-image">
                 {{ 'publicPages.reviews.image' | translate }}
               </label>
 
@@ -435,7 +383,7 @@ type ReviewControlName =
                 <img
                   [src]="preview"
                   alt=""
-                  class="mt-3 h-16 w-16 rounded-full object-cover"
+                  class="mt-3 h-14 w-14 rounded-full object-cover"
                 />
               }
             </div>
@@ -457,7 +405,7 @@ type ReviewControlName =
                 ></i>
               } @else {
                 <i
-                  class="pi pi-send text-xs"
+                  class="pi pi-send text-xs rtl:rotate-180"
                   aria-hidden="true"
                 ></i>
               }
@@ -465,30 +413,24 @@ type ReviewControlName =
               {{ 'publicPages.reviews.submit' | translate }}
             </button>
           </form>
-        </section>
+        </aside>
       </div>
-    </div>
+    </section>
   `
 })
-export class ReviewsComponent {
+export class ReviewsSectionComponent {
   private readonly reviewService = inject(ReviewService);
   private readonly formBuilder = inject(FormBuilder);
   private readonly messages = inject(MessageService);
   private readonly translate = inject(TranslateService);
+  private readonly language = inject(LanguageService);
 
-  private readonly pageSize = 6;
-
-  private requestId = 0;
   private previewObjectUrl: string | null = null;
 
   readonly stars = [1, 2, 3, 4, 5];
 
   readonly reviews = signal<Review[]>([]);
   readonly loading = signal(true);
-  readonly error = signal(false);
-
-  readonly page = signal(0);
-  readonly totalPages = signal(0);
 
   readonly submitting = signal(false);
   readonly success = signal(false);
@@ -534,48 +476,27 @@ export class ReviewsComponent {
   });
 
   constructor() {
-    this.loadPage(0);
+    effect(() => {
+      this.language.current();
+
+      untracked(() => this.load());
+    });
   }
 
-  loadPage(page: number): void {
-    const requestId = ++this.requestId;
-
+  load(): void {
     this.loading.set(true);
-    this.error.set(false);
 
-    this.reviewService
-      .getPublicReviews(page, this.pageSize)
-      .subscribe({
-        next: result => {
-          if (requestId !== this.requestId) {
-            return;
-          }
+    this.reviewService.getPublicReviews(0, 6).subscribe({
+      next: page => {
+        this.reviews.set(page.content);
+        this.loading.set(false);
+      },
 
-          this.reviews.set(result.content);
-          this.page.set(result.page);
-          this.totalPages.set(result.totalPages);
-          this.loading.set(false);
-        },
-
-        error: () => {
-          if (requestId !== this.requestId) {
-            return;
-          }
-
-          this.reviews.set([]);
-          this.totalPages.set(0);
-          this.loading.set(false);
-          this.error.set(true);
-        }
-      });
-  }
-
-  goToPage(page: number): void {
-    if (page < 0 || page >= this.totalPages()) {
-      return;
-    }
-
-    this.loadPage(page);
+      error: () => {
+        this.reviews.set([]);
+        this.loading.set(false);
+      }
+    });
   }
 
   setRating(value: number): void {
@@ -647,7 +568,7 @@ export class ReviewsComponent {
           });
 
           this.resetForm();
-          this.loadPage(0);
+          this.load();
         },
 
         error: () => {
@@ -655,9 +576,7 @@ export class ReviewsComponent {
 
           this.messages.add({
             severity: 'error',
-            summary: this.translate.instant(
-              'common.error'
-            ),
+            summary: this.translate.instant('common.error'),
             detail: this.translate.instant(
               'publicPages.reviews.error'
             ),

@@ -153,7 +153,8 @@ import {
           </p>
 
           <a
-            routerLink="/contact"
+            routerLink="/"
+            fragment="contact"
             class="mt-6 inline-flex min-h-11 items-center gap-2
                    rounded-xl bg-[var(--p-primary-color)] px-5 py-3
                    text-sm font-semibold

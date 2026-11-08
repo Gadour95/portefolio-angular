@@ -97,28 +97,6 @@ export const routes: Routes = [
       },
 
       {
-        path: 'reviews',
-
-        loadComponent: () =>
-          import(
-            './features/portfolio/pages/reviews/reviews.component'
-          ).then(component =>
-            component.ReviewsComponent
-          )
-      },
-
-      {
-        path: 'contact',
-
-        loadComponent: () =>
-          import(
-            './features/portfolio/pages/contact/contact.component'
-          ).then(component =>
-            component.ContactComponent
-          )
-      },
-
-      {
         path: 'cv',
 
         loadComponent: () =>

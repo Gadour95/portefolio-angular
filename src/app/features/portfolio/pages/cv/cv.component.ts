@@ -9,6 +9,8 @@ import {
 
 import { TranslatePipe } from '@ngx-translate/core';
 
+import { ActivatedRoute } from '@angular/router';
+
 import {
   catchError,
   finalize,
@@ -356,6 +358,9 @@ export class CvComponent {
   private readonly timelineService = inject(TimelineService);
   private readonly skillService = inject(SkillService);
   private readonly language = inject(LanguageService);
+  private readonly route = inject(ActivatedRoute);
+
+  private printTriggered = false;
 
   readonly about = signal<AboutPublic | null>(null);
   readonly timeline = signal<TimelinePublicItem[]>([]);
@@ -408,7 +413,12 @@ export class CvComponent {
           )
         )
     })
-      .pipe(finalize(() => this.loading.set(false)))
+      .pipe(
+        finalize(() => {
+          this.loading.set(false);
+          this.triggerPrintIfRequested();
+        })
+      )
       .subscribe(result => {
         this.about.set(result.about);
         this.timeline.set(result.timeline);
@@ -418,6 +428,23 @@ export class CvComponent {
 
   print(): void {
     window.print();
+  }
+
+  private triggerPrintIfRequested(): void {
+    if (this.printTriggered) {
+      return;
+    }
+
+    if (
+      this.route.snapshot.queryParamMap.get('download') !==
+      '1'
+    ) {
+      return;
+    }
+
+    this.printTriggered = true;
+
+    window.setTimeout(() => window.print(), 400);
   }
 
   formatDate(value: number | null): string {

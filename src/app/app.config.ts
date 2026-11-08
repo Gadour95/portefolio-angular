@@ -5,6 +5,8 @@ import {
   provideZoneChangeDetection
 } from '@angular/core';
 
+import { ViewportScroller } from '@angular/common';
+
 import {
   provideHttpClient,
   withInterceptors
@@ -95,6 +97,19 @@ export const appConfig: ApplicationConfig = {
         anchorScrolling: 'enabled'
       })
     ),
+
+    provideAppInitializer(() => {
+      inject(ViewportScroller).setOffset(() => {
+        const header = document.querySelector(
+          'app-header header'
+        );
+
+        const height =
+          header?.getBoundingClientRect().height ?? 0;
+
+        return [0, height + 16];
+      });
+    }),
 
     provideHttpClient(
       withInterceptors([

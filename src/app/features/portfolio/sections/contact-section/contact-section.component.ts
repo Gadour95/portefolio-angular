@@ -1,6 +1,7 @@
 import {
   Component,
   inject,
+  input,
   signal
 } from '@angular/core';
 
@@ -19,7 +20,6 @@ import { MessageService } from 'primeng/api';
 
 import { AboutPublic } from '../../../../core/models/about.model';
 
-import { AboutService } from '../../../../core/services/about.service';
 import {
   ContactMessageService
 } from '../../../../core/services/contact-message.service';
@@ -31,182 +31,202 @@ type ContactControlName =
   | 'message';
 
 @Component({
-  selector: 'app-contact',
+  selector: 'app-contact-section',
   standalone: true,
   imports: [ReactiveFormsModule, TranslatePipe],
 
   template: `
-    <div class="app-container space-y-10 py-10 sm:py-14">
-      <header class="max-w-3xl">
+    <section id="contact" class="scroll-mt-32">
+      <div class="max-w-2xl">
         <p
           class="text-xs font-bold uppercase tracking-[0.14em]
                  text-[var(--p-primary-color)]"
         >
-          {{ 'nav.contact' | translate }}
+          {{ 'home.contactEyebrow' | translate }}
         </p>
 
-        <h1
-          class="mt-2 text-3xl font-bold tracking-[-0.04em] sm:text-4xl"
+        <h2
+          class="mt-2 text-2xl font-bold tracking-[-0.035em] sm:text-3xl"
         >
-          {{ 'publicPages.contact.title' | translate }}
-        </h1>
+          {{ 'home.contactTitle' | translate }}
+        </h2>
 
         <p class="mt-3 leading-7 text-[var(--app-text-muted)]">
-          {{ 'publicPages.contact.subtitle' | translate }}
+          {{ 'home.contactText' | translate }}
         </p>
-      </header>
+      </div>
 
-      <div class="grid items-start gap-8 lg:grid-cols-2">
+      <div
+        class="mt-8 grid overflow-hidden rounded-[2rem] border
+               border-[var(--app-border)] bg-[var(--app-surface)]
+               lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)]"
+      >
         <!-- Coordonnées -->
         <aside
-          class="space-y-5 rounded-2xl border border-[var(--app-border)]
-                 bg-[var(--app-surface)] p-6 sm:p-8"
+          class="relative overflow-hidden bg-gradient-to-br
+                 from-indigo-700 via-indigo-600 to-blue-600 p-7
+                 text-white sm:p-9"
         >
-          <h2 class="text-lg font-bold">
-            {{ 'publicPages.contact.infoTitle' | translate }}
-          </h2>
+          <div
+            class="pointer-events-none absolute -right-16 -top-20 h-64 w-64
+                   rounded-full bg-white/10 blur-3xl"
+            aria-hidden="true"
+          ></div>
 
-          <p class="text-sm leading-7 app-muted">
-            {{
-              about()?.description ||
-                ('publicPages.contact.infoText' | translate)
-            }}
-          </p>
+          <div
+            class="pointer-events-none absolute -bottom-24 -left-16 h-64 w-64
+                   rounded-full bg-blue-300/10 blur-3xl"
+            aria-hidden="true"
+          ></div>
 
-          <div class="space-y-3">
-            @if (about()?.email; as email) {
-              <a
-                [href]="'mailto:' + email"
-                class="flex items-start gap-3 rounded-xl border
-                       border-[var(--app-border)] p-4 transition
-                       hover:border-[var(--p-primary-color)]"
-              >
-                <span
-                  class="inline-grid h-10 w-10 shrink-0 place-items-center
-                         rounded-lg bg-[var(--app-surface-muted)]
-                         text-[var(--p-primary-color)]"
-                >
-                  <i
-                    class="pi pi-envelope"
-                    aria-hidden="true"
-                  ></i>
-                </span>
-
-                <span class="min-w-0">
-                  <span
-                    class="block text-xs font-bold uppercase
-                           tracking-wide text-[var(--app-text-muted)]"
-                  >
-                    {{ 'publicPages.contact.emailLabel' | translate }}
-                  </span>
-
-                  <span class="mt-0.5 block truncate text-sm font-semibold">
-                    {{ email }}
-                  </span>
-                </span>
-              </a>
-            }
-
-            @if (about()?.location; as location) {
-              <div
-                class="flex items-start gap-3 rounded-xl border
-                       border-[var(--app-border)] p-4"
-              >
-                <span
-                  class="inline-grid h-10 w-10 shrink-0 place-items-center
-                         rounded-lg bg-[var(--app-surface-muted)]
-                         text-[var(--p-primary-color)]"
-                >
-                  <i
-                    class="pi pi-map-marker"
-                    aria-hidden="true"
-                  ></i>
-                </span>
-
-                <span>
-                  <span
-                    class="block text-xs font-bold uppercase
-                           tracking-wide text-[var(--app-text-muted)]"
-                  >
-                    {{ 'publicPages.contact.locationLabel' | translate }}
-                  </span>
-
-                  <span class="mt-0.5 block text-sm font-semibold">
-                    {{ location }}
-                  </span>
-                </span>
-              </div>
-            }
-
-            @if (about()?.availability; as availability) {
-              <div
-                class="flex items-start gap-3 rounded-xl border
-                       border-[var(--app-border)] p-4"
-              >
-                <span
-                  class="inline-grid h-10 w-10 shrink-0 place-items-center
-                         rounded-lg bg-[var(--app-surface-muted)]
-                         text-[var(--p-primary-color)]"
-                >
-                  <i
-                    class="pi pi-check-circle"
-                    aria-hidden="true"
-                  ></i>
-                </span>
-
-                <span>
-                  <span
-                    class="block text-xs font-bold uppercase
-                           tracking-wide text-[var(--app-text-muted)]"
-                  >
-                    {{ 'publicPages.contact.availabilityLabel' | translate }}
-                  </span>
-
-                  <span class="mt-0.5 block text-sm font-semibold">
-                    {{ availability }}
-                  </span>
-                </span>
-              </div>
-            }
-
-            <div
-              class="flex items-start gap-3 rounded-xl border
-                     border-[var(--app-border)] p-4"
+          <div class="relative">
+            <p
+              class="text-xs font-bold uppercase tracking-[0.14em]
+                     text-indigo-100"
             >
-              <span
-                class="inline-grid h-10 w-10 shrink-0 place-items-center
-                       rounded-lg bg-[var(--app-surface-muted)]
-                       text-[var(--p-primary-color)]"
-              >
-                <i
-                  class="pi pi-clock"
-                  aria-hidden="true"
-                ></i>
-              </span>
+              {{ 'publicPages.contact.infoTitle' | translate }}
+            </p>
 
-              <span>
-                <span
-                  class="block text-xs font-bold uppercase
-                         tracking-wide text-[var(--app-text-muted)]"
+            <p class="mt-4 text-lg font-semibold leading-8">
+              {{
+                about()?.description ||
+                  ('publicPages.contact.infoText' | translate)
+              }}
+            </p>
+
+            <div class="mt-8 space-y-3">
+              @if (about()?.email; as email) {
+                <a
+                  [href]="'mailto:' + email"
+                  class="flex items-start gap-3 rounded-2xl border
+                         border-white/20 bg-white/10 p-4
+                         backdrop-blur transition hover:bg-white/15"
                 >
-                  {{ 'publicPages.contact.responseLabel' | translate }}
+                  <span
+                    class="inline-grid h-10 w-10 shrink-0 place-items-center
+                           rounded-xl bg-white/15"
+                  >
+                    <i
+                      class="pi pi-envelope"
+                      aria-hidden="true"
+                    ></i>
+                  </span>
+
+                  <span class="min-w-0">
+                    <span
+                      class="block text-[0.68rem] font-bold uppercase
+                             tracking-wide text-indigo-100"
+                    >
+                      {{ 'publicPages.contact.emailLabel' | translate }}
+                    </span>
+
+                    <span
+                      class="mt-0.5 block break-all text-sm font-semibold"
+                    >
+                      {{ email }}
+                    </span>
+                  </span>
+                </a>
+              }
+
+              @if (about()?.location; as location) {
+                <div
+                  class="flex items-start gap-3 rounded-2xl border
+                         border-white/20 bg-white/10 p-4 backdrop-blur"
+                >
+                  <span
+                    class="inline-grid h-10 w-10 shrink-0 place-items-center
+                           rounded-xl bg-white/15"
+                  >
+                    <i
+                      class="pi pi-map-marker"
+                      aria-hidden="true"
+                    ></i>
+                  </span>
+
+                  <span>
+                    <span
+                      class="block text-[0.68rem] font-bold uppercase
+                             tracking-wide text-indigo-100"
+                    >
+                      {{ 'publicPages.contact.locationLabel' | translate }}
+                    </span>
+
+                    <span class="mt-0.5 block text-sm font-semibold">
+                      {{ location }}
+                    </span>
+                  </span>
+                </div>
+              }
+
+              @if (about()?.availability; as availability) {
+                <div
+                  class="flex items-start gap-3 rounded-2xl border
+                         border-white/20 bg-white/10 p-4 backdrop-blur"
+                >
+                  <span
+                    class="inline-grid h-10 w-10 shrink-0 place-items-center
+                           rounded-xl bg-white/15"
+                  >
+                    <i
+                      class="pi pi-check-circle"
+                      aria-hidden="true"
+                    ></i>
+                  </span>
+
+                  <span>
+                    <span
+                      class="block text-[0.68rem] font-bold uppercase
+                             tracking-wide text-indigo-100"
+                    >
+                      {{
+                        'publicPages.contact.availabilityLabel'
+                          | translate
+                      }}
+                    </span>
+
+                    <span class="mt-0.5 block text-sm font-semibold">
+                      {{ availability }}
+                    </span>
+                  </span>
+                </div>
+              }
+
+              <div
+                class="flex items-start gap-3 rounded-2xl border
+                       border-white/20 bg-white/10 p-4 backdrop-blur"
+              >
+                <span
+                  class="inline-grid h-10 w-10 shrink-0 place-items-center
+                         rounded-xl bg-white/15"
+                >
+                  <i
+                    class="pi pi-clock"
+                    aria-hidden="true"
+                  ></i>
                 </span>
 
-                <span class="mt-0.5 block text-sm font-semibold">
-                  {{ 'publicPages.contact.responseTime' | translate }}
+                <span>
+                  <span
+                    class="block text-[0.68rem] font-bold uppercase
+                           tracking-wide text-indigo-100"
+                  >
+                    {{ 'publicPages.contact.responseLabel' | translate }}
+                  </span>
+
+                  <span class="mt-0.5 block text-sm font-semibold">
+                    {{ 'publicPages.contact.responseTime' | translate }}
+                  </span>
                 </span>
-              </span>
+              </div>
             </div>
           </div>
         </aside>
 
         <!-- Formulaire -->
-        <section
-          class="rounded-2xl border border-[var(--app-border)]
-                 bg-[var(--app-surface)] p-6 sm:p-8"
-        >
+        <div class="p-7 sm:p-9">
           @if (success()) {
-            <div class="py-8 text-center" role="status">
+            <div class="py-10 text-center" role="status">
               <span
                 class="inline-grid h-14 w-14 place-items-center
                        rounded-full bg-emerald-100 text-emerald-700
@@ -218,9 +238,9 @@ type ContactControlName =
                 ></i>
               </span>
 
-              <h2 class="mt-5 text-xl font-bold">
+              <h3 class="mt-5 text-xl font-bold">
                 {{ 'publicPages.contact.successTitle' | translate }}
-              </h2>
+              </h3>
 
               <p class="mx-auto mt-2 max-w-md text-sm leading-7 app-muted">
                 {{ 'publicPages.contact.successText' | translate }}
@@ -244,11 +264,11 @@ type ContactControlName =
               </button>
             </div>
           } @else {
-            <h2 class="text-lg font-bold">
+            <h3 class="text-lg font-bold">
               {{ 'publicPages.contact.formTitle' | translate }}
-            </h2>
+            </h3>
 
-            <p class="mt-2 text-sm leading-6 app-muted">
+            <p class="mt-1.5 text-sm leading-6 app-muted">
               {{ 'publicPages.contact.formText' | translate }}
             </p>
 
@@ -347,7 +367,7 @@ type ContactControlName =
 
                 <textarea
                   id="contact-message"
-                  rows="7"
+                  rows="6"
                   class="app-control w-full py-2"
                   formControlName="message"
                   [style.borderColor]="
@@ -364,9 +384,10 @@ type ContactControlName =
 
               <button
                 type="submit"
-                class="inline-flex min-h-11 w-full items-center justify-center
-                       gap-2 rounded-xl bg-[var(--p-primary-color)] px-5
-                       py-3 text-sm font-semibold
+                class="inline-flex min-h-11 w-full items-center
+                       justify-center gap-2 rounded-xl
+                       bg-[var(--p-primary-color)] px-5 py-3 text-sm
+                       font-semibold
                        text-[var(--p-primary-inverse-color)]
                        transition hover:bg-[var(--p-primary-hover-color)]
                        disabled:cursor-not-allowed disabled:opacity-60"
@@ -388,22 +409,21 @@ type ContactControlName =
               </button>
             </form>
           }
-        </section>
+        </div>
       </div>
-    </div>
+    </section>
   `
 })
-export class ContactComponent {
+export class ContactSectionComponent {
   private readonly contactMessageService = inject(
     ContactMessageService
   );
 
-  private readonly aboutService = inject(AboutService);
   private readonly formBuilder = inject(FormBuilder);
   private readonly messages = inject(MessageService);
   private readonly translate = inject(TranslateService);
 
-  readonly about = signal<AboutPublic | null>(null);
+  readonly about = input<AboutPublic | null>(null);
 
   readonly submitting = signal(false);
   readonly success = signal(false);
@@ -443,13 +463,6 @@ export class ContactComponent {
       ]
     ]
   });
-
-  constructor() {
-    this.aboutService.getPublicAbout().subscribe({
-      next: about => this.about.set(about),
-      error: () => this.about.set(null)
-    });
-  }
 
   submit(): void {
     if (this.form.invalid) {
@@ -497,9 +510,7 @@ export class ContactComponent {
 
           this.messages.add({
             severity: 'error',
-            summary: this.translate.instant(
-              'common.error'
-            ),
+            summary: this.translate.instant('common.error'),
             detail: this.translate.instant(
               'publicPages.contact.error'
             ),

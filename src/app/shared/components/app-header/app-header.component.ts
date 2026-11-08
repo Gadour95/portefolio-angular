@@ -69,7 +69,16 @@ import {
     TooltipModule
   ],
 
-  templateUrl: './app-header.component.html'
+  templateUrl: './app-header.component.html',
+
+  styles: [`
+    :host {
+      display: block;
+      position: sticky;
+      top: 0;
+      z-index: 40;
+    }
+  `]
 })
 export class AppHeaderComponent {
   readonly auth = inject(AuthService);
