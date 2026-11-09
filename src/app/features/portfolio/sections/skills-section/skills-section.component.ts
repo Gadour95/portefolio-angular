@@ -30,7 +30,6 @@ import {
   selector: 'app-skills-section',
   standalone: true,
   imports: [
-    RouterLink,
     TranslatePipe,
     ScrollStripComponent
   ],
@@ -61,19 +60,6 @@ import {
           </p>
         </div>
 
-        <a
-          routerLink="/skills"
-          class="inline-flex shrink-0 items-center gap-2 text-sm
-                 font-semibold text-[var(--p-primary-color)]
-                 hover:underline"
-        >
-          {{ 'home.viewAllSkills' | translate }}
-
-          <i
-            class="pi pi-arrow-right text-xs rtl:rotate-180"
-            aria-hidden="true"
-          ></i>
-        </a>
       </div>
 
       @if (loading()) {

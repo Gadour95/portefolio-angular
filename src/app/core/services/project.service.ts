@@ -49,6 +49,17 @@ export class ProjectService {
     );
   }
 
+  getTopPublicProjects(
+    limit = 5
+  ): Observable<ProjectPublic[]> {
+    return this.http.get<ProjectPublic[]>(
+      `${this.publicUrl}/top`,
+      {
+        params: buildHttpParams({ limit })
+      }
+    );
+  }
+
   // ----------------------------------------------------------
   // Admin
   // ----------------------------------------------------------
@@ -67,6 +78,12 @@ export class ProjectService {
   getAdminProject(id: string): Observable<ProjectAdmin> {
     return this.http.get<ProjectAdmin>(
       `${this.adminUrl}/${id}`
+    );
+  }
+
+  getNextProjectPosition(): Observable<number> {
+    return this.http.get<number>(
+      `${this.adminUrl}/next-position`
     );
   }
 

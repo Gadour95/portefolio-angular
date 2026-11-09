@@ -869,6 +869,9 @@ export class ServicesAdminComponent implements OnInit {
   openCreate(): void {
     this.editingId.set(null);
     this.resetForm();
+    this.form.controls.position.setValue(this.nextPosition(), {
+      emitEvent: false
+    });
     this.dialogVisible.set(true);
   }
 
@@ -1079,6 +1082,16 @@ export class ServicesAdminComponent implements OnInit {
         });
       }
     });
+  }
+
+  private nextPosition(): number {
+    const positions = this.services().map(
+      service => service.position ?? 0
+    );
+
+    return positions.length
+      ? Math.max(...positions) + 1
+      : 0;
   }
 
   private localizedGroup(maxLength: number) {

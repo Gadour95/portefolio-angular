@@ -1011,6 +1011,19 @@ export class TimelineAdminComponent implements OnInit {
     ).subscribe(current => {
       this.syncEndDateState(current);
     });
+
+    this.form.controls.type.valueChanges.pipe(
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe(type => {
+      if (this.editingId() !== null) {
+        return;
+      }
+
+      this.form.controls.position.setValue(
+        this.nextTimelinePosition(type),
+        { emitEvent: false }
+      );
+    });
   }
 
   ngOnInit(): void {
@@ -1106,6 +1119,10 @@ export class TimelineAdminComponent implements OnInit {
   openCreate(): void {
     this.editingId.set(null);
     this.resetForm();
+    this.form.controls.position.setValue(
+      this.nextTimelinePosition('EXPERIENCE'),
+      { emitEvent: false }
+    );
     this.dialogVisible.set(true);
   }
 
@@ -1273,6 +1290,16 @@ export class TimelineAdminComponent implements OnInit {
         });
       }
     });
+  }
+
+  private nextTimelinePosition(type: TimelineType): number {
+    const positions = this.items()
+      .filter(item => item.type === type)
+      .map(item => item.position ?? 0);
+
+    return positions.length
+      ? Math.max(...positions) + 1
+      : 0;
   }
 
   private syncEndDateState(current: boolean): void {

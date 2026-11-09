@@ -47,6 +47,7 @@ import { InputIconModule } from 'primeng/inputicon';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { InputTextModule } from 'primeng/inputtext';
 import { MessageModule } from 'primeng/message';
+import { PaginatorModule, PaginatorState } from 'primeng/paginator';
 import { SelectModule } from 'primeng/select';
 import { TableModule } from 'primeng/table';
 import { ToolbarModule } from 'primeng/toolbar';
@@ -112,6 +113,7 @@ import {
     InputNumberModule,
     InputTextModule,
     MessageModule,
+    PaginatorModule,
     SelectModule,
     TableModule,
     ToolbarModule,
@@ -238,7 +240,7 @@ import {
 
       <p-card styleClass="overflow-hidden rounded-2xl">
         <p-table
-          [value]="filteredSkills()"
+          [value]="paginatedSkills()"
           [loading]="loading()"
           dataKey="id"
           size="small"
@@ -457,6 +459,15 @@ import {
             </tr>
           </ng-template>
         </p-table>
+
+        @if (filteredSkills().length > pageSize) {
+          <p-paginator
+            [rows]="pageSize"
+            [totalRecords]="filteredSkills().length"
+            [first]="currentPage() * pageSize"
+            (onPageChange)="onPageChange($event)"
+          />
+        }
 
         @if (filteredSkills().length) {
           <div
@@ -923,6 +934,9 @@ export class SkillsAdminComponent implements OnInit {
     () => !!this.searchTerm().trim() || !!this.categoryFilter()
   );
 
+  readonly pageSize = 10;
+  readonly currentPage = signal(0);
+
   readonly filteredSkills = computed(() => {
     const term = this.searchTerm().trim().toLowerCase();
     const categoryId = this.categoryFilter();
@@ -941,6 +955,15 @@ export class SkillsAdminComponent implements OnInit {
         skill.categoryName.toLowerCase().includes(term)
       );
     });
+  });
+
+  readonly paginatedSkills = computed(() => {
+    const start = this.currentPage() * this.pageSize;
+
+    return this.filteredSkills().slice(
+      start,
+      start + this.pageSize
+    );
   });
 
   readonly dialogVisible = signal(false);
@@ -1026,6 +1049,7 @@ export class SkillsAdminComponent implements OnInit {
       takeUntilDestroyed(this.destroyRef)
     ).subscribe(value => {
       this.searchTerm.set(value);
+      this.currentPage.set(0);
     });
 
     this.categoryFilterControl.valueChanges.pipe(
@@ -1033,6 +1057,20 @@ export class SkillsAdminComponent implements OnInit {
       takeUntilDestroyed(this.destroyRef)
     ).subscribe(value => {
       this.categoryFilter.set(value);
+      this.currentPage.set(0);
+    });
+
+    this.form.controls.categoryId.valueChanges.pipe(
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe(categoryId => {
+      if (this.editingId() !== null || !categoryId) {
+        return;
+      }
+
+      this.form.controls.position.setValue(
+        this.nextSkillPosition(categoryId),
+        { emitEvent: false }
+      );
     });
   }
 
@@ -1097,6 +1135,16 @@ export class SkillsAdminComponent implements OnInit {
 
     this.editingId.set(null);
     this.resetForm();
+
+    const categoryId = this.form.controls.categoryId.value;
+
+    if (categoryId) {
+      this.form.controls.position.setValue(
+        this.nextSkillPosition(categoryId),
+        { emitEvent: false }
+      );
+    }
+
     this.dialogVisible.set(true);
   }
 
@@ -1252,6 +1300,20 @@ export class SkillsAdminComponent implements OnInit {
         });
       }
     });
+  }
+
+  onPageChange(event: PaginatorState): void {
+    this.currentPage.set(event.page ?? 0);
+  }
+
+  private nextSkillPosition(categoryId: string): number {
+    const positions = this.skills()
+      .filter(skill => skill.categoryId === categoryId)
+      .map(skill => skill.position ?? 0);
+
+    return positions.length
+      ? Math.max(...positions) + 1
+      : 0;
   }
 
   private normalizeColor(value: string): string | null {

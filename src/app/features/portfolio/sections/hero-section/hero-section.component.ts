@@ -1,21 +1,48 @@
 import {
   Component,
+  DestroyRef,
   computed,
   effect,
   inject,
-  input,
   signal,
   untracked
 } from '@angular/core';
 
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+
 import { RouterLink } from '@angular/router';
+
+import { catchError, of } from 'rxjs';
 
 import { TranslatePipe } from '@ngx-translate/core';
 
-import { AboutPublic } from '../../../../core/models/about.model';
-import { Technology } from '../../../../core/models/technology.model';
-import { LanguageService } from '../../../../core/services/language.service';
-import { TechnologyService } from '../../../../core/services/technology.service';
+import {
+  resolveMediaUrl
+} from '../../../../core/http/media-url';
+
+import {
+  AppLang
+} from '../../../../core/models/common.model';
+
+import {
+  CvPublic
+} from '../../../../core/models/cv.model';
+
+import {
+  Technology
+} from '../../../../core/models/technology.model';
+
+import {
+  CvService
+} from '../../../../core/services/cv.service';
+
+import {
+  LanguageService
+} from '../../../../core/services/language.service';
+
+import {
+  TechnologyService
+} from '../../../../core/services/technology.service';
 
 @Component({
   selector: 'app-hero-section',
@@ -29,6 +56,7 @@ import { TechnologyService } from '../../../../core/services/technology.service'
              px-6 py-12 shadow-[0_30px_90px_-55px_rgba(15,23,42,0.55)]
              sm:px-10 sm:py-16 lg:px-16"
     >
+      <!-- Décoration -->
       <div
         class="pointer-events-none absolute -right-32 -top-32 h-96 w-96
                rounded-full bg-indigo-500/15 blur-3xl"
@@ -53,7 +81,8 @@ import { TechnologyService } from '../../../../core/services/technology.service'
         class="relative grid items-center gap-12
                lg:grid-cols-[minmax(0,1.12fr)_minmax(0,0.88fr)]"
       >
-        <div>
+        <!-- Présentation statique traduite -->
+        <div class="min-w-0">
           <span
             class="inline-flex items-center gap-2 rounded-full border
                    border-[var(--p-primary-color)]/25
@@ -61,19 +90,12 @@ import { TechnologyService } from '../../../../core/services/technology.service'
                    text-xs font-semibold uppercase tracking-[0.14em]
                    text-[var(--p-primary-color)]"
           >
-            <span class="relative flex h-2 w-2" aria-hidden="true">
-              <span
-                class="absolute inline-flex h-full w-full animate-ping
-                       rounded-full bg-[var(--p-primary-color)] opacity-60"
-              ></span>
+            <i
+              class="pi pi-code text-sm"
+              aria-hidden="true"
+            ></i>
 
-              <span
-                class="relative inline-flex h-2 w-2 rounded-full
-                       bg-[var(--p-primary-color)]"
-              ></span>
-            </span>
-
-            {{ 'portfolio.heroEyebrow' | translate }}
+            {{ 'hero.role' | translate }}
           </span>
 
           <h1
@@ -81,19 +103,21 @@ import { TechnologyService } from '../../../../core/services/technology.service'
                    leading-[1.05] tracking-[-0.055em] sm:text-5xl
                    lg:text-[3.75rem]"
           >
-            {{ 'portfolio.heroTitle' | translate }}
+            {{ 'hero.firstName' | translate }}
+
+            <span class="text-[var(--p-primary-color)]">
+              {{ 'hero.lastName' | translate }}
+            </span>
           </h1>
 
           <p
             class="mt-6 max-w-2xl text-base leading-8
                    text-[var(--app-text-muted)] sm:text-lg"
           >
-            {{
-              about()?.description ||
-                ('portfolio.heroText' | translate)
-            }}
+            {{ 'hero.description' | translate }}
           </p>
 
+          <!-- Actions -->
           <div class="mt-8 flex flex-wrap items-center gap-3">
             <a
               routerLink="/"
@@ -114,8 +138,8 @@ import { TechnologyService } from '../../../../core/services/technology.service'
             </a>
 
             <a
-              routerLink="/cv"
-              [queryParams]="{ download: 1 }"
+              [attr.href]="cvDownloadUrl()"
+              [attr.aria-disabled]="cvDownloadUrl() ? null : 'true'"
               class="inline-flex min-h-12 items-center justify-center
                      gap-2 rounded-xl border border-[var(--app-border)]
                      bg-[var(--app-surface)] px-6 py-3 text-sm
@@ -132,58 +156,93 @@ import { TechnologyService } from '../../../../core/services/technology.service'
             </a>
           </div>
 
-          @if (about(); as info) {
+          <!-- Technologies : icônes uniquement -->
+          @if (loading() || technologies().length) {
             <div
-              class="mt-9 flex flex-wrap items-center gap-x-6 gap-y-3
-                     border-t border-[var(--app-border)] pt-6 text-sm"
+              class="mt-9 border-t border-[var(--app-border)] pt-6"
+              [attr.aria-busy]="loading()"
             >
-              @if (info.availability) {
-                <span class="inline-flex items-center gap-2 font-medium">
-                  <span
-                    class="inline-grid h-7 w-7 place-items-center rounded-lg
-                           bg-emerald-500/10 text-emerald-600
-                           dark:text-emerald-400"
-                  >
-                    <i
-                      class="pi pi-check-circle text-xs"
-                      aria-hidden="true"
-                    ></i>
-                  </span>
-
-                  {{ info.availability }}
-                </span>
-              }
-
-              @if (info.location) {
-                <span class="inline-flex items-center gap-2">
-                  <i
-                    class="pi pi-map-marker text-[var(--p-primary-color)]"
-                    aria-hidden="true"
-                  ></i>
-
-                  {{ info.location }}
-                </span>
-              }
-
-              @if (info.email) {
-                <a
-                  [href]="'mailto:' + info.email"
-                  class="inline-flex min-w-0 items-center gap-2
-                         transition hover:text-[var(--p-primary-color)]"
+              @if (loading()) {
+                <div
+                  class="flex flex-wrap gap-3"
+                  aria-hidden="true"
                 >
-                  <i
-                    class="pi pi-envelope text-[var(--p-primary-color)]"
-                    aria-hidden="true"
-                  ></i>
+                  @for (item of [1, 2, 3, 4, 5, 6]; track item) {
+                    <div
+                      class="h-14 w-14 animate-pulse rounded-2xl
+                             bg-[var(--app-surface-muted)]"
+                    ></div>
+                  }
+                </div>
+              } @else {
+                <div class="flex flex-wrap gap-3">
+                  @for (
+                    technology of technologies();
+                    track technology.id
+                  ) {
+                    <div
+                      tabindex="0"
+                      class="group relative inline-grid h-14 w-14
+                             shrink-0 place-items-center rounded-2xl
+                             border border-white/60 bg-white/60
+                             shadow-sm backdrop-blur-md transition
+                             hover:-translate-y-1
+                             hover:border-[var(--p-primary-color)]
+                             hover:shadow-[0_14px_28px_-16px_rgba(79,70,229,0.6)]
+                             focus-visible:-translate-y-1
+                             focus-visible:outline
+                             focus-visible:outline-2
+                             focus-visible:outline-offset-2
+                             focus-visible:outline-[var(--p-primary-color)]
+                             dark:border-white/10
+                             dark:bg-white/[0.05]"
+                      [attr.aria-label]="technology.name"
+                    >
+                      @if (technologyImage(technology); as image) {
+                        <img
+                          [src]="image"
+                          alt=""
+                          class="h-8 w-8 object-contain"
+                          loading="lazy"
+                        />
+                      } @else {
+                        <span
+                          aria-hidden="true"
+                          class="text-lg font-bold"
+                          [style.color]="
+                            technology.color ||
+                            'var(--p-primary-color)'
+                          "
+                        >
+                          {{ technology.name.charAt(0) }}
+                        </span>
+                      }
 
-                  <span class="truncate">{{ info.email }}</span>
-                </a>
+                      <!-- Nom au survol et au focus clavier -->
+                      <span
+                        aria-hidden="true"
+                        class="pointer-events-none absolute bottom-full
+                               start-1/2 z-20 mb-2
+                               -translate-x-1/2 whitespace-nowrap
+                               rounded-lg bg-[var(--app-text)]
+                               px-2.5 py-1.5 text-xs font-semibold
+                               text-[var(--app-surface)] opacity-0
+                               shadow-lg transition
+                               group-hover:opacity-100
+                               group-focus-visible:opacity-100
+                               rtl:translate-x-1/2"
+                      >
+                        {{ technology.name }}
+                      </span>
+                    </div>
+                  }
+                </div>
               }
             </div>
           }
         </div>
 
-        <!-- Carte profil / code -->
+        <!-- Carte profil statique traduite -->
         <div class="relative mx-auto w-full max-w-md lg:mx-0">
           <div
             class="absolute -inset-4 rounded-[2rem] bg-gradient-to-br
@@ -194,13 +253,15 @@ import { TechnologyService } from '../../../../core/services/technology.service'
 
           <div
             class="relative overflow-hidden rounded-3xl border
-                   border-white/60 bg-white/70 shadow-[0_30px_80px_-45px_rgba(15,23,42,0.55)]
+                   border-white/60 bg-white/70
+                   shadow-[0_30px_80px_-45px_rgba(15,23,42,0.55)]
                    backdrop-blur-xl dark:border-white/10
                    dark:bg-white/[0.06]"
           >
+            <!-- En-tête de la carte -->
             <div
-              class="flex items-center gap-2 border-b border-[var(--app-border)]
-                     px-5 py-3.5"
+              class="flex items-center gap-2 border-b
+                     border-[var(--app-border)] px-5 py-3.5"
             >
               <span
                 class="h-2.5 w-2.5 rounded-full bg-red-400"
@@ -218,149 +279,144 @@ import { TechnologyService } from '../../../../core/services/technology.service'
               ></span>
 
               <span
-                class="ms-2 font-mono text-xs text-[var(--app-text-muted)]"
+                class="ms-2 font-mono text-xs
+                       text-[var(--app-text-muted)]"
               >
                 profile.ts
               </span>
             </div>
 
-            <div class="space-y-1 p-5 font-mono text-[0.78rem] leading-7">
-              <p class="text-[var(--app-text-muted)]">
+            <!-- Contenu de la carte -->
+            <div
+              dir="ltr"
+              class="space-y-2 break-words p-5 text-left font-mono
+                     text-[0.78rem] leading-7 sm:p-6"
+            >
+              <p>
                 <span class="text-fuchsia-500">const</span>
                 <span class="text-sky-500"> profile</span>
-                <span class="text-[var(--app-text-muted)]"> = {{ '{' }}</span>
+                <span class="text-[var(--app-text-muted)]">
+                  = {{ '{' }}
+                </span>
               </p>
 
               <p class="ps-4">
                 <span class="text-emerald-600 dark:text-emerald-400">
-                  role
+                  name
                 </span>
                 <span class="text-[var(--app-text-muted)]">: </span>
                 <span class="text-amber-600 dark:text-amber-400">
-                  '{{ 'app.tagline' | translate }}'
+                  '<bdi>{{ 'hero.firstName' | translate }} {{ 'hero.lastName' | translate }}</bdi>'
                 </span>
                 <span class="text-[var(--app-text-muted)]">,</span>
               </p>
 
-              <p class="ps-4">
-                <span class="text-emerald-600 dark:text-emerald-400">
-                  location
-                </span>
-                <span class="text-[var(--app-text-muted)]">: </span>
-                <span class="text-amber-600 dark:text-amber-400">
-                  '{{ about()?.location || '—' }}'
-                </span>
-                <span class="text-[var(--app-text-muted)]">,</span>
-              </p>
-
-              <p class="ps-4">
-                <span class="text-emerald-600 dark:text-emerald-400">
-                  availability
-                </span>
-                <span class="text-[var(--app-text-muted)]">: </span>
-                <span class="text-amber-600 dark:text-amber-400">
-                  '{{ about()?.availability || '—' }}'
-                </span>
-                <span class="text-[var(--app-text-muted)]">,</span>
-              </p>
-
-              <p class="ps-4">
-                <span class="text-emerald-600 dark:text-emerald-400">
-                  email
-                </span>
-                <span class="text-[var(--app-text-muted)]">: </span>
-
-                @if (about()?.email; as email) {
-                  <a
-                    [href]="'mailto:' + email"
-                    class="break-all text-sky-600 hover:underline
-                           dark:text-sky-400"
-                  >
-                    '{{ email }}'
-                  </a>
-                } @else {
-                  <span class="text-amber-600 dark:text-amber-400">
-                    '—'
+              @for (field of profileFields; track field.key) {
+                <p class="ps-4">
+                  <span class="text-emerald-600 dark:text-emerald-400">
+                    {{ field.key }}
                   </span>
-                }
-              </p>
-
-              <p class="text-[var(--app-text-muted)]">{{ '}' }};</p>
-            </div>
-
-            <div class="border-t border-[var(--app-border)] p-5">
-              @if (stack().length) {
-                <p
-                  class="text-[0.65rem] font-bold uppercase tracking-[0.16em]
-                         text-[var(--app-text-muted)]"
-                >
-                  {{ 'home.stackLabel' | translate }}
+                  <span class="text-[var(--app-text-muted)]">: </span>
+                  <span class="text-amber-600 dark:text-amber-400">
+                    '<bdi>{{ field.translationKey | translate }}</bdi>'
+                  </span>
+                  <span class="text-[var(--app-text-muted)]">,</span>
                 </p>
-
-                <div class="mt-3 flex flex-wrap gap-1.5">
-                  @for (technology of stack(); track technology.id) {
-                    <span
-                      class="rounded-lg border border-[var(--app-border)]
-                             bg-[var(--app-surface)]/70 px-2.5 py-1
-                             font-mono text-[0.68rem] font-medium"
-                    >
-                      {{ technology.name }}
-                    </span>
-                  }
-                </div>
               }
+
+              <p class="text-[var(--app-text-muted)]">
+                {{ '}' }};
+              </p>
             </div>
           </div>
-
-          @if (about()?.availability) {
-            <span
-              class="absolute -bottom-4 start-6 inline-flex items-center
-                     gap-2 rounded-full border border-emerald-300/60
-                     bg-emerald-50 px-3.5 py-2 text-xs font-semibold
-                     text-emerald-700 shadow-lg dark:border-emerald-700/50
-                     dark:bg-emerald-950/80 dark:text-emerald-300"
-            >
-              <span
-                class="h-2 w-2 rounded-full bg-emerald-500"
-                aria-hidden="true"
-              ></span>
-
-              {{ about()?.availability }}
-            </span>
-          }
         </div>
       </div>
     </section>
   `
 })
 export class HeroSectionComponent {
-  readonly about = input<AboutPublic | null>(null);
-
   private readonly technologyService = inject(TechnologyService);
+  private readonly cvService = inject(CvService);
   private readonly language = inject(LanguageService);
+  private readonly destroyRef = inject(DestroyRef);
 
-  readonly technologies = signal<Technology[]>([]);
+  private readonly technologyItems = signal<Technology[]>([]);
+  private readonly cvItems = signal<CvPublic[]>([]);
 
-  readonly stack = computed(() =>
-    [...this.technologies()]
-      .sort((a, b) => a.position - b.position)
-      .slice(0, 5)
+  readonly loading = signal(true);
+
+  readonly technologies = computed(() =>
+    [...this.technologyItems()].sort(
+      (a, b) => a.position - b.position
+    )
   );
 
+  readonly cvDownloadUrl = computed(() => {
+    const cvs = this.cvItems();
+
+    if (!cvs.length) {
+      return null;
+    }
+
+    const preferred: AppLang[] = [
+      this.language.current(),
+      'fr',
+      'en',
+      'ar'
+    ];
+
+    for (const code of preferred) {
+      if (cvs.some(cv => cv.locale === code)) {
+        return this.cvService.downloadUrl(code);
+      }
+    }
+
+    return null;
+  });
+
+  readonly profileFields = [
+    {
+      key: 'role',
+      translationKey: 'hero.role'
+    },
+    {
+      key: 'focus',
+      translationKey: 'hero.focus'
+    }
+  ] as const;
+
   constructor() {
-    effect(() => {
+    effect(onCleanup => {
       this.language.current();
 
-      untracked(() => this.loadTechnologies());
+      const subscription = untracked(() => {
+        this.loading.set(true);
+
+        return this.technologyService
+          .getPublicTechnologies()
+          .subscribe({
+            next: technologies => {
+              this.technologyItems.set(technologies);
+              this.loading.set(false);
+            },
+
+            error: () => {
+              this.technologyItems.set([]);
+              this.loading.set(false);
+            }
+          });
+      });
+
+      onCleanup(() => subscription.unsubscribe());
     });
+
+    this.cvService.getPublicCvs().pipe(
+      takeUntilDestroyed(this.destroyRef),
+      catchError(() => of([] as CvPublic[]))
+    ).subscribe(cvs => this.cvItems.set(cvs));
   }
 
-  private loadTechnologies(): void {
-    this.technologyService
-      .getPublicTechnologies()
-      .subscribe({
-        next: technologies => this.technologies.set(technologies),
-        error: () => this.technologies.set([])
-      });
+  technologyImage(technology: Technology): string | null {
+    return resolveMediaUrl(technology.imageUrl);
   }
 }

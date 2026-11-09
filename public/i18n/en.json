@@ -1,7 +1,7 @@
 ﻿{
   "app": {
-    "name": "Portefolio",
-    "tagline": "Full Stack Developer"
+    "name": "Abdelkader SNIHA",
+    "tagline": "Software Engineer"
   },
   "nav": {
     "main": "Main navigation",
@@ -26,7 +26,8 @@
     "system": "System"
   },
   "footer": {
-    "description": "Developer portfolio — projects, skills and contact."
+  "description": "Developer portfolio — projects, skills and contact.",
+  "copyright": "© 2026 Abdelkader SNIHA. All rights reserved."
   },
   "header": {
     "account": "My account",
@@ -172,7 +173,10 @@
         "email": "A valid email address is required.",
         "subject": "Subject is required.",
         "message": "The message must contain at least 20 characters."
-      }
+      },
+      "phoneLabel": "Phone",
+      "socialTitle": "Find me online",
+      "opensNewTab": "Opens in a new tab"
     },
     "cv": {
       "title": "Resume",
@@ -193,6 +197,7 @@
     "dashboard": "Dashboard",
     "content": "Content",
     "about": "About",
+    "cv": "CV",
     "timeline": "Timeline",
     "technologies": "Technologies",
     "skills": "Skills",
@@ -247,6 +252,70 @@
     "messages": {
       "title": "Messages",
       "subtitle": "Read contact messages."
+    }
+  },
+  "adminDashboard": {
+    "refresh": "Refresh",
+    "updatedAt": "Last updated:",
+    "kpi": {
+      "projects": "Projects",
+      "projectsHint": "Published: {{published}} · Drafts: {{draft}}",
+      "reviews": "Reviews",
+      "reviewsHint": "Pending: {{pending}} · Approved: {{approved}}",
+      "messages": "Messages",
+      "messagesHint": "Unread: {{unread}} · Read: {{read}}",
+      "rating": "Average rating",
+      "ratingHint": "Average of approved reviews ({{count}}).",
+      "technologies": "Technologies",
+      "technologiesHint": "Referenced in the catalog.",
+      "skills": "Skills",
+      "skillsHint": "Organized by category.",
+      "services": "Services",
+      "servicesHint": "Services offered to visitors.",
+      "timeline": "Timeline",
+      "timelineHint": "Experience: {{experiences}} · Education: {{educations}}"
+    },
+    "charts": {
+      "activityTitle": "Activity over the last {{months}} months",
+      "activitySubtitle": "Projects, reviews and messages created over the last {{months}} months.",
+      "months": "{{count}} months",
+      "reviewsStatusTitle": "Review status",
+      "reviewsStatusSubtitle": "Distribution of received reviews.",
+      "projectsTechTitle": "Projects by technology",
+      "projectsTechSubtitle": "Top 8 most used technologies.",
+      "skillsCategoryTitle": "Skills by category",
+      "skillsCategorySubtitle": "Top 8 categories by skill count.",
+      "reviewsRatingTitle": "Review ratings",
+      "reviewsRatingSubtitle": "Distribution of ratings from 1 to 5.",
+      "projectsStatusTitle": "Project status",
+      "projectsStatusSubtitle": "Published projects and drafts.",
+      "messagesStatusTitle": "Message status",
+      "messagesStatusSubtitle": "Read and unread messages.",
+      "timelineTypeTitle": "Timeline by type",
+      "timelineTypeSubtitle": "Experiences and education.",
+      "noData": "No data available yet."
+    },
+    "series": {
+      "projects": "Projects",
+      "reviews": "Reviews",
+      "messages": "Messages",
+      "skills": "Skills"
+    },
+    "status": {
+      "published": "Published",
+      "draft": "Draft",
+      "approved": "Approved",
+      "rejected": "Rejected",
+      "pending": "Pending",
+      "unread": "Unread",
+      "read": "Read",
+      "experience": "Experience",
+      "education": "Education"
+    },
+    "recent": {
+      "title": "Recent activity",
+      "subtitle": "Latest projects, reviews and messages.",
+      "empty": "No recent activity."
     }
   },
   "adminCategories": {
@@ -429,6 +498,30 @@
     "deletedSuccess": "The service was deleted.",
     "genericError": "Unable to complete the operation. Please try again."
   },
+  "adminCv": {
+    "title": "CV",
+    "subtitle": "Manage the PDF files of your CV for each site language.",
+    "refresh": "Refresh",
+    "available": "Available",
+    "missing": "No file",
+    "noCv": "No CV for this language.",
+    "upload": "Add a PDF",
+    "replace": "Replace",
+    "delete": "Delete",
+    "cancel": "Cancel",
+    "open": "Open",
+    "formatHelp": "PDF file only, 20 MB maximum.",
+    "pdfOnly": "Only PDF files are accepted.",
+    "sizeError": "The file exceeds the maximum allowed size of 20 MB.",
+    "uploadError": "Unable to upload the CV. Please try again.",
+    "deleteError": "Unable to delete the CV. Please try again.",
+    "deleteTitle": "Delete CV",
+    "deleteQuestion": "Confirm deletion of the {{language}} CV?",
+    "uploaded": "The CV has been saved.",
+    "deleted": "The CV has been deleted.",
+    "success": "Operation successful",
+    "error": "Error"
+  },
   "adminProjects": {
     "title": "Projects",
     "subtitle": "Manage portfolio projects and showcases.",
@@ -470,15 +563,24 @@
     "video": "Presentation video",
     "videoType": "Video type",
     "videoUpload": "Upload video file",
-    "videoUrlOption": "External or YouTube link",
+    "videoUrlOption": "YouTube link",
+    "videoUrlHelp": "Paste a valid YouTube link (e.g. https://www.youtube.com/watch?v=... or https://youtu.be/...).",
     "videoHelp": "Optional. Upload a video file (MP4, WEBM, MOV - max 50 MB) or provide a YouTube link (e.g. https://youtube.com/watch?v=...).",
     "uploadVideo": "Choose a video",
     "videoUploading": "Uploading video...",
-    "removeVideo": "Remove video",
+    "videoUploadedFile": "Uploaded video",
+    "videoExternalLink": "External video link",
+    "videoAlreadySet": "A video is already linked to this project. Remove it to change the source (upload or YouTube link).",
+    "videoUrlInvalid": "Invalid YouTube link. Use a URL such as https://www.youtube.com/watch?v=... or https://youtu.be/...",
+    "removeVideo": "Delete video",
     "videoSizeError": "The video exceeds the maximum allowed size of 50 MB.",
     "videoUploadError": "Unable to upload video. Please try again.",
     "images": "Image gallery",
     "imagesHelp": "Optional. Add multiple images or screenshots. The first image will be the primary cover (max 10 MB per image).",
+    "imageReorderHelp": "Drag and drop the images to change their order, or use the arrows. The first image is used as the cover.",
+    "dragToReorder": "Drag to reorder",
+    "moveImageLeft": "Move left",
+    "moveImageRight": "Move right",
     "uploadImages": "Add images",
     "imagesUploading": "Uploading images...",
     "noImages": "No images added yet.",
@@ -781,5 +883,12 @@
     "markedAsReadSuccess": "The message has been marked as read.",
     "markedAsUnreadSuccess": "The message has been marked as unread.",
     "deletedSuccess": "The message has been deleted successfully."
-  }
+  },
+  "hero": {
+  "firstName": "Abdelkader",
+  "lastName": "SNIHA",
+  "role": "Software Engineer",
+  "description": "Passionate about designing secure, scalable, and intelligent software solutions. Specialized in full-stack development, cloud-native architectures, DevOps, and AI-driven applications.",
+  "focus": "Full Stack, DevOps, Security & Artificial Intelligence"
+}
 }

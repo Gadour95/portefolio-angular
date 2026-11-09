@@ -1,9 +1,12 @@
 import {
   Component,
+  DestroyRef,
+  ElementRef,
   effect,
   inject,
   signal,
-  untracked
+  untracked,
+  viewChild
 } from '@angular/core';
 
 import {
@@ -23,10 +26,17 @@ import {
   resolveMediaUrl
 } from '../../../../core/http/media-url';
 
-import { Review } from '../../../../core/models/review.model';
+import {
+  Review
+} from '../../../../core/models/review.model';
 
-import { LanguageService } from '../../../../core/services/language.service';
-import { ReviewService } from '../../../../core/services/review.service';
+import {
+  LanguageService
+} from '../../../../core/services/language.service';
+
+import {
+  ReviewService
+} from '../../../../core/services/review.service';
 
 type ReviewControlName =
   | 'fullName'
@@ -40,118 +50,126 @@ type ReviewControlName =
   imports: [ReactiveFormsModule, TranslatePipe],
 
   template: `
-    <section id="reviews" class="scroll-mt-32">
-      <div class="max-w-2xl">
-        <p
-          class="text-xs font-bold uppercase tracking-[0.14em]
-                 text-[var(--p-primary-color)]"
-        >
-          {{ 'home.reviewsEyebrow' | translate }}
-        </p>
+    <section id="reviews" class="scroll-mt-32 py-4">
+      <!-- En-tête -->
+      <div
+        class="flex flex-col justify-between gap-6
+               sm:flex-row sm:items-end"
+      >
+        <div class="max-w-2xl">
+          <div class="flex items-center gap-3">
+            <span
+              class="h-px w-9 bg-[var(--p-primary-color)]"
+              aria-hidden="true"
+            ></span>
 
-        <h2
-          class="mt-2 text-2xl font-bold tracking-[-0.035em] sm:text-3xl"
-        >
-          {{ 'publicPages.reviews.title' | translate }}
-        </h2>
+            <p
+              class="text-xs font-bold uppercase tracking-[0.2em]
+                     text-[var(--p-primary-color)]"
+            >
+              {{ 'home.reviewsEyebrow' | translate }}
+            </p>
+          </div>
 
-        <p class="mt-3 leading-7 text-[var(--app-text-muted)]">
-          {{ 'publicPages.reviews.subtitle' | translate }}
-        </p>
+          <h2
+            class="mt-4 text-3xl font-bold tracking-[-0.045em]
+                   sm:text-4xl"
+          >
+            {{ 'publicPages.reviews.title' | translate }}
+          </h2>
+
+          <p class="mt-3 leading-7 text-[var(--app-text-muted)]">
+            {{ 'publicPages.reviews.subtitle' | translate }}
+          </p>
+        </div>
+
+        <button
+          type="button"
+          class="primary-button shrink-0 self-start sm:self-auto"
+          aria-haspopup="dialog"
+          (click)="openModal()"
+        >
+          <i class="pi pi-pencil text-sm" aria-hidden="true"></i>
+
+          {{ 'publicPages.reviews.formTitle' | translate }}
+
+          <i
+            class="pi pi-arrow-up-right text-xs rtl:-rotate-90"
+            aria-hidden="true"
+          ></i>
+        </button>
       </div>
 
-      <div
-        class="mt-8 grid items-start gap-6
-               lg:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)]"
-      >
-        <!-- Liste des avis -->
-        <div class="space-y-4">
-          @if (loading()) {
-            @for (item of [1, 2, 3]; track item) {
+      <!-- Avis -->
+      <div class="mt-8" [attr.aria-busy]="loading()">
+        @if (loading()) {
+          <div
+            class="grid gap-4 sm:grid-cols-2 lg:gap-5"
+            aria-hidden="true"
+          >
+            @for (item of [1, 2, 3, 4]; track item) {
               <div
-                class="h-48 animate-pulse rounded-3xl
+                class="h-56 animate-pulse rounded-3xl
                        bg-[var(--app-surface-muted)]"
               ></div>
             }
-          } @else if (!reviews().length) {
-            <div
-              class="rounded-3xl border border-dashed
-                     border-[var(--app-border)] bg-[var(--app-surface)]
-                     p-10 text-center"
+          </div>
+        } @else if (!reviews().length) {
+          <div
+            class="rounded-3xl border border-dashed
+                   border-[var(--app-border)] px-6 py-14 text-center"
+          >
+            <span
+              class="mx-auto grid h-14 w-14 place-items-center
+                     rounded-2xl bg-[var(--app-surface-muted)]
+                     text-[var(--p-primary-color)]"
+              aria-hidden="true"
             >
-              <i
-                class="pi pi-star text-4xl text-[var(--app-text-muted)]"
-                aria-hidden="true"
-              ></i>
+              <i class="pi pi-comments text-2xl"></i>
+            </span>
 
-              <p class="mt-4 text-sm text-[var(--app-text-muted)]">
-                {{ 'publicPages.reviews.empty' | translate }}
-              </p>
-            </div>
-          } @else {
+            <p class="mt-4 text-sm text-[var(--app-text-muted)]">
+              {{ 'publicPages.reviews.empty' | translate }}
+            </p>
+          </div>
+        } @else {
+          <div class="grid gap-4 sm:grid-cols-2 lg:gap-5">
             @for (review of reviews(); track review.id) {
-              <article
-                class="group relative overflow-hidden rounded-3xl border
-                       border-[var(--app-border)] bg-[var(--app-surface)]
-                       p-6 transition hover:border-[var(--p-primary-color)]/40
-                       hover:shadow-[0_20px_50px_-38px_rgba(79,70,229,0.55)]
-                       sm:p-7"
-              >
-                <span
-                  class="pointer-events-none absolute -top-4 end-4
-                         select-none font-serif text-[6.5rem] leading-none
-                         text-[var(--p-primary-color)]/10"
-                  aria-hidden="true"
-                >
-                  ”
-                </span>
-
-                <span
-                  class="inline-grid h-9 w-9 place-items-center rounded-xl
-                         bg-[var(--p-primary-color)]/10
-                         text-[var(--p-primary-color)]"
-                  aria-hidden="true"
-                >
-                  <i class="pi pi-comment text-sm"></i>
-                </span>
-
-                <p
-                  class="relative mt-4 text-[0.95rem] leading-8
-                         text-[var(--app-text-muted)]"
-                >
-                  {{ review.description }}
-                </p>
-
-                <div
-                  class="mt-5 flex flex-wrap items-center gap-3
-                         border-t border-[var(--app-border)] pt-5"
-                >
+              <article class="review-card">
+                <!-- Identité en haut -->
+                <div class="relative flex items-start gap-3">
                   @if (reviewImage(review); as image) {
                     <img
                       [src]="image"
                       [alt]="review.fullName"
-                      class="h-11 w-11 shrink-0 rounded-full object-cover"
+                      class="h-12 w-12 shrink-0 rounded-2xl
+                             object-cover"
                       loading="lazy"
                     />
                   } @else {
                     <span
-                      class="inline-grid h-11 w-11 shrink-0 place-items-center
-                             rounded-full bg-[var(--app-surface-muted)]
+                      class="inline-grid h-12 w-12 shrink-0
+                             place-items-center rounded-2xl
+                             bg-[var(--app-surface-muted)]
                              text-sm font-bold
                              text-[var(--p-primary-color)]"
+                      aria-hidden="true"
                     >
                       {{ initials(review.fullName) }}
                     </span>
                   }
 
-                  <div class="min-w-0 flex-1">
-                    <p class="truncate text-sm font-semibold">
+                  <div class="min-w-0 flex-1 pt-0.5">
+                    <h3
+                      class="break-words text-sm font-bold
+                             leading-6 sm:text-base"
+                    >
                       {{ review.fullName }}
-                    </p>
+                    </h3>
 
                     @if (review.jobTitle) {
                       <p
-                        class="truncate text-xs
+                        class="mt-0.5 break-words text-xs leading-5
                                text-[var(--app-text-muted)]"
                       >
                         {{ review.jobTitle }}
@@ -159,263 +177,738 @@ type ReviewControlName =
                     }
                   </div>
 
-                  <div class="flex flex-col items-end gap-1">
-                    <div
-                      class="flex items-center gap-0.5"
-                      [attr.aria-label]="
-                        ('publicPages.reviews.rating' | translate) +
-                        ': ' +
-                        review.rating +
-                        '/5'
-                      "
-                    >
-                      @for (star of stars; track star) {
-                        <i
-                          class="pi pi-star-fill text-[0.7rem]"
-                          [style.color]="
-                            star <= review.rating
-                              ? '#f59e0b'
-                              : 'var(--app-border)'
-                          "
-                          aria-hidden="true"
-                        ></i>
-                      }
-                    </div>
-
-                    <time
-                      class="text-[0.68rem] text-[var(--app-text-muted)]"
-                      [attr.datetime]="review.createdAt"
-                    >
-                      {{ formatDate(review.createdAt) }}
-                    </time>
-                  </div>
-                </div>
-              </article>
-            }
-          }
-        </div>
-
-        <!-- Formulaire -->
-        <aside
-          class="rounded-3xl border border-[var(--app-border)]
-                 bg-[var(--app-surface)] p-6 lg:sticky lg:top-32 sm:p-7"
-        >
-          <span
-            class="inline-grid h-10 w-10 place-items-center rounded-xl
-                   bg-[var(--p-primary-color)]/10
-                   text-[var(--p-primary-color)]"
-            aria-hidden="true"
-          >
-            <i class="pi pi-pencil text-sm"></i>
-          </span>
-
-          <h3 class="mt-4 text-lg font-bold">
-            {{ 'publicPages.reviews.formTitle' | translate }}
-          </h3>
-
-          <p class="mt-1.5 text-sm leading-6 app-muted">
-            {{ 'publicPages.reviews.formText' | translate }}
-          </p>
-
-          @if (success()) {
-            <div
-              class="mt-5 rounded-xl border border-emerald-300
-                     bg-emerald-50 p-4 text-sm text-emerald-800
-                     dark:border-emerald-800 dark:bg-emerald-950/40
-                     dark:text-emerald-200"
-              role="status"
-            >
-              <div class="flex items-start gap-3">
-                <i
-                  class="pi pi-check-circle mt-0.5"
-                  aria-hidden="true"
-                ></i>
-
-                <p class="flex-1">
-                  {{ 'publicPages.reviews.success' | translate }}
-                </p>
-
-                <button
-                  type="button"
-                  class="text-emerald-700 dark:text-emerald-200"
-                  [attr.aria-label]="'common.close' | translate"
-                  (click)="success.set(false)"
-                >
-                  <i
-                    class="pi pi-times text-xs"
+                  <span
+                    class="inline-grid h-8 w-8 shrink-0
+                           place-items-center rounded-xl
+                           bg-[var(--app-surface-muted)]
+                           text-[var(--p-primary-color)]"
                     aria-hidden="true"
-                  ></i>
-                </button>
-              </div>
-            </div>
-          }
+                  >
+                    <i class="pi pi-comment text-xs"></i>
+                  </span>
+                </div>
 
-          <form
-            class="mt-5 space-y-4"
-            [formGroup]="form"
-            (ngSubmit)="submit()"
-            novalidate
-          >
-            <div>
-              <label class="app-label" for="review-full-name">
-                {{ 'publicPages.reviews.fullName' | translate }}
-              </label>
+                <!-- Note et date -->
+                <div
+                  class="relative mt-5 flex flex-wrap items-center
+                         justify-between gap-2"
+                >
+                  <div
+                    class="flex items-center gap-1"
+                    [attr.aria-label]="
+                      ('publicPages.reviews.rating' | translate) +
+                      ': ' + review.rating + '/5'
+                    "
+                  >
+                    @for (star of stars; track star) {
+                      <i
+                        class="pi pi-star-fill text-xs"
+                        [style.color]="
+                          star <= review.rating
+                            ? '#f59e0b'
+                            : 'var(--app-border)'
+                        "
+                        aria-hidden="true"
+                      ></i>
+                    }
+                  </div>
 
-              <input
-                id="review-full-name"
-                type="text"
-                class="app-control w-full"
-                formControlName="fullName"
-                autocomplete="name"
-                [style.borderColor]="
-                  isInvalid('fullName') ? '#ef4444' : null
-                "
-              />
-
-              @if (isInvalid('fullName')) {
-                <p class="mt-1.5 text-xs text-red-600">
-                  {{ 'publicPages.reviews.errors.fullName' | translate }}
-                </p>
-              }
-            </div>
-
-            <div>
-              <label class="app-label" for="review-job-title">
-                {{ 'publicPages.reviews.jobTitle' | translate }}
-              </label>
-
-              <input
-                id="review-job-title"
-                type="text"
-                class="app-control w-full"
-                formControlName="jobTitle"
-                autocomplete="organization-title"
-                [style.borderColor]="
-                  isInvalid('jobTitle') ? '#ef4444' : null
-                "
-              />
-
-              @if (isInvalid('jobTitle')) {
-                <p class="mt-1.5 text-xs text-red-600">
-                  {{ 'publicPages.reviews.errors.jobTitle' | translate }}
-                </p>
-              }
-            </div>
-
-            <div>
-              <span class="app-label">
-                {{ 'publicPages.reviews.rating' | translate }}
-              </span>
-
-              <div class="flex items-center gap-1">
-                @for (star of stars; track star) {
-                  <button
-                    type="button"
-                    class="rounded p-0.5 transition hover:scale-110"
-                    [attr.aria-label]="star + ' / 5'"
-                    [attr.aria-pressed]="ratingValue() === star"
-                    (click)="setRating(star)"
+                  <time
+                    class="inline-flex items-center gap-1.5
+                           text-[0.68rem]
+                           text-[var(--app-text-muted)]"
+                    [attr.datetime]="review.createdAt"
                   >
                     <i
-                      class="pi pi-star-fill text-2xl"
-                      [style.color]="
-                        star <= ratingValue()
-                          ? '#f59e0b'
-                          : 'var(--app-border)'
-                      "
+                      class="pi pi-calendar text-[0.65rem]"
                       aria-hidden="true"
                     ></i>
-                  </button>
+
+                    {{ formatDate(review.createdAt) }}
+                  </time>
+                </div>
+
+                <!-- Texte de l'avis en bas -->
+                <blockquote
+                  class="relative mt-4 border-t
+                         border-[var(--app-border)] pt-4"
+                >
+                  <p
+                    class="whitespace-pre-line break-words
+                           text-sm leading-7
+                           text-[var(--app-text-muted)]"
+                  >
+                    {{ review.description }}
+                  </p>
+                </blockquote>
+              </article>
+            }
+          </div>
+        }
+      </div>
+    </section>
+
+    <!-- Modale -->
+    <dialog
+      #reviewDialog
+      class="review-dialog"
+      aria-labelledby="review-dialog-title"
+      aria-describedby="review-dialog-description"
+      (click)="onBackdropClick($event)"
+      (cancel)="onDialogCancel($event)"
+    >
+      <div class="modal-content">
+        <!-- En-tête -->
+        <div class="modal-header">
+          <div class="flex items-start gap-3">
+            <span
+              class="inline-grid h-12 w-12 shrink-0
+                     place-items-center rounded-2xl
+                     bg-[var(--app-surface-muted)]
+                     text-[var(--p-primary-color)]"
+              aria-hidden="true"
+            >
+              <i class="pi pi-pencil text-lg"></i>
+            </span>
+
+            <div class="min-w-0">
+              <h3
+                id="review-dialog-title"
+                class="text-lg font-bold tracking-tight sm:text-xl"
+              >
+                {{ 'publicPages.reviews.formTitle' | translate }}
+              </h3>
+
+              <p
+                id="review-dialog-description"
+                class="mt-1 text-sm leading-6
+                       text-[var(--app-text-muted)]"
+              >
+                {{ 'publicPages.reviews.formText' | translate }}
+              </p>
+            </div>
+          </div>
+
+          <button
+            type="button"
+            class="close-button"
+            [disabled]="submitting()"
+            [attr.aria-label]="'common.close' | translate"
+            (click)="closeModal()"
+          >
+            <i class="pi pi-times text-sm" aria-hidden="true"></i>
+          </button>
+        </div>
+
+        <form
+          class="modal-form"
+          [formGroup]="form"
+          (ngSubmit)="submit()"
+          novalidate
+        >
+          <fieldset
+            class="min-w-0 space-y-5"
+            [disabled]="submitting()"
+          >
+            <!-- Nom et fonction -->
+            <div class="grid gap-5 sm:grid-cols-2">
+              <div>
+                <label class="field-label" for="review-full-name">
+                  {{ 'publicPages.reviews.fullName' | translate }}
+                </label>
+
+                <div class="input-wrapper">
+                  <i
+                    class="pi pi-user field-icon"
+                    aria-hidden="true"
+                  ></i>
+
+                  <input
+                    id="review-full-name"
+                    type="text"
+                    class="review-input"
+                    formControlName="fullName"
+                    autocomplete="name"
+                    maxlength="120"
+                    [class.field-invalid]="isInvalid('fullName')"
+                    [attr.aria-invalid]="isInvalid('fullName')"
+                    [attr.aria-describedby]="
+                      isInvalid('fullName')
+                        ? 'review-full-name-error'
+                        : null
+                    "
+                  />
+                </div>
+
+                @if (isInvalid('fullName')) {
+                  <p id="review-full-name-error" class="field-error">
+                    {{
+                      'publicPages.reviews.errors.fullName'
+                        | translate
+                    }}
+                  </p>
                 }
               </div>
 
+              <div>
+                <label class="field-label" for="review-job-title">
+                  {{ 'publicPages.reviews.jobTitle' | translate }}
+                </label>
+
+                <div class="input-wrapper">
+                  <i
+                    class="pi pi-briefcase field-icon"
+                    aria-hidden="true"
+                  ></i>
+
+                  <input
+                    id="review-job-title"
+                    type="text"
+                    class="review-input"
+                    formControlName="jobTitle"
+                    autocomplete="organization-title"
+                    maxlength="120"
+                    [class.field-invalid]="isInvalid('jobTitle')"
+                    [attr.aria-invalid]="isInvalid('jobTitle')"
+                    [attr.aria-describedby]="
+                      isInvalid('jobTitle')
+                        ? 'review-job-title-error'
+                        : null
+                    "
+                  />
+                </div>
+
+                @if (isInvalid('jobTitle')) {
+                  <p id="review-job-title-error" class="field-error">
+                    {{
+                      'publicPages.reviews.errors.jobTitle'
+                        | translate
+                    }}
+                  </p>
+                }
+              </div>
+            </div>
+
+            <!-- Note -->
+            <div class="rating-panel">
+              <span id="review-rating-label" class="field-label">
+                {{ 'publicPages.reviews.rating' | translate }}
+              </span>
+
+              <div
+                class="flex flex-wrap items-center gap-3"
+                role="group"
+                aria-labelledby="review-rating-label"
+              >
+                <div class="flex items-center gap-1">
+                  @for (star of stars; track star) {
+                    <button
+                      type="button"
+                      class="rating-button"
+                      [attr.aria-label]="star + ' / 5'"
+                      [attr.aria-pressed]="ratingValue() === star"
+                      (click)="setRating(star)"
+                    >
+                      <i
+                        class="pi pi-star-fill text-2xl"
+                        [style.color]="
+                          star <= ratingValue()
+                            ? '#f59e0b'
+                            : 'var(--app-border)'
+                        "
+                        aria-hidden="true"
+                      ></i>
+                    </button>
+                  }
+                </div>
+
+                <span
+                  class="text-sm font-semibold
+                         text-[var(--app-text-muted)]"
+                  aria-live="polite"
+                >
+                  {{ ratingValue() }} / 5
+                </span>
+              </div>
+
               @if (isInvalid('rating')) {
-                <p class="mt-1.5 text-xs text-red-600">
+                <p class="field-error">
                   {{ 'publicPages.reviews.errors.rating' | translate }}
                 </p>
               }
             </div>
 
+            <!-- Avis -->
             <div>
-              <label class="app-label" for="review-description">
+              <label class="field-label" for="review-description">
                 {{ 'publicPages.reviews.description' | translate }}
               </label>
 
               <textarea
                 id="review-description"
                 rows="4"
-                class="app-control w-full py-2"
+                class="review-textarea"
                 formControlName="description"
-                [style.borderColor]="
-                  isInvalid('description') ? '#ef4444' : null
+                maxlength="2000"
+                [class.field-invalid]="isInvalid('description')"
+                [attr.aria-invalid]="isInvalid('description')"
+                [attr.aria-describedby]="
+                  isInvalid('description')
+                    ? 'review-description-error'
+                    : null
                 "
               ></textarea>
 
-              @if (isInvalid('description')) {
-                <p class="mt-1.5 text-xs text-red-600">
-                  {{ 'publicPages.reviews.errors.description' | translate }}
-                </p>
-              }
+              <div class="mt-1.5 flex items-start justify-between gap-3">
+                <div>
+                  @if (isInvalid('description')) {
+                    <p
+                      id="review-description-error"
+                      class="field-error !mt-0"
+                    >
+                      {{
+                        'publicPages.reviews.errors.description'
+                          | translate
+                      }}
+                    </p>
+                  }
+                </div>
+
+                <span
+                  class="shrink-0 text-[0.68rem]
+                         text-[var(--app-text-muted)]"
+                >
+                  {{ form.controls.description.value.length }} / 2000
+                </span>
+              </div>
             </div>
 
+            <!-- Photo facultative -->
             <div>
-              <label class="app-label" for="review-image">
+              <label class="field-label" for="review-image">
                 {{ 'publicPages.reviews.image' | translate }}
               </label>
 
-              <input
-                id="review-image"
-                type="file"
-                accept="image/jpeg,image/png,image/webp"
-                class="block w-full text-sm text-[var(--app-text-muted)]
-                       file:me-3 file:rounded-lg file:border-0
-                       file:bg-[var(--app-surface-muted)]
-                       file:px-3 file:py-2 file:text-sm
-                       file:font-semibold file:text-[var(--app-text)]"
-                (change)="onFileSelected($event)"
-              />
+              <div class="upload-panel">
+                @if (previewUrl(); as preview) {
+                  <img
+                    [src]="preview"
+                    alt=""
+                    class="h-14 w-14 shrink-0 rounded-2xl object-cover"
+                  />
+                } @else {
+                  <span
+                    class="inline-grid h-14 w-14 shrink-0
+                           place-items-center rounded-2xl
+                           bg-[var(--app-surface)]
+                           text-[var(--p-primary-color)]"
+                    aria-hidden="true"
+                  >
+                    <i class="pi pi-camera text-xl"></i>
+                  </span>
+                }
 
-              <p class="mt-1.5 text-xs text-[var(--app-text-muted)]">
-                {{ 'publicPages.reviews.imageHelp' | translate }}
-              </p>
+                <div class="min-w-0 flex-1">
+                  <input
+                    #imageInput
+                    id="review-image"
+                    type="file"
+                    accept="image/jpeg,image/png,image/webp"
+                    class="file-input"
+                    aria-describedby="review-image-help"
+                    (change)="onFileSelected($event)"
+                  />
 
-              @if (previewUrl(); as preview) {
-                <img
-                  [src]="preview"
-                  alt=""
-                  class="mt-3 h-14 w-14 rounded-full object-cover"
-                />
-              }
+                  <p
+                    id="review-image-help"
+                    class="mt-2 text-xs leading-5
+                           text-[var(--app-text-muted)]"
+                  >
+                    {{ 'publicPages.reviews.imageHelp' | translate }}
+                  </p>
+                </div>
+
+                @if (previewUrl()) {
+                  <button
+                    type="button"
+                    class="close-button"
+                    [attr.aria-label]="'common.delete' | translate"
+                    (click)="removeImage()"
+                  >
+                    <i
+                      class="pi pi-trash text-sm"
+                      aria-hidden="true"
+                    ></i>
+                  </button>
+                }
+              </div>
             </div>
+          </fieldset>
+
+          <!-- Actions -->
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="secondary-button"
+              [disabled]="submitting()"
+              (click)="closeModal()"
+            >
+              {{ 'common.cancel' | translate }}
+            </button>
 
             <button
               type="submit"
-              class="inline-flex min-h-11 w-full items-center justify-center
-                     gap-2 rounded-xl bg-[var(--p-primary-color)] px-5
-                     py-3 text-sm font-semibold
-                     text-[var(--p-primary-inverse-color)]
-                     transition hover:bg-[var(--p-primary-hover-color)]
-                     disabled:cursor-not-allowed disabled:opacity-60"
+              class="primary-button"
               [disabled]="submitting()"
             >
               @if (submitting()) {
                 <i
-                  class="pi pi-spin pi-spinner text-xs"
+                  class="pi pi-spin pi-spinner text-sm"
                   aria-hidden="true"
                 ></i>
               } @else {
                 <i
-                  class="pi pi-send text-xs rtl:rotate-180"
+                  class="pi pi-send text-sm rtl:rotate-180"
                   aria-hidden="true"
                 ></i>
               }
 
               {{ 'publicPages.reviews.submit' | translate }}
             </button>
-          </form>
-        </aside>
+          </div>
+        </form>
       </div>
-    </section>
+    </dialog>
+  `,
+
+  styles: `
+    :host {
+      display: block;
+    }
+
+    .review-card {
+      position: relative;
+      min-width: 0;
+      overflow: hidden;
+      border: 1px solid var(--app-border);
+      border-radius: 1.5rem;
+      background: var(--app-surface);
+      padding: 1.5rem;
+      box-shadow: 0 8px 24px -22px rgb(15 23 42 / 0.25);
+      transition:
+        transform 200ms ease,
+        border-color 200ms ease,
+        box-shadow 200ms ease;
+    }
+
+    .review-card::before {
+      position: absolute;
+      inset-block: 1.5rem;
+      inset-inline-start: 0;
+      width: 3px;
+      border-radius: 0 4px 4px 0;
+      background: var(--p-primary-color);
+      opacity: 0;
+      content: '';
+      transition: opacity 200ms ease;
+    }
+
+    .review-card:hover {
+      transform: translateY(-3px);
+      border-color: var(--p-primary-color);
+      box-shadow: 0 18px 45px -32px rgb(15 23 42 / 0.4);
+    }
+
+    .review-card:hover::before {
+      opacity: 1;
+    }
+
+    .primary-button,
+    .secondary-button {
+      display: inline-flex;
+      min-height: 2.875rem;
+      align-items: center;
+      justify-content: center;
+      gap: 0.625rem;
+      border-radius: 0.875rem;
+      padding: 0.75rem 1.125rem;
+      font-size: 0.875rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition:
+        background-color 180ms ease,
+        border-color 180ms ease,
+        transform 180ms ease;
+    }
+
+    .primary-button {
+      border: 1px solid transparent;
+      background: var(--p-primary-color);
+      color: var(--p-primary-inverse-color);
+    }
+
+    .primary-button:hover:not(:disabled) {
+      background: var(--p-primary-hover-color);
+      transform: translateY(-1px);
+    }
+
+    .secondary-button {
+      border: 1px solid var(--app-border);
+      background: var(--app-surface);
+      color: var(--app-text);
+    }
+
+    .secondary-button:hover:not(:disabled) {
+      border-color: var(--p-primary-color);
+      color: var(--p-primary-color);
+    }
+
+    button:disabled {
+      cursor: not-allowed;
+      opacity: 0.6;
+    }
+
+    button:focus-visible,
+    .file-input:focus-visible {
+      outline: 2px solid var(--p-primary-color);
+      outline-offset: 3px;
+    }
+
+    .review-dialog {
+      width: min(40rem, calc(100vw - 2rem));
+      max-width: none;
+      max-height: calc(100dvh - 2rem);
+      margin: auto;
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      border: 1px solid var(--app-border);
+      border-radius: 1.75rem;
+      padding: 0;
+      background: var(--app-surface);
+      color: var(--app-text);
+      box-shadow: 0 32px 100px -24px rgb(0 0 0 / 0.45);
+    }
+
+    .review-dialog::backdrop {
+      background: rgb(2 6 23 / 0.6);
+      backdrop-filter: blur(7px);
+    }
+
+    .review-dialog[open] {
+      animation: modal-enter 200ms ease-out;
+    }
+
+    .modal-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 1rem;
+      border-bottom: 1px solid var(--app-border);
+      padding: 1.5rem;
+    }
+
+    .close-button {
+      display: inline-grid;
+      width: 2.25rem;
+      height: 2.25rem;
+      flex-shrink: 0;
+      place-items: center;
+      border: 1px solid transparent;
+      border-radius: 0.75rem;
+      background: var(--app-surface-muted);
+      color: var(--app-text-muted);
+      cursor: pointer;
+      transition:
+        color 180ms ease,
+        border-color 180ms ease;
+    }
+
+    .close-button:hover:not(:disabled) {
+      border-color: var(--app-border);
+      color: var(--app-text);
+    }
+
+    .modal-form {
+      padding: 1.5rem;
+    }
+
+    .field-label {
+      display: block;
+      margin-bottom: 0.625rem;
+      color: var(--app-text);
+      font-size: 0.8125rem;
+      font-weight: 600;
+    }
+
+    .input-wrapper {
+      position: relative;
+    }
+
+    .field-icon {
+      position: absolute;
+      inset-inline-start: 0.875rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--app-text-muted);
+      font-size: 0.875rem;
+      pointer-events: none;
+    }
+
+    .review-input,
+    .review-textarea {
+      display: block;
+      width: 100%;
+      border: 1px solid var(--app-border);
+      border-radius: 0.875rem;
+      background: var(--app-surface);
+      color: var(--app-text);
+      font-size: 0.875rem;
+      outline: none;
+      transition:
+        border-color 180ms ease,
+        box-shadow 180ms ease;
+    }
+
+    .review-input {
+      min-height: 2.875rem;
+      padding-block: 0.75rem;
+      padding-inline-start: 2.5rem;
+      padding-inline-end: 0.875rem;
+    }
+
+    .review-textarea {
+      min-height: 8rem;
+      resize: vertical;
+      padding: 0.875rem;
+      line-height: 1.75;
+    }
+
+    .review-input:focus,
+    .review-textarea:focus {
+      border-color: var(--p-primary-color);
+      box-shadow: 0 0 0 3px
+        color-mix(in srgb, var(--p-primary-color) 12%, transparent);
+    }
+
+    .field-invalid {
+      border-color: #ef4444;
+    }
+
+    .field-error {
+      margin-top: 0.375rem;
+      color: #dc2626;
+      font-size: 0.75rem;
+      line-height: 1.5;
+    }
+
+    .rating-panel {
+      border-radius: 1rem;
+      background: var(--app-surface-muted);
+      padding: 1rem;
+    }
+
+    .rating-button {
+      display: inline-grid;
+      width: 2.5rem;
+      height: 2.5rem;
+      place-items: center;
+      border-radius: 0.625rem;
+      cursor: pointer;
+      transition: transform 150ms ease;
+    }
+
+    .rating-button:hover:not(:disabled) {
+      transform: translateY(-2px) scale(1.08);
+    }
+
+    .upload-panel {
+      display: flex;
+      align-items: center;
+      gap: 0.875rem;
+      border: 1px dashed var(--app-border);
+      border-radius: 1rem;
+      background: var(--app-surface-muted);
+      padding: 1rem;
+    }
+
+    .file-input {
+      display: block;
+      width: 100%;
+      color: var(--app-text-muted);
+      font-size: 0.75rem;
+    }
+
+    .file-input::file-selector-button {
+      margin-inline-end: 0.75rem;
+      border: 1px solid var(--app-border);
+      border-radius: 0.5rem;
+      background: var(--app-surface);
+      padding: 0.5rem 0.625rem;
+      color: var(--app-text);
+      font-size: 0.75rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 0.75rem;
+      margin-top: 1.5rem;
+      border-top: 1px solid var(--app-border);
+      padding-top: 1.25rem;
+    }
+
+    @keyframes modal-enter {
+      from {
+        opacity: 0;
+        transform: translateY(12px) scale(0.98);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    @media (max-width: 479px) {
+      .modal-header,
+      .modal-form {
+        padding: 1.125rem;
+      }
+
+      .upload-panel {
+        flex-wrap: wrap;
+      }
+
+      .modal-footer {
+        flex-direction: column-reverse;
+      }
+
+      .modal-footer button {
+        width: 100%;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .review-dialog[open] {
+        animation: none;
+      }
+
+      .review-card,
+      .review-card::before,
+      .primary-button,
+      .secondary-button,
+      .rating-button {
+        transition: none;
+      }
+
+      .review-card:hover,
+      .primary-button:hover:not(:disabled),
+      .rating-button:hover:not(:disabled) {
+        transform: none;
+      }
+    }
   `
 })
 export class ReviewsSectionComponent {
@@ -424,6 +917,13 @@ export class ReviewsSectionComponent {
   private readonly messages = inject(MessageService);
   private readonly translate = inject(TranslateService);
   private readonly language = inject(LanguageService);
+  private readonly destroyRef = inject(DestroyRef);
+
+  private readonly reviewDialog =
+    viewChild<ElementRef<HTMLDialogElement>>('reviewDialog');
+
+  private readonly imageInput =
+    viewChild<ElementRef<HTMLInputElement>>('imageInput');
 
   private previewObjectUrl: string | null = null;
 
@@ -431,9 +931,7 @@ export class ReviewsSectionComponent {
 
   readonly reviews = signal<Review[]>([]);
   readonly loading = signal(true);
-
   readonly submitting = signal(false);
-  readonly success = signal(false);
 
   readonly ratingValue = signal(0);
   readonly selectedFile = signal<File | null>(null);
@@ -476,17 +974,23 @@ export class ReviewsSectionComponent {
   });
 
   constructor() {
-    effect(() => {
+    effect(onCleanup => {
       this.language.current();
 
-      untracked(() => this.load());
+      const subscription = untracked(() => this.load());
+
+      onCleanup(() => subscription.unsubscribe());
+    });
+
+    this.destroyRef.onDestroy(() => {
+      this.releasePreview();
     });
   }
 
-  load(): void {
+  load() {
     this.loading.set(true);
 
-    this.reviewService.getPublicReviews(0, 6).subscribe({
+    return this.reviewService.getPublicReviews(0, 6).subscribe({
       next: page => {
         this.reviews.set(page.content);
         this.loading.set(false);
@@ -499,7 +1003,53 @@ export class ReviewsSectionComponent {
     });
   }
 
+  openModal(): void {
+    const dialog = this.reviewDialog()?.nativeElement;
+
+    if (dialog && !dialog.open) {
+      dialog.showModal();
+    }
+  }
+
+  closeModal(): void {
+    if (this.submitting()) {
+      return;
+    }
+
+    this.reviewDialog()?.nativeElement.close();
+  }
+
+  onDialogCancel(event: Event): void {
+    if (this.submitting()) {
+      event.preventDefault();
+    }
+  }
+
+  onBackdropClick(event: MouseEvent): void {
+    const dialog = this.reviewDialog()?.nativeElement;
+
+    if (!dialog || event.target !== dialog) {
+      return;
+    }
+
+    const bounds = dialog.getBoundingClientRect();
+
+    const outside =
+      event.clientX < bounds.left ||
+      event.clientX > bounds.right ||
+      event.clientY < bounds.top ||
+      event.clientY > bounds.bottom;
+
+    if (outside) {
+      this.closeModal();
+    }
+  }
+
   setRating(value: number): void {
+    if (this.submitting()) {
+      return;
+    }
+
     this.ratingValue.set(value);
     this.form.controls.rating.setValue(value);
     this.form.controls.rating.markAsTouched();
@@ -509,18 +1059,35 @@ export class ReviewsSectionComponent {
     const input = event.target as HTMLInputElement;
     const file = input.files?.[0] ?? null;
 
-    this.releasePreview();
+    this.removeImage(false);
 
     if (!file) {
-      this.selectedFile.set(null);
-      this.previewUrl.set(null);
       return;
     }
 
-    if (!file.type.startsWith('image/')) {
+    const allowedTypes = [
+      'image/jpeg',
+      'image/png',
+      'image/webp'
+    ];
+
+    const maxSize = 5 * 1024 * 1024;
+
+    if (
+      !allowedTypes.includes(file.type) ||
+      file.size > maxSize
+    ) {
       input.value = '';
-      this.selectedFile.set(null);
-      this.previewUrl.set(null);
+
+      this.messages.add({
+        severity: 'error',
+        summary: this.translate.instant('common.error'),
+        detail: this.translate.instant(
+          'publicPages.reviews.imageHelp'
+        ),
+        life: 5000
+      });
+
       return;
     }
 
@@ -529,8 +1096,32 @@ export class ReviewsSectionComponent {
     this.previewUrl.set(this.previewObjectUrl);
   }
 
+  removeImage(clearInput = true): void {
+    this.selectedFile.set(null);
+    this.releasePreview();
+    this.previewUrl.set(null);
+
+    if (clearInput) {
+      const input = this.imageInput()?.nativeElement;
+
+      if (input) {
+        input.value = '';
+      }
+    }
+  }
+
   submit(): void {
-    this.success.set(false);
+    if (this.submitting()) {
+      return;
+    }
+
+    const rawValue = this.form.getRawValue();
+
+    this.form.patchValue({
+      fullName: rawValue.fullName.trim(),
+      jobTitle: rawValue.jobTitle.trim(),
+      description: rawValue.description.trim()
+    });
 
     if (this.form.invalid) {
       this.form.markAllAsTouched();
@@ -541,20 +1132,22 @@ export class ReviewsSectionComponent {
 
     this.submitting.set(true);
 
-    this.reviewService
+    const subscription = this.reviewService
       .createReview(
         {
-          fullName: value.fullName.trim(),
-          jobTitle: value.jobTitle.trim(),
+          fullName: value.fullName,
+          jobTitle: value.jobTitle,
           rating: value.rating,
-          description: value.description.trim()
+          description: value.description
         },
         this.selectedFile() ?? undefined
       )
       .subscribe({
         next: () => {
           this.submitting.set(false);
-          this.success.set(true);
+
+          this.closeModal();
+          this.resetForm();
 
           this.messages.add({
             severity: 'success',
@@ -566,9 +1159,6 @@ export class ReviewsSectionComponent {
             ),
             life: 5000
           });
-
-          this.resetForm();
-          this.load();
         },
 
         error: () => {
@@ -584,6 +1174,8 @@ export class ReviewsSectionComponent {
           });
         }
       });
+
+    this.destroyRef.onDestroy(() => subscription.unsubscribe());
   }
 
   isInvalid(controlName: ReviewControlName): boolean {
@@ -600,22 +1192,20 @@ export class ReviewsSectionComponent {
   }
 
   initials(fullName: string): string {
-    const parts = fullName
-      .trim()
-      .split(/\s+/)
-      .filter(Boolean);
+    const parts = fullName.trim().split(/\s+/).filter(Boolean);
 
     if (!parts.length) {
       return '?';
     }
 
     const first = parts[0]?.charAt(0) ?? '';
+
     const last =
       parts.length > 1
         ? parts[parts.length - 1]?.charAt(0) ?? ''
         : '';
 
-    return `${first}${last}`.toUpperCase();
+    return (first + last).toUpperCase();
   }
 
   formatDate(value: string): string {
@@ -625,7 +1215,7 @@ export class ReviewsSectionComponent {
       return '';
     }
 
-    return date.toLocaleDateString(undefined, {
+    return date.toLocaleDateString(this.language.current(), {
       year: 'numeric',
       month: 'short'
     });
@@ -640,9 +1230,7 @@ export class ReviewsSectionComponent {
     });
 
     this.ratingValue.set(0);
-    this.selectedFile.set(null);
-    this.releasePreview();
-    this.previewUrl.set(null);
+    this.removeImage();
   }
 
   private releasePreview(): void {

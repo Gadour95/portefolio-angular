@@ -46,7 +46,6 @@ import {
   standalone: true,
   imports: [
     HeroSectionComponent,
-    TechnologiesSectionComponent,
     AboutTimelineSectionComponent,
     SkillsSectionComponent,
     ServicesSectionComponent,
@@ -57,9 +56,9 @@ import {
 
   template: `
     <div class="app-container flex flex-col gap-20 py-8 sm:py-12">
-      <app-hero-section [about]="about()" />
+      <app-hero-section />
 
-      <app-technologies-section />
+     <!-- <app-technologies-section /> -->
 
       <app-about-timeline-section [about]="about()" />
 

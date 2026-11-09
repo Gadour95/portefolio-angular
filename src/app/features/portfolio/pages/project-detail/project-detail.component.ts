@@ -16,6 +16,11 @@ import {
   RouterLink
 } from '@angular/router';
 
+import {
+  DomSanitizer,
+  SafeResourceUrl
+} from '@angular/platform-browser';
+
 import { TranslatePipe } from '@ngx-translate/core';
 
 import {
@@ -236,14 +241,23 @@ import { ProjectService } from '../../../../core/services/project.service';
 
             @if (images().length) {
               <div
-                class="overflow-hidden rounded-3xl border
+                class="relative h-72 overflow-hidden rounded-3xl border
                        border-[var(--app-border)]
-                       bg-[var(--app-surface-muted)]"
+                       bg-[var(--app-surface-muted)]
+                       sm:h-[32rem]"
               >
                 <img
                   [src]="images()[activeImage()]"
+                  alt=""
+                  aria-hidden="true"
+                  class="absolute inset-0 h-full w-full scale-125
+                         object-cover opacity-60 blur-2xl"
+                />
+
+                <img
+                  [src]="images()[activeImage()]"
                   [alt]="item.title"
-                  class="max-h-[32rem] w-full object-cover"
+                  class="relative z-10 h-full w-full object-contain"
                 />
               </div>
 
@@ -253,6 +267,7 @@ import { ProjectService } from '../../../../core/services/project.service';
                     <button
                       type="button"
                       class="h-20 w-28 overflow-hidden rounded-xl border-2
+                             bg-[var(--app-surface-muted)]
                              transition hover:opacity-90"
                       [style.borderColor]="
                         activeImage() === index
@@ -265,7 +280,7 @@ import { ProjectService } from '../../../../core/services/project.service';
                       <img
                         [src]="image"
                         [alt]="item.title"
-                        class="h-full w-full object-cover"
+                        class="h-full w-full object-contain"
                         loading="lazy"
                       />
                     </button>
@@ -299,14 +314,35 @@ import { ProjectService } from '../../../../core/services/project.service';
                 {{ 'publicPages.projects.video' | translate }}
               </h2>
 
-              @if (isDirectVideo(video)) {
-                <video
-                  class="w-full rounded-2xl border
-                         border-[var(--app-border)]"
-                  controls
-                  preload="metadata"
-                  [src]="video"
-                ></video>
+              @if (youtubeId(); as ytId) {
+                <div
+                  class="aspect-video w-full overflow-hidden rounded-2xl
+                         border border-[var(--app-border)] bg-black"
+                >
+                  <iframe
+                    class="h-full w-full"
+                    [src]="youtubeEmbedUrl()"
+                    title="YouTube video player"
+                    frameborder="0"
+                    allow="accelerometer; autoplay; clipboard-write;
+                           encrypted-media; gyroscope; picture-in-picture;
+                           web-share"
+                    referrerpolicy="strict-origin-when-cross-origin"
+                    allowfullscreen
+                  ></iframe>
+                </div>
+              } @else if (isDirectVideo(video)) {
+                <div
+                  class="aspect-video w-full overflow-hidden rounded-2xl
+                         border border-[var(--app-border)] bg-black"
+                >
+                  <video
+                    class="h-full w-full object-contain"
+                    controls
+                    preload="metadata"
+                    [src]="video"
+                  ></video>
+                </div>
               } @else {
                 <a
                   [href]="video"
@@ -338,6 +374,7 @@ import { ProjectService } from '../../../../core/services/project.service';
 export class ProjectDetailComponent {
   private readonly projectService = inject(ProjectService);
   private readonly route = inject(ActivatedRoute);
+  private readonly sanitizer = inject(DomSanitizer);
 
   readonly project = signal<ProjectPublic | null>(null);
   readonly loading = signal(true);
@@ -353,6 +390,20 @@ export class ProjectDetailComponent {
   readonly videoUrl = computed(() =>
     resolveMediaUrl(this.project()?.video)
   );
+
+  readonly youtubeId = computed(() =>
+    this.extractYoutubeId(this.videoUrl())
+  );
+
+  readonly youtubeEmbedUrl = computed<SafeResourceUrl | null>(() => {
+    const id = this.youtubeId();
+
+    if (!id) return null;
+
+    return this.sanitizer.bypassSecurityTrustResourceUrl(
+      `https://www.youtube-nocookie.com/embed/${id}`
+    );
+  });
 
   constructor() {
     this.route.paramMap
@@ -380,6 +431,20 @@ export class ProjectDetailComponent {
 
   isDirectVideo(url: string): boolean {
     return /\.(mp4|webm|ogg|ogv|mov)(\?.*)?$/i.test(url);
+  }
+
+  private extractYoutubeId(
+    value: string | null | undefined
+  ): string | null {
+    if (!value) return null;
+
+    const match = value
+      .trim()
+      .match(
+        /(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|shorts\/|watch\?v=|watch\?.+&v=))([\w-]{11})/i
+      );
+
+    return match ? match[1] : null;
   }
 
   private load(slug: string): void {

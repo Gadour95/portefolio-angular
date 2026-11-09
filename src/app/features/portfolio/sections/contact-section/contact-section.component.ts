@@ -18,7 +18,9 @@ import {
 
 import { MessageService } from 'primeng/api';
 
-import { AboutPublic } from '../../../../core/models/about.model';
+import {
+  AboutPublic
+} from '../../../../core/models/about.model';
 
 import {
   ContactMessageService
@@ -36,227 +38,258 @@ type ContactControlName =
   imports: [ReactiveFormsModule, TranslatePipe],
 
   template: `
-    <section id="contact" class="scroll-mt-32">
-      <div class="max-w-2xl">
-        <p
-          class="text-xs font-bold uppercase tracking-[0.14em]
-                 text-[var(--p-primary-color)]"
-        >
-          {{ 'home.contactEyebrow' | translate }}
-        </p>
-
-        <h2
-          class="mt-2 text-2xl font-bold tracking-[-0.035em] sm:text-3xl"
-        >
-          {{ 'home.contactTitle' | translate }}
-        </h2>
-
-        <p class="mt-3 leading-7 text-[var(--app-text-muted)]">
-          {{ 'home.contactText' | translate }}
-        </p>
-      </div>
-
+    <section id="contact" class="scroll-mt-32 py-4">
       <div
-        class="mt-8 grid overflow-hidden rounded-[2rem] border
-               border-[var(--app-border)] bg-[var(--app-surface)]
-               lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)]"
+        class="grid items-start gap-10
+               lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)]
+               lg:gap-14 xl:gap-20"
       >
-        <!-- Coordonnées -->
-        <aside
-          class="relative overflow-hidden bg-gradient-to-br
-                 from-indigo-700 via-indigo-600 to-blue-600 p-7
-                 text-white sm:p-9"
-        >
-          <div
-            class="pointer-events-none absolute -right-16 -top-20 h-64 w-64
-                   rounded-full bg-white/10 blur-3xl"
-            aria-hidden="true"
-          ></div>
+        <!-- Présentation et coordonnées -->
+        <div class="min-w-0 py-3 lg:py-6">
+          <div class="flex items-center gap-3">
+            <span
+              class="h-px w-9 bg-[var(--p-primary-color)]"
+              aria-hidden="true"
+            ></span>
 
-          <div
-            class="pointer-events-none absolute -bottom-24 -left-16 h-64 w-64
-                   rounded-full bg-blue-300/10 blur-3xl"
-            aria-hidden="true"
-          ></div>
-
-          <div class="relative">
             <p
-              class="text-xs font-bold uppercase tracking-[0.14em]
-                     text-indigo-100"
+              class="text-xs font-bold uppercase tracking-[0.2em]
+                     text-[var(--p-primary-color)]"
             >
-              {{ 'publicPages.contact.infoTitle' | translate }}
+              {{ 'home.contactEyebrow' | translate }}
             </p>
+          </div>
 
-            <p class="mt-4 text-lg font-semibold leading-8">
-              {{
-                about()?.description ||
-                  ('publicPages.contact.infoText' | translate)
-              }}
-            </p>
+          <h2
+            class="mt-4 max-w-lg text-balance text-3xl font-bold
+                   leading-tight tracking-[-0.045em]
+                   sm:text-4xl lg:text-[2.65rem]"
+          >
+            {{ 'home.contactTitle' | translate }}
+          </h2>
 
-            <div class="mt-8 space-y-3">
-              @if (about()?.email; as email) {
-                <a
-                  [href]="'mailto:' + email"
-                  class="flex items-start gap-3 rounded-2xl border
-                         border-white/20 bg-white/10 p-4
-                         backdrop-blur transition hover:bg-white/15"
-                >
-                  <span
-                    class="inline-grid h-10 w-10 shrink-0 place-items-center
-                           rounded-xl bg-white/15"
-                  >
-                    <i
-                      class="pi pi-envelope"
-                      aria-hidden="true"
-                    ></i>
-                  </span>
+          <p
+            class="mt-5 max-w-lg text-base leading-8
+                   text-[var(--app-text-muted)]"
+          >
+            {{ 'home.contactText' | translate }}
+          </p>
 
-                  <span class="min-w-0">
-                    <span
-                      class="block text-[0.68rem] font-bold uppercase
-                             tracking-wide text-indigo-100"
-                    >
-                      {{ 'publicPages.contact.emailLabel' | translate }}
-                    </span>
+          <!-- Disponibilité -->
+          @if (about()?.availability; as availability) {
+            <div
+              class="mt-6 inline-flex items-center gap-2.5
+                     rounded-full border border-emerald-500/20
+                     bg-emerald-500/10 px-3.5 py-2
+                     text-xs font-semibold text-emerald-700
+                     dark:text-emerald-300"
+            >
+              <span
+                class="h-2 w-2 shrink-0 rounded-full
+                       bg-emerald-500"
+                aria-hidden="true"
+              ></span>
 
-                    <span
-                      class="mt-0.5 block break-all text-sm font-semibold"
-                    >
-                      {{ email }}
-                    </span>
-                  </span>
-                </a>
-              }
+              <span>{{ availability }}</span>
+            </div>
+          }
 
-              @if (about()?.location; as location) {
-                <div
-                  class="flex items-start gap-3 rounded-2xl border
-                         border-white/20 bg-white/10 p-4 backdrop-blur"
-                >
-                  <span
-                    class="inline-grid h-10 w-10 shrink-0 place-items-center
-                           rounded-xl bg-white/15"
-                  >
-                    <i
-                      class="pi pi-map-marker"
-                      aria-hidden="true"
-                    ></i>
-                  </span>
-
-                  <span>
-                    <span
-                      class="block text-[0.68rem] font-bold uppercase
-                             tracking-wide text-indigo-100"
-                    >
-                      {{ 'publicPages.contact.locationLabel' | translate }}
-                    </span>
-
-                    <span class="mt-0.5 block text-sm font-semibold">
-                      {{ location }}
-                    </span>
-                  </span>
-                </div>
-              }
-
-              @if (about()?.availability; as availability) {
-                <div
-                  class="flex items-start gap-3 rounded-2xl border
-                         border-white/20 bg-white/10 p-4 backdrop-blur"
-                >
-                  <span
-                    class="inline-grid h-10 w-10 shrink-0 place-items-center
-                           rounded-xl bg-white/15"
-                  >
-                    <i
-                      class="pi pi-check-circle"
-                      aria-hidden="true"
-                    ></i>
-                  </span>
-
-                  <span>
-                    <span
-                      class="block text-[0.68rem] font-bold uppercase
-                             tracking-wide text-indigo-100"
-                    >
-                      {{
-                        'publicPages.contact.availabilityLabel'
-                          | translate
-                      }}
-                    </span>
-
-                    <span class="mt-0.5 block text-sm font-semibold">
-                      {{ availability }}
-                    </span>
-                  </span>
-                </div>
-              }
-
-              <div
-                class="flex items-start gap-3 rounded-2xl border
-                       border-white/20 bg-white/10 p-4 backdrop-blur"
+          <!-- Coordonnées -->
+          <div class="mt-8 space-y-3">
+            @if (about()?.email; as email) {
+              <a
+                [href]="'mailto:' + email"
+                class="contact-link"
               >
-                <span
-                  class="inline-grid h-10 w-10 shrink-0 place-items-center
-                         rounded-xl bg-white/15"
-                >
-                  <i
-                    class="pi pi-clock"
-                    aria-hidden="true"
-                  ></i>
+                <span class="contact-icon" aria-hidden="true">
+                  <i class="pi pi-envelope text-lg"></i>
                 </span>
 
-                <span>
-                  <span
-                    class="block text-[0.68rem] font-bold uppercase
-                           tracking-wide text-indigo-100"
-                  >
-                    {{ 'publicPages.contact.responseLabel' | translate }}
+                <span class="min-w-0 flex-1">
+                  <span class="contact-label">
+                    {{ 'publicPages.contact.emailLabel' | translate }}
                   </span>
 
-                  <span class="mt-0.5 block text-sm font-semibold">
-                    {{ 'publicPages.contact.responseTime' | translate }}
+                  <span class="contact-value break-all">
+                    {{ email }}
+                  </span>
+                </span>
+
+                <i
+                  class="pi pi-arrow-up-right contact-arrow
+                         rtl:-rotate-90"
+                  aria-hidden="true"
+                ></i>
+              </a>
+            }
+
+            <!-- Téléphone -->
+            <a
+              [href]="contact.phoneHref"
+              class="contact-link"
+            >
+              <span class="contact-icon" aria-hidden="true">
+                <i class="pi pi-phone text-lg"></i>
+              </span>
+
+              <span class="min-w-0 flex-1">
+                <span class="contact-label">
+                  {{ 'publicPages.contact.phoneLabel' | translate }}
+                </span>
+
+                <span class="contact-value">
+                  <bdi dir="ltr">{{ contact.phone }}</bdi>
+                </span>
+              </span>
+
+              <i
+                class="pi pi-arrow-up-right contact-arrow
+                       rtl:-rotate-90"
+                aria-hidden="true"
+              ></i>
+            </a>
+
+            <!-- Localisation -->
+            @if (about()?.location; as location) {
+              <div class="contact-link">
+                <span class="contact-icon" aria-hidden="true">
+                  <i class="pi pi-map-marker text-lg"></i>
+                </span>
+
+                <span class="min-w-0 flex-1">
+                  <span class="contact-label">
+                    {{
+                      'publicPages.contact.locationLabel'
+                        | translate
+                    }}
+                  </span>
+
+                  <span class="contact-value break-words">
+                    {{ location }}
                   </span>
                 </span>
               </div>
-            </div>
+            }
           </div>
-        </aside>
 
-        <!-- Formulaire -->
-        <div class="p-7 sm:p-9">
-          @if (success()) {
-            <div class="py-10 text-center" role="status">
-              <span
-                class="inline-grid h-14 w-14 place-items-center
-                       rounded-full bg-emerald-100 text-emerald-700
-                       dark:bg-emerald-950/50 dark:text-emerald-300"
+          <!-- Réseaux sociaux -->
+          <div
+            class="mt-8 border-t border-[var(--app-border)] pt-6"
+          >
+            <p
+              class="text-xs font-semibold
+                     text-[var(--app-text-muted)]"
+            >
+              {{ 'publicPages.contact.socialTitle' | translate }}
+            </p>
+
+            <div class="mt-3 flex flex-wrap gap-3">
+              <a
+                [href]="contact.github"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="social-link"
+                [attr.aria-label]="
+                  'GitHub — ' +
+                  ('publicPages.contact.opensNewTab' | translate)
+                "
               >
                 <i
-                  class="pi pi-check text-2xl"
+                  class="pi pi-github text-lg"
                   aria-hidden="true"
                 ></i>
+
+                <span>GitHub</span>
+
+                <i
+                  class="pi pi-arrow-up-right text-[0.65rem]
+                         opacity-60 rtl:-rotate-90"
+                  aria-hidden="true"
+                ></i>
+              </a>
+
+              <a
+                [href]="contact.linkedin"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="social-link"
+                [attr.aria-label]="
+                  'LinkedIn — ' +
+                  ('publicPages.contact.opensNewTab' | translate)
+                "
+              >
+                <i
+                  class="pi pi-linkedin text-lg"
+                  aria-hidden="true"
+                ></i>
+
+                <span>LinkedIn</span>
+
+                <i
+                  class="pi pi-arrow-up-right text-[0.65rem]
+                         opacity-60 rtl:-rotate-90"
+                  aria-hidden="true"
+                ></i>
+              </a>
+            </div>
+          </div>
+
+          <!-- Délai de réponse -->
+          <div
+            class="mt-7 flex items-center gap-2.5 text-xs
+                   leading-6 text-[var(--app-text-muted)]"
+          >
+            <i
+              class="pi pi-clock text-sm
+                     text-[var(--p-primary-color)]"
+              aria-hidden="true"
+            ></i>
+
+            <span>
+              {{ 'publicPages.contact.responseLabel' | translate }}
+              :
+              {{ 'publicPages.contact.responseTime' | translate }}
+            </span>
+          </div>
+        </div>
+
+        <!-- Formulaire -->
+        <div class="contact-form-card">
+          <div class="form-accent" aria-hidden="true"></div>
+
+          @if (success()) {
+            <div
+              class="flex min-h-[32rem] flex-col items-center
+                     justify-center px-2 py-10 text-center"
+              role="status"
+            >
+              <span
+                class="inline-grid h-20 w-20 place-items-center
+                       rounded-3xl bg-emerald-500/10
+                       text-emerald-600 dark:text-emerald-400"
+                aria-hidden="true"
+              >
+                <i class="pi pi-check-circle text-4xl"></i>
               </span>
 
-              <h3 class="mt-5 text-xl font-bold">
+              <h3 class="mt-6 text-2xl font-bold tracking-tight">
                 {{ 'publicPages.contact.successTitle' | translate }}
               </h3>
 
-              <p class="mx-auto mt-2 max-w-md text-sm leading-7 app-muted">
+              <p
+                class="mt-3 max-w-sm text-sm leading-7
+                       text-[var(--app-text-muted)]"
+              >
                 {{ 'publicPages.contact.successText' | translate }}
               </p>
 
               <button
                 type="button"
-                class="mt-6 inline-flex min-h-10 items-center gap-2
-                       rounded-xl border border-[var(--app-border)]
-                       px-4 py-2 text-sm font-semibold transition
-                       hover:border-[var(--p-primary-color)]
-                       hover:text-[var(--p-primary-color)]"
+                class="secondary-button mt-7"
                 (click)="success.set(false)"
               >
                 <i
-                  class="pi pi-pencil text-xs"
+                  class="pi pi-pencil text-sm"
                   aria-hidden="true"
                 ></i>
 
@@ -264,154 +297,550 @@ type ContactControlName =
               </button>
             </div>
           } @else {
-            <h3 class="text-lg font-bold">
-              {{ 'publicPages.contact.formTitle' | translate }}
-            </h3>
+            <!-- En-tête du formulaire -->
+            <div class="flex items-start gap-4">
+              <span
+                class="inline-grid h-12 w-12 shrink-0
+                       place-items-center rounded-2xl
+                       bg-[var(--app-surface-muted)]
+                       text-[var(--p-primary-color)]"
+                aria-hidden="true"
+              >
+                <i class="pi pi-send text-lg rtl:rotate-180"></i>
+              </span>
 
-            <p class="mt-1.5 text-sm leading-6 app-muted">
-              {{ 'publicPages.contact.formText' | translate }}
-            </p>
+              <div>
+                <h3 class="text-xl font-bold tracking-[-0.025em]">
+                  {{ 'publicPages.contact.formTitle' | translate }}
+                </h3>
+
+                <p
+                  class="mt-1.5 text-sm leading-6
+                         text-[var(--app-text-muted)]"
+                >
+                  {{ 'publicPages.contact.formText' | translate }}
+                </p>
+              </div>
+            </div>
 
             <form
-              class="mt-6 space-y-5"
+              class="mt-7"
               [formGroup]="form"
               (ngSubmit)="submit()"
               novalidate
             >
-              <div class="grid gap-5 sm:grid-cols-2">
-                <div>
-                  <label
-                    class="app-label"
-                    for="contact-full-name"
-                  >
-                    {{ 'publicPages.contact.fullName' | translate }}
-                  </label>
-
-                  <input
-                    id="contact-full-name"
-                    type="text"
-                    class="app-control w-full"
-                    formControlName="fullName"
-                    autocomplete="name"
-                    [style.borderColor]="
-                      isInvalid('fullName') ? '#ef4444' : null
-                    "
-                  />
-
-                  @if (isInvalid('fullName')) {
-                    <p class="mt-1.5 text-xs text-red-600">
-                      {{ 'publicPages.contact.errors.fullName' | translate }}
-                    </p>
-                  }
-                </div>
-
-                <div>
-                  <label
-                    class="app-label"
-                    for="contact-email"
-                  >
-                    {{ 'publicPages.contact.email' | translate }}
-                  </label>
-
-                  <input
-                    id="contact-email"
-                    type="email"
-                    class="app-control w-full"
-                    formControlName="email"
-                    autocomplete="email"
-                    [style.borderColor]="
-                      isInvalid('email') ? '#ef4444' : null
-                    "
-                  />
-
-                  @if (isInvalid('email')) {
-                    <p class="mt-1.5 text-xs text-red-600">
-                      {{ 'publicPages.contact.errors.email' | translate }}
-                    </p>
-                  }
-                </div>
-              </div>
-
-              <div>
-                <label
-                  class="app-label"
-                  for="contact-subject"
-                >
-                  {{ 'publicPages.contact.subject' | translate }}
-                </label>
-
-                <input
-                  id="contact-subject"
-                  type="text"
-                  class="app-control w-full"
-                  formControlName="subject"
-                  [style.borderColor]="
-                    isInvalid('subject') ? '#ef4444' : null
-                  "
-                />
-
-                @if (isInvalid('subject')) {
-                  <p class="mt-1.5 text-xs text-red-600">
-                    {{ 'publicPages.contact.errors.subject' | translate }}
-                  </p>
-                }
-              </div>
-
-              <div>
-                <label
-                  class="app-label"
-                  for="contact-message"
-                >
-                  {{ 'publicPages.contact.message' | translate }}
-                </label>
-
-                <textarea
-                  id="contact-message"
-                  rows="6"
-                  class="app-control w-full py-2"
-                  formControlName="message"
-                  [style.borderColor]="
-                    isInvalid('message') ? '#ef4444' : null
-                  "
-                ></textarea>
-
-                @if (isInvalid('message')) {
-                  <p class="mt-1.5 text-xs text-red-600">
-                    {{ 'publicPages.contact.errors.message' | translate }}
-                  </p>
-                }
-              </div>
-
-              <button
-                type="submit"
-                class="inline-flex min-h-11 w-full items-center
-                       justify-center gap-2 rounded-xl
-                       bg-[var(--p-primary-color)] px-5 py-3 text-sm
-                       font-semibold
-                       text-[var(--p-primary-inverse-color)]
-                       transition hover:bg-[var(--p-primary-hover-color)]
-                       disabled:cursor-not-allowed disabled:opacity-60"
+              <fieldset
+                class="min-w-0 space-y-5"
                 [disabled]="submitting()"
               >
-                @if (submitting()) {
-                  <i
-                    class="pi pi-spin pi-spinner text-xs"
-                    aria-hidden="true"
-                  ></i>
-                } @else {
-                  <i
-                    class="pi pi-send text-xs rtl:rotate-180"
-                    aria-hidden="true"
-                  ></i>
-                }
+                <!-- Nom et email -->
+                <div class="grid gap-5 sm:grid-cols-2">
+                  <div>
+                    <label
+                      class="field-label"
+                      for="contact-full-name"
+                    >
+                      {{ 'publicPages.contact.fullName' | translate }}
+                    </label>
 
-                {{ 'publicPages.contact.submit' | translate }}
-              </button>
+                    <div class="input-wrapper">
+                      <i
+                        class="pi pi-user input-icon"
+                        aria-hidden="true"
+                      ></i>
+
+                      <input
+                        id="contact-full-name"
+                        type="text"
+                        class="contact-input"
+                        formControlName="fullName"
+                        autocomplete="name"
+                        maxlength="120"
+                        [class.field-invalid]="isInvalid('fullName')"
+                        [attr.aria-invalid]="isInvalid('fullName')"
+                        [attr.aria-describedby]="
+                          isInvalid('fullName')
+                            ? 'contact-full-name-error'
+                            : null
+                        "
+                      />
+                    </div>
+
+                    @if (isInvalid('fullName')) {
+                      <p
+                        id="contact-full-name-error"
+                        class="field-error"
+                      >
+                        {{
+                          'publicPages.contact.errors.fullName'
+                            | translate
+                        }}
+                      </p>
+                    }
+                  </div>
+
+                  <div>
+                    <label
+                      class="field-label"
+                      for="contact-email"
+                    >
+                      {{ 'publicPages.contact.email' | translate }}
+                    </label>
+
+                    <div class="input-wrapper">
+                      <i
+                        class="pi pi-envelope input-icon"
+                        aria-hidden="true"
+                      ></i>
+
+                      <input
+                        id="contact-email"
+                        type="email"
+                        class="contact-input"
+                        formControlName="email"
+                        autocomplete="email"
+                        inputmode="email"
+                        maxlength="160"
+                        [class.field-invalid]="isInvalid('email')"
+                        [attr.aria-invalid]="isInvalid('email')"
+                        [attr.aria-describedby]="
+                          isInvalid('email')
+                            ? 'contact-email-error'
+                            : null
+                        "
+                      />
+                    </div>
+
+                    @if (isInvalid('email')) {
+                      <p
+                        id="contact-email-error"
+                        class="field-error"
+                      >
+                        {{
+                          'publicPages.contact.errors.email'
+                            | translate
+                        }}
+                      </p>
+                    }
+                  </div>
+                </div>
+
+                <!-- Objet -->
+                <div>
+                  <label
+                    class="field-label"
+                    for="contact-subject"
+                  >
+                    {{ 'publicPages.contact.subject' | translate }}
+                  </label>
+
+                  <div class="input-wrapper">
+                    <i
+                      class="pi pi-tag input-icon"
+                      aria-hidden="true"
+                    ></i>
+
+                    <input
+                      id="contact-subject"
+                      type="text"
+                      class="contact-input"
+                      formControlName="subject"
+                      maxlength="160"
+                      [class.field-invalid]="isInvalid('subject')"
+                      [attr.aria-invalid]="isInvalid('subject')"
+                      [attr.aria-describedby]="
+                        isInvalid('subject')
+                          ? 'contact-subject-error'
+                          : null
+                      "
+                    />
+                  </div>
+
+                  @if (isInvalid('subject')) {
+                    <p
+                      id="contact-subject-error"
+                      class="field-error"
+                    >
+                      {{
+                        'publicPages.contact.errors.subject'
+                          | translate
+                      }}
+                    </p>
+                  }
+                </div>
+
+                <!-- Message -->
+                <div>
+                  <label
+                    class="field-label"
+                    for="contact-message"
+                  >
+                    {{ 'publicPages.contact.message' | translate }}
+                  </label>
+
+                  <textarea
+                    id="contact-message"
+                    rows="6"
+                    class="contact-textarea"
+                    formControlName="message"
+                    maxlength="3000"
+                    [class.field-invalid]="isInvalid('message')"
+                    [attr.aria-invalid]="isInvalid('message')"
+                    [attr.aria-describedby]="
+                      isInvalid('message')
+                        ? 'contact-message-error'
+                        : null
+                    "
+                  ></textarea>
+
+                  <div
+                    class="mt-2 flex items-start
+                           justify-between gap-3"
+                  >
+                    <div>
+                      @if (isInvalid('message')) {
+                        <p
+                          id="contact-message-error"
+                          class="field-error message-error"
+                        >
+                          {{
+                            'publicPages.contact.errors.message'
+                              | translate
+                          }}
+                        </p>
+                      }
+                    </div>
+
+                    <span
+                      class="shrink-0 text-[0.68rem]
+                             text-[var(--app-text-muted)]"
+                    >
+                      {{ form.controls.message.value.length }} / 3000
+                    </span>
+                  </div>
+                </div>
+
+                <!-- Bouton compact aligné à droite -->
+                <div class="flex justify-end pt-2">
+                  <button
+                    type="submit"
+                    class="submit-button"
+                    [disabled]="submitting()"
+                  >
+                    @if (submitting()) {
+                      <i
+                        class="pi pi-spin pi-spinner text-sm"
+                        aria-hidden="true"
+                      ></i>
+                    } @else {
+                      <i
+                        class="pi pi-send text-sm rtl:rotate-180"
+                        aria-hidden="true"
+                      ></i>
+                    }
+
+                    <span>
+                      {{ 'publicPages.contact.submit' | translate }}
+                    </span>
+                  </button>
+                </div>
+              </fieldset>
             </form>
           }
         </div>
       </div>
     </section>
+  `,
+
+  styles: `
+    :host {
+      display: block;
+    }
+
+    .contact-link {
+      display: flex;
+      min-width: 0;
+      align-items: center;
+      gap: 1rem;
+      border-radius: 1rem;
+      padding: 0.875rem;
+      color: var(--app-text);
+      transition:
+        background-color 180ms ease,
+        transform 180ms ease;
+    }
+
+    a.contact-link:hover {
+      background: var(--app-surface-muted);
+      transform: translateY(-2px);
+    }
+
+    .contact-icon {
+      display: inline-grid;
+      width: 3rem;
+      height: 3rem;
+      flex-shrink: 0;
+      place-items: center;
+      border: 1px solid var(--app-border);
+      border-radius: 1rem;
+      background: var(--app-surface);
+      color: var(--p-primary-color);
+      box-shadow: 0 5px 14px -12px rgb(15 23 42 / 0.35);
+      transition: border-color 180ms ease;
+    }
+
+    a.contact-link:hover .contact-icon {
+      border-color: var(--p-primary-color);
+    }
+
+    .contact-label {
+      display: block;
+      color: var(--app-text-muted);
+      font-size: 0.75rem;
+      font-weight: 500;
+    }
+
+    .contact-value {
+      display: block;
+      margin-top: 0.25rem;
+      font-size: 0.875rem;
+      font-weight: 600;
+      line-height: 1.6;
+    }
+
+    .contact-arrow {
+      flex-shrink: 0;
+      color: var(--app-text-muted);
+      font-size: 0.75rem;
+      transition: color 180ms ease;
+    }
+
+    a.contact-link:hover .contact-arrow {
+      color: var(--p-primary-color);
+    }
+
+    .social-link {
+      display: inline-flex;
+      min-height: 2.875rem;
+      align-items: center;
+      gap: 0.625rem;
+      border: 1px solid var(--app-border);
+      border-radius: 0.875rem;
+      background: var(--app-surface);
+      padding: 0.75rem 1rem;
+      color: var(--app-text);
+      font-size: 0.8125rem;
+      font-weight: 600;
+      transition:
+        border-color 180ms ease,
+        color 180ms ease,
+        transform 180ms ease;
+    }
+
+    .social-link:hover {
+      transform: translateY(-2px);
+      border-color: var(--p-primary-color);
+      color: var(--p-primary-color);
+    }
+
+    .contact-form-card {
+      position: relative;
+      min-width: 0;
+      overflow: hidden;
+      border: 1px solid var(--app-border);
+      border-radius: 1.75rem;
+      background: var(--app-surface);
+      padding: 1.5rem;
+      box-shadow: 0 24px 70px -50px rgb(15 23 42 / 0.4);
+    }
+
+    .form-accent {
+      position: absolute;
+      inset-block-start: 0;
+      inset-inline: 2rem;
+      height: 2px;
+      background: linear-gradient(
+        90deg,
+        transparent,
+        var(--p-primary-color),
+        transparent
+      );
+      opacity: 0.7;
+    }
+
+    .field-label {
+      display: block;
+      margin-bottom: 0.625rem;
+      color: var(--app-text);
+      font-size: 0.8125rem;
+      font-weight: 600;
+    }
+
+    .input-wrapper {
+      position: relative;
+    }
+
+    .input-icon {
+      position: absolute;
+      inset-inline-start: 0.875rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--app-text-muted);
+      font-size: 0.875rem;
+      pointer-events: none;
+    }
+
+    .contact-input,
+    .contact-textarea {
+      display: block;
+      width: 100%;
+      border: 1px solid var(--app-border);
+      border-radius: 0.875rem;
+      background: var(--app-surface);
+      color: var(--app-text);
+      font-size: 0.875rem;
+      outline: none;
+      transition:
+        border-color 180ms ease,
+        box-shadow 180ms ease;
+    }
+
+    .contact-input {
+      min-height: 3rem;
+      padding-block: 0.75rem;
+      padding-inline-start: 2.5rem;
+      padding-inline-end: 0.875rem;
+    }
+
+    .contact-textarea {
+      min-height: 10rem;
+      resize: vertical;
+      padding: 0.875rem 1rem;
+      line-height: 1.8;
+    }
+
+    .contact-input:hover,
+    .contact-textarea:hover {
+      border-color: var(--app-text-muted);
+    }
+
+    .contact-input:focus,
+    .contact-textarea:focus {
+      border-color: var(--p-primary-color);
+      box-shadow: 0 0 0 3px
+        color-mix(in srgb, var(--p-primary-color) 12%, transparent);
+    }
+
+    .field-invalid {
+      border-color: #ef4444;
+    }
+
+    .field-error {
+      margin-top: 0.375rem;
+      color: #dc2626;
+      font-size: 0.75rem;
+      line-height: 1.5;
+    }
+
+    .message-error {
+      margin-top: 0;
+    }
+
+    .submit-button {
+      display: inline-flex;
+      width: auto;
+      min-height: 2.75rem;
+      align-items: center;
+      justify-content: center;
+      gap: 0.625rem;
+
+      border: 1px solid transparent;
+      border-radius: 0.75rem;
+
+      background: var(--p-primary-color);
+      padding: 0.75rem 1.25rem;
+      color: var(--p-primary-inverse-color);
+
+      font-size: 0.8125rem;
+      font-weight: 600;
+      line-height: 1.5;
+      text-align: center;
+
+      cursor: pointer;
+
+      transition:
+        background-color 180ms ease,
+        transform 180ms ease;
+    }
+
+    .submit-button:hover:not(:disabled) {
+      background: var(--p-primary-hover-color);
+      transform: translateY(-1px);
+    }
+
+    .secondary-button {
+      display: inline-flex;
+      min-height: 2.875rem;
+      align-items: center;
+      justify-content: center;
+      gap: 0.625rem;
+      border: 1px solid var(--app-border);
+      border-radius: 0.875rem;
+      background: var(--app-surface);
+      padding: 0.75rem 1rem;
+      color: var(--app-text);
+      font-size: 0.875rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition:
+        border-color 180ms ease,
+        color 180ms ease;
+    }
+
+    .secondary-button:hover {
+      border-color: var(--p-primary-color);
+      color: var(--p-primary-color);
+    }
+
+    button:disabled {
+      cursor: not-allowed;
+      opacity: 0.6;
+    }
+
+    a:focus-visible,
+    button:focus-visible {
+      outline: 2px solid var(--p-primary-color);
+      outline-offset: 4px;
+    }
+
+    @media (min-width: 640px) {
+      .contact-form-card {
+        padding: 2rem;
+      }
+
+      .contact-value {
+        font-size: 0.9375rem;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .contact-link,
+      .contact-icon,
+      .contact-arrow,
+      .social-link,
+      .contact-input,
+      .contact-textarea,
+      .submit-button,
+      .secondary-button {
+        transition: none;
+      }
+
+      a.contact-link:hover,
+      .social-link:hover,
+      .submit-button:hover:not(:disabled) {
+        transform: none;
+      }
+    }
   `
 })
 export class ContactSectionComponent {
@@ -427,6 +856,14 @@ export class ContactSectionComponent {
 
   readonly submitting = signal(false);
   readonly success = signal(false);
+
+  readonly contact = {
+    phone: '+216 55 681 691',
+    phoneHref: 'tel:+21655681691',
+    github: 'https://github.com/Gadour95',
+    linkedin:
+      'https://www.linkedin.com/in/abdelkader-sniha-124651326/'
+  } as const;
 
   readonly form = this.formBuilder.nonNullable.group({
     fullName: [
@@ -465,6 +902,19 @@ export class ContactSectionComponent {
   });
 
   submit(): void {
+    if (this.submitting()) {
+      return;
+    }
+
+    const rawValue = this.form.getRawValue();
+
+    this.form.patchValue({
+      fullName: rawValue.fullName.trim(),
+      email: rawValue.email.trim(),
+      subject: rawValue.subject.trim(),
+      message: rawValue.message.trim()
+    });
+
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       return;
@@ -476,10 +926,10 @@ export class ContactSectionComponent {
 
     this.contactMessageService
       .createContactMessage({
-        fullName: value.fullName.trim(),
-        email: value.email.trim(),
-        subject: value.subject.trim(),
-        message: value.message.trim()
+        fullName: value.fullName,
+        email: value.email,
+        subject: value.subject,
+        message: value.message
       })
       .subscribe({
         next: () => {

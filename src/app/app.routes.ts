@@ -181,6 +181,17 @@ export const routes: Routes = [
       },
 
       {
+        path: 'cv',
+
+        loadComponent: () =>
+          import(
+            './features/admin/cv/cv-admin.component'
+          ).then(component =>
+            component.CvAdminComponent
+          )
+      },
+
+      {
         path: 'timeline',
 
         loadComponent: () =>

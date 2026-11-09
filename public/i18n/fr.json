@@ -1,7 +1,7 @@
 ﻿{
   "app": {
-    "name": "Portefolio",
-    "tagline": "Développeur Full Stack"
+    "name": "Abdelkader SNIHA",
+    "tagline": "Ingénieur Logiciel"
   },
   "nav": {
     "main": "Navigation principale",
@@ -12,7 +12,7 @@
     "technologies": "Technologies",
     "services": "Services",
     "reviews": "Avis",
-    "about": "À propos",
+    "about": "À propos", 
     "contact": "Contact",
     "cv": "CV",
     "admin": "Administration",
@@ -26,7 +26,8 @@
     "system": "Système"
   },
   "footer": {
-    "description": "Portfolio de développeur — projets, compétences et contact."
+  "description": "Portfolio de développeur — projets, compétences et contact.",
+  "copyright": "© 2026 Abdelkader SNIHA. Tous droits réservés."
   },
   "header": {
     "account": "Mon compte",
@@ -172,7 +173,10 @@
         "email": "Une adresse e-mail valide est requise.",
         "subject": "L’objet est requis.",
         "message": "Le message doit contenir au moins 20 caractères."
-      }
+      },
+      "phoneLabel": "Téléphone",
+      "socialTitle": "Retrouvez-moi aussi sur",
+      "opensNewTab": "Ouvre un nouvel onglet"
     },
     "cv": {
       "title": "CV",
@@ -193,6 +197,7 @@
     "dashboard": "Tableau de bord",
     "content": "Contenu",
     "about": "À propos",
+    "cv": "CV",
     "timeline": "Parcours",
     "technologies": "Technologies",
     "skills": "Compétences",
@@ -247,6 +252,70 @@
     "messages": {
       "title": "Messages",
       "subtitle": "Consultez les messages de contact."
+    }
+  },
+  "adminDashboard": {
+    "refresh": "Actualiser",
+    "updatedAt": "Dernière mise à jour :",
+    "kpi": {
+      "projects": "Projets",
+      "projectsHint": "Publiés : {{published}} · Brouillons : {{draft}}",
+      "reviews": "Avis",
+      "reviewsHint": "En attente : {{pending}} · Approuvés : {{approved}}",
+      "messages": "Messages",
+      "messagesHint": "Non lus : {{unread}} · Lus : {{read}}",
+      "rating": "Note moyenne",
+      "ratingHint": "Moyenne des avis approuvés ({{count}}).",
+      "technologies": "Technologies",
+      "technologiesHint": "Référencées dans le catalogue.",
+      "skills": "Compétences",
+      "skillsHint": "Organisées par catégories.",
+      "services": "Services",
+      "servicesHint": "Prestations proposées aux visiteurs.",
+      "timeline": "Parcours",
+      "timelineHint": "Expériences : {{experiences}} · Formations : {{educations}}"
+    },
+    "charts": {
+      "activityTitle": "Activité des {{months}} derniers mois",
+      "activitySubtitle": "Projets, avis et messages créés sur les {{months}} derniers mois.",
+      "months": "{{count}} mois",
+      "reviewsStatusTitle": "Statut des avis",
+      "reviewsStatusSubtitle": "Répartition des avis reçus.",
+      "projectsTechTitle": "Projets par technologie",
+      "projectsTechSubtitle": "Top 8 des technologies les plus utilisées.",
+      "skillsCategoryTitle": "Compétences par catégorie",
+      "skillsCategorySubtitle": "Top 8 des catégories les plus fournies.",
+      "reviewsRatingTitle": "Notes des avis",
+      "reviewsRatingSubtitle": "Répartition des notes de 1 à 5.",
+      "projectsStatusTitle": "Statut des projets",
+      "projectsStatusSubtitle": "Projets publiés et brouillons.",
+      "messagesStatusTitle": "Statut des messages",
+      "messagesStatusSubtitle": "Messages lus et non lus.",
+      "timelineTypeTitle": "Parcours par type",
+      "timelineTypeSubtitle": "Expériences et formations.",
+      "noData": "Aucune donnée disponible pour le moment."
+    },
+    "series": {
+      "projects": "Projets",
+      "reviews": "Avis",
+      "messages": "Messages",
+      "skills": "Compétences"
+    },
+    "status": {
+      "published": "Publié",
+      "draft": "Brouillon",
+      "approved": "Approuvé",
+      "rejected": "Rejeté",
+      "pending": "En attente",
+      "unread": "Non lu",
+      "read": "Lu",
+      "experience": "Expérience",
+      "education": "Formation"
+    },
+    "recent": {
+      "title": "Activité récente",
+      "subtitle": "Derniers projets, avis et messages.",
+      "empty": "Aucune activité récente."
     }
   },
   "adminCategories": {
@@ -429,6 +498,30 @@
     "deletedSuccess": "Le service a été supprimé.",
     "genericError": "Impossible de terminer l’opération. Veuillez réessayer."
   },
+  "adminCv": {
+    "title": "CV",
+    "subtitle": "Gérez les fichiers PDF de votre CV pour chaque langue du site.",
+    "refresh": "Actualiser",
+    "available": "Disponible",
+    "missing": "Aucun fichier",
+    "noCv": "Aucun CV pour cette langue.",
+    "upload": "Ajouter un PDF",
+    "replace": "Remplacer",
+    "delete": "Supprimer",
+    "cancel": "Annuler",
+    "open": "Ouvrir",
+    "formatHelp": "Fichier PDF uniquement, 20 Mo maximum.",
+    "pdfOnly": "Seuls les fichiers PDF sont acceptés.",
+    "sizeError": "Le fichier dépasse la taille maximale autorisée de 20 Mo.",
+    "uploadError": "Impossible d’envoyer le CV. Veuillez réessayer.",
+    "deleteError": "Impossible de supprimer le CV. Veuillez réessayer.",
+    "deleteTitle": "Supprimer le CV",
+    "deleteQuestion": "Confirmer la suppression du CV « {{language}} » ?",
+    "uploaded": "Le CV a été enregistré.",
+    "deleted": "Le CV a été supprimé.",
+    "success": "Opération réussie",
+    "error": "Erreur"
+  },
   "adminProjects": {
     "title": "Projets",
     "subtitle": "Gérez les réalisations et projets de votre portfolio.",
@@ -470,15 +563,24 @@
     "video": "Vidéo de présentation",
     "videoType": "Type de vidéo",
     "videoUpload": "Téléverser un fichier vidéo",
-    "videoUrlOption": "Lien externe ou YouTube",
+    "videoUrlOption": "Lien YouTube",
+    "videoUrlHelp": "Collez un lien YouTube valide (ex: https://www.youtube.com/watch?v=... ou https://youtu.be/...).",
     "videoHelp": "Optionnel. Téléversez un fichier vidéo (MP4, WEBM, MOV - max 50 Mo) ou renseignez un lien YouTube (ex: https://youtube.com/watch?v=...).",
     "uploadVideo": "Choisir une vidéo",
     "videoUploading": "Téléversement de la vidéo en cours...",
-    "removeVideo": "Retirer la vidéo",
+    "videoUploadedFile": "Vidéo téléversée",
+    "videoExternalLink": "Lien vidéo externe",
+    "videoAlreadySet": "Une vidéo est déjà associée à ce projet. Retirez-la pour changer de source (upload ou lien YouTube).",
+    "videoUrlInvalid": "Lien YouTube invalide. Utilisez une URL du type https://www.youtube.com/watch?v=... ou https://youtu.be/...",
+    "removeVideo": "Supprimer la vidéo",
     "videoSizeError": "La vidéo dépasse la taille maximale autorisée de 50 Mo.",
     "videoUploadError": "Impossible d’envoyer la vidéo. Veuillez réessayer.",
     "images": "Galerie d’images",
     "imagesHelp": "Optionnel. Ajoutez plusieurs images ou captures d’écran. La première image servira de couverture principale (max 10 Mo par image).",
+    "imageReorderHelp": "Glissez-déposez les images pour changer leur ordre, ou utilisez les flèches. La première image est utilisée comme couverture.",
+    "dragToReorder": "Glisser pour réordonner",
+    "moveImageLeft": "Déplacer à gauche",
+    "moveImageRight": "Déplacer à droite",
     "uploadImages": "Ajouter des images",
     "imagesUploading": "Téléversement des images en cours...",
     "noImages": "Aucune image ajoutée pour le moment.",
@@ -781,5 +883,12 @@
     "markedAsReadSuccess": "Le message a été marqué comme lu.",
     "markedAsUnreadSuccess": "Le message a été marqué comme non lu.",
     "deletedSuccess": "Le message a été supprimé avec succès."
-  }
+  },
+  "hero": {
+  "firstName": "Abdelkader",
+  "lastName": "SNIHA",
+  "role": "Ingénieur logiciel",
+  "description": "Passionné par la conception de solutions logicielles sécurisées, évolutives et intelligentes. Spécialisé dans le développement Full Stack, les architectures cloud natives, le DevOps et les applications basées sur l’intelligence artificielle.",
+  "focus": "Full Stack, DevOps, Sécurité et Intelligence Artificielle"
+}
 }

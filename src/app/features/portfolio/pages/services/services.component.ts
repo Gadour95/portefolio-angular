@@ -106,13 +106,27 @@ import {
                      hover:shadow-[0_18px_40px_-30px_rgba(79,70,229,0.6)]"
             >
               @if (serviceImageUrl(service); as imageUrl) {
-                <img
-                  [src]="imageUrl"
-                  [alt]="service.name"
-                  class="h-12 w-12 rounded-xl object-cover
-                         border border-[var(--app-border)]"
-                  loading="lazy"
-                />
+                <span
+                  class="relative inline-block h-12 w-12 overflow-hidden
+                         rounded-xl border border-[var(--app-border)]
+                         bg-[var(--app-surface-muted)]"
+                >
+                  <img
+                    [src]="imageUrl"
+                    alt=""
+                    aria-hidden="true"
+                    class="absolute inset-0 h-full w-full scale-125
+                           object-cover opacity-60 blur-md"
+                    loading="lazy"
+                  />
+
+                  <img
+                    [src]="imageUrl"
+                    [alt]="service.name"
+                    class="relative z-10 h-full w-full object-contain"
+                    loading="lazy"
+                  />
+                </span>
               } @else {
                 <span
                   class="inline-grid h-12 w-12 place-items-center

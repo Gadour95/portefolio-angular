@@ -780,6 +780,9 @@ export class CategoriesAdminComponent implements OnInit {
   openCreate(): void {
     this.editingId.set(null);
     this.resetForm();
+    this.form.controls.position.setValue(this.nextPosition(), {
+      emitEvent: false
+    });
     this.dialogVisible.set(true);
   }
 
@@ -991,6 +994,16 @@ export class CategoriesAdminComponent implements OnInit {
         });
       }
     });
+  }
+
+  private nextPosition(): number {
+    const positions = this.categories().map(
+      category => category.position ?? 0
+    );
+
+    return positions.length
+      ? Math.max(...positions) + 1
+      : 0;
   }
 
   private normalizeColor(value: string): string | null {

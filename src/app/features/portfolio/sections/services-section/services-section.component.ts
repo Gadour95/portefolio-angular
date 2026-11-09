@@ -63,19 +63,6 @@ import {
           </p>
         </div>
 
-        <a
-          routerLink="/services"
-          class="inline-flex shrink-0 items-center gap-2 text-sm
-                 font-semibold text-[var(--p-primary-color)]
-                 hover:underline"
-        >
-          {{ 'home.viewAllServices' | translate }}
-
-          <i
-            class="pi pi-arrow-right text-xs rtl:rotate-180"
-            aria-hidden="true"
-          ></i>
-        </a>
       </div>
 
       @if (loading()) {
@@ -123,13 +110,27 @@ import {
                 ></div>
 
                 @if (serviceImageUrl(service); as imageUrl) {
-                  <img
-                    [src]="imageUrl"
-                    [alt]="service.name"
-                    class="h-14 w-14 rounded-2xl border
-                           border-[var(--app-border)] object-cover"
-                    loading="lazy"
-                  />
+                  <span
+                    class="relative inline-block h-14 w-14 overflow-hidden
+                           rounded-2xl border border-[var(--app-border)]
+                           bg-[var(--app-surface-muted)]"
+                  >
+                    <img
+                      [src]="imageUrl"
+                      alt=""
+                      aria-hidden="true"
+                      class="absolute inset-0 h-full w-full scale-125
+                             object-cover opacity-60 blur-md"
+                      loading="lazy"
+                    />
+
+                    <img
+                      [src]="imageUrl"
+                      [alt]="service.name"
+                      class="relative z-10 h-full w-full object-contain"
+                      loading="lazy"
+                    />
+                  </span>
                 } @else {
                   <span
                     class="inline-grid h-14 w-14 place-items-center

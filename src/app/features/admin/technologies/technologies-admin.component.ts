@@ -42,6 +42,7 @@ import { InputIconModule } from 'primeng/inputicon';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { InputTextModule } from 'primeng/inputtext';
 import { MessageModule } from 'primeng/message';
+import { PaginatorModule, PaginatorState } from 'primeng/paginator';
 import { TableModule } from 'primeng/table';
 import { ToolbarModule } from 'primeng/toolbar';
 import { TooltipModule } from 'primeng/tooltip';
@@ -95,6 +96,7 @@ import {
     InputNumberModule,
     InputTextModule,
     MessageModule,
+    PaginatorModule,
     TableModule,
     ToolbarModule,
     TooltipModule
@@ -171,7 +173,7 @@ import {
 
       <p-card styleClass="overflow-hidden rounded-2xl">
         <p-table
-          [value]="filteredTechnologies()"
+          [value]="paginatedTechnologies()"
           [loading]="loading()"
           dataKey="id"
           size="small"
@@ -348,6 +350,15 @@ import {
             </tr>
           </ng-template>
         </p-table>
+
+        @if (filteredTechnologies().length > pageSize) {
+          <p-paginator
+            [rows]="pageSize"
+            [totalRecords]="filteredTechnologies().length"
+            [first]="currentPage() * pageSize"
+            (onPageChange)="onPageChange($event)"
+          />
+        }
 
         @if (filteredTechnologies().length) {
           <div
@@ -684,6 +695,9 @@ export class TechnologiesAdminComponent implements OnInit {
 
   readonly searchTerm = signal('');
 
+  readonly pageSize = 10;
+  readonly currentPage = signal(0);
+
   readonly filteredTechnologies = computed(() => {
     const term = this.searchTerm().trim().toLowerCase();
 
@@ -693,6 +707,15 @@ export class TechnologiesAdminComponent implements OnInit {
 
     return this.technologies().filter(technology =>
       technology.name.toLowerCase().includes(term)
+    );
+  });
+
+  readonly paginatedTechnologies = computed(() => {
+    const start = this.currentPage() * this.pageSize;
+
+    return this.filteredTechnologies().slice(
+      start,
+      start + this.pageSize
     );
   });
 
@@ -742,6 +765,7 @@ export class TechnologiesAdminComponent implements OnInit {
       takeUntilDestroyed(this.destroyRef)
     ).subscribe(value => {
       this.searchTerm.set(value);
+      this.currentPage.set(0);
     });
   }
 
@@ -792,6 +816,9 @@ export class TechnologiesAdminComponent implements OnInit {
   openCreate(): void {
     this.editingId.set(null);
     this.resetForm();
+    this.form.controls.position.setValue(this.nextPosition(), {
+      emitEvent: false
+    });
     this.dialogVisible.set(true);
   }
 
@@ -995,6 +1022,20 @@ export class TechnologiesAdminComponent implements OnInit {
         });
       }
     });
+  }
+
+  onPageChange(event: PaginatorState): void {
+    this.currentPage.set(event.page ?? 0);
+  }
+
+  private nextPosition(): number {
+    const positions = this.technologies().map(
+      technology => technology.position ?? 0
+    );
+
+    return positions.length
+      ? Math.max(...positions) + 1
+      : 0;
   }
 
   private normalizeColor(value: string): string | null {

@@ -1,7 +1,7 @@
 ﻿{
   "app": {
-    "name": "Portefolio",
-    "tagline": "مطور ويب متكامل"
+    "name": "عبد القادر سنيحة",
+    "tagline": "مهندس برمجيات"
   },
   "nav": {
     "main": "التنقل الرئيسي",
@@ -26,7 +26,8 @@
     "system": "النظام"
   },
   "footer": {
-    "description": "موقع مطور — مشاريع، مهارات وتواصل."
+  "description": "بورتفوليو مطوّر — المشاريع، المهارات والتواصل.",
+  "copyright": "© 2026 عبد القادر سنيحة. جميع الحقوق محفوظة."
   },
   "header": {
     "account": "حسابي",
@@ -172,7 +173,10 @@
         "email": "مطلوب بريد إلكتروني صالح.",
         "subject": "الموضوع مطلوب.",
         "message": "يجب أن تحتوي الرسالة على 20 حرفًا على الأقل."
-      }
+      },
+      "phoneLabel": "الهاتف",
+      "socialTitle": "تجدني أيضًا على",
+      "opensNewTab": "يفتح في علامة تبويب جديدة"
     },
     "cv": {
       "title": "السيرة الذاتية",
@@ -193,6 +197,7 @@
     "dashboard": "لوحة التحكم",
     "content": "المحتوى",
     "about": "حولي",
+    "cv": "السيرة الذاتية",
     "timeline": "المسار",
     "technologies": "التقنيات",
     "skills": "المهارات",
@@ -247,6 +252,70 @@
     "messages": {
       "title": "الرسائل",
       "subtitle": "عرض رسائل التواصل."
+    }
+  },
+  "adminDashboard": {
+    "refresh": "تحديث",
+    "updatedAt": "آخر تحديث:",
+    "kpi": {
+      "projects": "المشاريع",
+      "projectsHint": "منشور: {{published}} · مسودات: {{draft}}",
+      "reviews": "الآراء",
+      "reviewsHint": "قيد المراجعة: {{pending}} · معتمد: {{approved}}",
+      "messages": "الرسائل",
+      "messagesHint": "غير مقروء: {{unread}} · مقروء: {{read}}",
+      "rating": "متوسط التقييم",
+      "ratingHint": "متوسط الآراء المعتمدة ({{count}}).",
+      "technologies": "التقنيات",
+      "technologiesHint": "مدرجة في الكتالوج.",
+      "skills": "المهارات",
+      "skillsHint": "منظمة حسب الفئة.",
+      "services": "الخدمات",
+      "servicesHint": "خدمات مقدمة للزوار.",
+      "timeline": "المسار",
+      "timelineHint": "الخبرات: {{experiences}} · التكوينات: {{educations}}"
+    },
+    "charts": {
+      "activityTitle": "نشاط آخر {{months}} أشهر",
+      "activitySubtitle": "المشاريع والآراء والرسائل المنشأة خلال آخر {{months}} أشهر.",
+      "months": "{{count}} أشهر",
+      "reviewsStatusTitle": "حالة الآراء",
+      "reviewsStatusSubtitle": "توزيع الآراء الواردة.",
+      "projectsTechTitle": "المشاريع حسب التقنية",
+      "projectsTechSubtitle": "أكثر 8 تقنيات استخدامًا.",
+      "skillsCategoryTitle": "المهارات حسب الفئة",
+      "skillsCategorySubtitle": "أكثر 8 فئات من حيث عدد المهارات.",
+      "reviewsRatingTitle": "تقييمات الآراء",
+      "reviewsRatingSubtitle": "توزيع التقييمات من 1 إلى 5.",
+      "projectsStatusTitle": "حالة المشاريع",
+      "projectsStatusSubtitle": "المشاريع المنشورة والمسودات.",
+      "messagesStatusTitle": "حالة الرسائل",
+      "messagesStatusSubtitle": "الرسائل المقروءة وغير المقروءة.",
+      "timelineTypeTitle": "المسار حسب النوع",
+      "timelineTypeSubtitle": "الخبرات والتكوينات.",
+      "noData": "لا توجد بيانات متاحة حاليًا."
+    },
+    "series": {
+      "projects": "المشاريع",
+      "reviews": "الآراء",
+      "messages": "الرسائل",
+      "skills": "المهارات"
+    },
+    "status": {
+      "published": "منشور",
+      "draft": "مسودة",
+      "approved": "معتمد",
+      "rejected": "مرفوض",
+      "pending": "قيد المراجعة",
+      "unread": "غير مقروء",
+      "read": "مقروء",
+      "experience": "خبرة",
+      "education": "تكوين"
+    },
+    "recent": {
+      "title": "النشاط الأخير",
+      "subtitle": "آخر المشاريع والآراء والرسائل.",
+      "empty": "لا يوجد نشاط حديث."
     }
   },
   "adminCategories": {
@@ -429,6 +498,30 @@
     "deletedSuccess": "تم حذف الخدمة.",
     "genericError": "تعذر إكمال العملية. يرجى المحاولة مرة أخرى."
   },
+  "adminCv": {
+    "title": "السيرة الذاتية",
+    "subtitle": "إدارة ملفات PDF للسيرة الذاتية لكل لغة من لغات الموقع.",
+    "refresh": "تحديث",
+    "available": "متوفر",
+    "missing": "لا يوجد ملف",
+    "noCv": "لا توجد سيرة ذاتية لهذه اللغة.",
+    "upload": "إضافة ملف PDF",
+    "replace": "استبدال",
+    "delete": "حذف",
+    "cancel": "إلغاء",
+    "open": "فتح",
+    "formatHelp": "ملف PDF فقط، بحد أقصى 20 ميغابايت.",
+    "pdfOnly": "يُسمح فقط بملفات PDF.",
+    "sizeError": "يتجاوز الملف الحجم الأقصى المسموح به وهو 20 ميغابايت.",
+    "uploadError": "تعذر رفع السيرة الذاتية. يرجى المحاولة مرة أخرى.",
+    "deleteError": "تعذر حذف السيرة الذاتية. يرجى المحاولة مرة أخرى.",
+    "deleteTitle": "حذف السيرة الذاتية",
+    "deleteQuestion": "تأكيد حذف السيرة الذاتية باللغة {{language}}؟",
+    "uploaded": "تم حفظ السيرة الذاتية.",
+    "deleted": "تم حذف السيرة الذاتية.",
+    "success": "تمت العملية بنجاح",
+    "error": "خطأ"
+  },
   "adminProjects": {
     "title": "المشاريع",
     "subtitle": "إدارة مشاريع وأعمال معرضك الشخصي.",
@@ -470,15 +563,24 @@
     "video": "فيديو العرض",
     "videoType": "نوع الفيديو",
     "videoUpload": "رفع ملف فيديو",
-    "videoUrlOption": "رابط خارجي أو يوتيوب",
+    "videoUrlOption": "رابط يوتيوب",
+    "videoUrlHelp": "الصق رابط يوتيوب صالحًا (مثال: https://www.youtube.com/watch?v=... أو https://youtu.be/...).",
     "videoHelp": "اختياري. ارفع ملف فيديو (MP4, WEBM, MOV - حتى 50 ميغابايت) أو أدخل رابط يوتيوب (مثال: https://youtube.com/watch?v=...).",
     "uploadVideo": "اختيار فيديو",
     "videoUploading": "جاري رفع الفيديو...",
-    "removeVideo": "إزالة الفيديو",
+    "videoUploadedFile": "فيديو مرفوع",
+    "videoExternalLink": "رابط فيديو خارجي",
+    "videoAlreadySet": "يوجد فيديو مرتبط بهذا المشروع بالفعل. أزله لتغيير المصدر (رفع أو رابط يوتيوب).",
+    "videoUrlInvalid": "رابط يوتيوب غير صالح. استخدم رابطًا مثل https://www.youtube.com/watch?v=... أو https://youtu.be/...",
+    "removeVideo": "حذف الفيديو",
     "videoSizeError": "يتجاوز الفيديو الحجم الأقصى المسموح به وهو 50 ميغابايت.",
     "videoUploadError": "تعذر رفع الفيديو. يرجى المحاولة مجددًا.",
     "images": "معرض الصور",
     "imagesHelp": "اختياري. أضف لقطات شاشة متعددة. ستكون الصورة الأولى هي الغلاف الرئيسي (الحد الأقصى 10 ميغابايت لكل صورة).",
+    "imageReorderHelp": "اسحب الصور وأفلتها لتغيير ترتيبها، أو استخدم الأسهم. تُستخدم الصورة الأولى كغلاف.",
+    "dragToReorder": "اسحب لإعادة الترتيب",
+    "moveImageLeft": "نقل إلى اليسار",
+    "moveImageRight": "نقل إلى اليمين",
     "uploadImages": "إضافة صور",
     "imagesUploading": "جاري رفع الصور...",
     "noImages": "لم تتم إضافة أي صور بعد.",
@@ -781,5 +883,12 @@
     "markedAsReadSuccess": "تم تحديد الرسالة كمقروءة.",
     "markedAsUnreadSuccess": "تم تحديد الرسالة كغير مقروءة.",
     "deletedSuccess": "تم حذف الرسالة بنجاح."
-  }
+  },
+  "hero": {
+  "firstName": "عبد القادر",
+  "lastName": "سنيحة",
+  "role": "مهندس برمجيات",
+  "description": "شغوف بتصميم حلول برمجية آمنة وقابلة للتوسع وذكية. متخصص في تطوير تطبيقات Full Stack، والبنى السحابية الحديثة، وعمليات DevOps، والتطبيقات المعتمدة على الذكاء الاصطناعي.",
+  "focus": "تطوير الأنظمة، DevOps، الأمن السيبراني والذكاء الاصطناعي"
+}
 }

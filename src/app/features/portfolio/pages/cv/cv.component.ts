@@ -9,8 +9,6 @@ import {
 
 import { TranslatePipe } from '@ngx-translate/core';
 
-import { ActivatedRoute } from '@angular/router';
-
 import {
   catchError,
   finalize,
@@ -43,12 +41,7 @@ import { TimelineService } from '../../../../core/services/timeline.service';
                sm:flex-row sm:items-end"
       >
         <div class="max-w-3xl">
-          <p
-            class="text-xs font-bold uppercase tracking-[0.14em]
-                   text-[var(--p-primary-color)]"
-          >
-            {{ 'nav.cv' | translate }}
-          </p>
+          
 
           <h1
             class="mt-2 text-3xl font-bold tracking-[-0.04em] sm:text-4xl"
@@ -61,23 +54,6 @@ import { TimelineService } from '../../../../core/services/timeline.service';
           </p>
         </div>
 
-        <button
-          type="button"
-          class="no-print inline-flex min-h-11 shrink-0 items-center
-                 justify-center gap-2 rounded-xl border
-                 border-[var(--app-border)] bg-[var(--app-surface)]
-                 px-5 py-3 text-sm font-semibold transition
-                 hover:border-[var(--p-primary-color)]
-                 hover:text-[var(--p-primary-color)]"
-          (click)="print()"
-        >
-          <i
-            class="pi pi-print text-xs"
-            aria-hidden="true"
-          ></i>
-
-          {{ 'publicPages.cv.print' | translate }}
-        </button>
       </header>
 
       @if (loading()) {
@@ -104,13 +80,17 @@ import { TimelineService } from '../../../../core/services/timeline.service';
                    bg-[var(--app-surface)] p-6 sm:p-8"
           >
             <div>
-              <span
-                class="inline-grid h-16 w-16 place-items-center rounded-2xl
-                       bg-gradient-to-br from-indigo-600 to-blue-600
-                       text-2xl font-bold text-white"
-              >
-                {{ initials() }}
-              </span>
+              <img
+                src="images/portrait.jpg"
+                alt="Portrait"
+                width="64"
+                height="64"
+                draggable="false"
+                (contextmenu)="$event.preventDefault()"
+                (dragstart)="$event.preventDefault()"
+                class="h-16 w-16 select-none rounded-2xl object-cover object-center"
+                style="-webkit-touch-callout: none;"
+              />
 
               <h2 class="mt-4 text-xl font-bold">
                 {{ 'app.name' | translate }}
@@ -358,9 +338,6 @@ export class CvComponent {
   private readonly timelineService = inject(TimelineService);
   private readonly skillService = inject(SkillService);
   private readonly language = inject(LanguageService);
-  private readonly route = inject(ActivatedRoute);
-
-  private printTriggered = false;
 
   readonly about = signal<AboutPublic | null>(null);
   readonly timeline = signal<TimelinePublicItem[]>([]);
@@ -416,7 +393,6 @@ export class CvComponent {
       .pipe(
         finalize(() => {
           this.loading.set(false);
-          this.triggerPrintIfRequested();
         })
       )
       .subscribe(result => {
@@ -424,27 +400,6 @@ export class CvComponent {
         this.timeline.set(result.timeline);
         this.categories.set(result.categories);
       });
-  }
-
-  print(): void {
-    window.print();
-  }
-
-  private triggerPrintIfRequested(): void {
-    if (this.printTriggered) {
-      return;
-    }
-
-    if (
-      this.route.snapshot.queryParamMap.get('download') !==
-      '1'
-    ) {
-      return;
-    }
-
-    this.printTriggered = true;
-
-    window.setTimeout(() => window.print(), 400);
   }
 
   formatDate(value: number | null): string {

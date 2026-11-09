@@ -10,7 +10,7 @@ export const environment = {
   keycloak: {
     url: 'http://localhost:8080',
     realm: 'portfolio-abdelkader',
-    clientId: 'portfolio-frontend',
+    clientId: 'portfolio-angular',
     rolesClientId: 'portfolio-spring'
   }
 };

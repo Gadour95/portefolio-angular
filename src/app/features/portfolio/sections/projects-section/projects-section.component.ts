@@ -1,6 +1,5 @@
 import {
   Component,
-  computed,
   effect,
   inject,
   signal,
@@ -11,13 +10,10 @@ import { RouterLink } from '@angular/router';
 
 import { TranslatePipe } from '@ngx-translate/core';
 
-import { switchMap } from 'rxjs';
-
 import {
   resolveMediaUrl
 } from '../../../../core/http/media-url';
 
-import { PageResponse } from '../../../../core/models/page-response.model';
 import {
   ProjectPublic
 } from '../../../../core/models/project.model';
@@ -28,16 +24,6 @@ import { ProjectService } from '../../../../core/services/project.service';
 import {
   ScrollStripComponent
 } from '../../../../shared/components/scroll-strip/scroll-strip.component';
-
-const EMPTY_PROJECT_PAGE: PageResponse<ProjectPublic> = {
-  content: [],
-  page: 0,
-  size: 5,
-  totalElements: 0,
-  totalPages: 0,
-  first: true,
-  last: true
-};
 
 @Component({
   selector: 'app-projects-section',
@@ -125,7 +111,7 @@ const EMPTY_PROJECT_PAGE: PageResponse<ProjectPublic> = {
       } @else {
         <div class="mt-8">
           <app-scroll-strip>
-            @for (project of topProjects(); track project.id) {
+            @for (project of projects(); track project.id) {
               <a
                 [routerLink]="['/projects', project.slug]"
                 class="group flex w-[21rem] shrink-0 snap-start flex-col
@@ -143,9 +129,19 @@ const EMPTY_PROJECT_PAGE: PageResponse<ProjectPublic> = {
                   @if (projectImage(project); as image) {
                     <img
                       [src]="image"
+                      alt=""
+                      aria-hidden="true"
+                      class="absolute inset-0 h-full w-full scale-125
+                             object-cover opacity-70 blur-xl"
+                      loading="lazy"
+                    />
+
+                    <img
+                      [src]="image"
                       [alt]="project.title"
-                      class="h-full w-full object-cover transition
-                             duration-500 group-hover:scale-105"
+                      class="relative z-10 h-full w-full object-contain
+                             transition duration-500
+                             group-hover:scale-105"
                       loading="lazy"
                     />
                   } @else {
@@ -243,10 +239,6 @@ export class ProjectsSectionComponent {
   readonly projects = signal<ProjectPublic[]>([]);
   readonly loading = signal(true);
 
-  readonly topProjects = computed(() =>
-    this.projects().slice(0, 5)
-  );
-
   constructor() {
     effect(() => {
       this.language.current();
@@ -259,29 +251,15 @@ export class ProjectsSectionComponent {
     this.loading.set(true);
 
     this.projectService
-      .getPublicProjects({
-        page: 0,
-        size: 5,
-        featured: true
-      })
-      .pipe(
-        switchMap(page =>
-          page.content.length
-            ? [page]
-            : this.projectService.getPublicProjects({
-                page: 0,
-                size: 5
-              })
-        )
-      )
+      .getTopPublicProjects(5)
       .subscribe({
-        next: page => {
-          this.projects.set(page.content);
+        next: projects => {
+          this.projects.set(projects);
           this.loading.set(false);
         },
 
         error: () => {
-          this.projects.set(EMPTY_PROJECT_PAGE.content);
+          this.projects.set([]);
           this.loading.set(false);
         }
       });

@@ -221,6 +221,16 @@ export class AdminLayoutComponent {
 
           {
             label: this.translate.instant(
+              'adminNav.cv'
+            ),
+
+            icon: 'pi pi-file-pdf',
+
+            routerLink: '/admin/cv'
+          },
+
+          {
+            label: this.translate.instant(
               'adminNav.timeline'
             ),
 

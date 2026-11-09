@@ -219,9 +219,19 @@ import {
                 @if (projectImage(project); as image) {
                   <img
                     [src]="image"
+                    alt=""
+                    aria-hidden="true"
+                    class="absolute inset-0 h-full w-full scale-125
+                           object-cover opacity-70 blur-xl"
+                    loading="lazy"
+                  />
+
+                  <img
+                    [src]="image"
                     [alt]="project.title"
-                    class="h-full w-full object-cover transition
-                           duration-300 group-hover:scale-105"
+                    class="relative z-10 h-full w-full object-contain
+                           transition duration-300
+                           group-hover:scale-105"
                     loading="lazy"
                   />
                 } @else {
