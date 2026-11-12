@@ -8,7 +8,7 @@ export const environment = {
   mediaUrl: '/media',
 
   keycloak: {
-    url: 'http://localhost:8080',
+    url: 'https://auth.abdelkadersniha.tn',
     realm: 'portfolio-abdelkader',
     clientId: 'portfolio-angular',
     rolesClientId: 'portfolio-spring'
