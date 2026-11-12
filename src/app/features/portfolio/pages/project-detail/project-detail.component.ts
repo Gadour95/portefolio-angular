@@ -34,6 +34,8 @@ import {
 
 import { ProjectService } from '../../../../core/services/project.service';
 
+import { SeoService } from '../../../../core/seo/seo.service';
+
 @Component({
   selector: 'app-project-detail',
   standalone: true,
@@ -375,6 +377,7 @@ export class ProjectDetailComponent {
   private readonly projectService = inject(ProjectService);
   private readonly route = inject(ActivatedRoute);
   private readonly sanitizer = inject(DomSanitizer);
+  private readonly seo = inject(SeoService);
 
   readonly project = signal<ProjectPublic | null>(null);
   readonly loading = signal(true);
@@ -414,6 +417,7 @@ export class ProjectDetailComponent {
         if (!slug) {
           this.loading.set(false);
           this.notFound.set(true);
+          this.seo.setProjectNotFound();
           return;
         }
 
@@ -457,6 +461,7 @@ export class ProjectDetailComponent {
       next: project => {
         this.project.set(project);
         this.loading.set(false);
+        this.seo.setProject(project);
       },
 
       error: (error: unknown) => {
@@ -468,6 +473,7 @@ export class ProjectDetailComponent {
           error.status === 404
         ) {
           this.notFound.set(true);
+          this.seo.setProjectNotFound();
           return;
         }
 

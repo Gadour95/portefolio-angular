@@ -123,6 +123,33 @@ select:focus-visible {
   color: var(--app-text);
 }
 
+/* Panneau des selects publics : même surface que les cartes */
+.app-select-panel.p-select-overlay {
+  border: 1px solid var(--app-border);
+  border-radius: 0.9rem;
+  background: var(--app-surface);
+  box-shadow: 0 18px 48px -18px rgb(15 23 42 / 0.35);
+}
+
+.app-select-panel .p-select-list {
+  padding: 0.3rem;
+}
+
+.app-select-panel .p-select-header {
+  padding: 0.5rem 0.55rem 0.2rem;
+}
+
+.app-select-panel .p-select-filter {
+  background: var(--app-surface-muted);
+  font-size: 0.875rem;
+}
+
+.app-select-panel .p-select-option {
+  border-radius: 0.55rem;
+  padding: 0.6rem 0.75rem;
+  font-size: 0.875rem;
+}
+
 .app-nav-link {
   border-radius: 0.75rem;
   padding: 0.65rem 0.9rem;

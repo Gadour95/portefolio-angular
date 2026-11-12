@@ -52,6 +52,8 @@ import {
   LanguageService
 } from './core/services/language.service';
 
+import { SeoService } from './core/seo/seo.service';
+
 import {
   authInterceptor
 } from './core/interceptors/auth.interceptor';
@@ -153,8 +155,10 @@ export const appConfig: ApplicationConfig = {
     provideAppInitializer(() => {
       const themeService = inject(ThemeService);
       const languageService = inject(LanguageService);
+      const seoService = inject(SeoService);
 
       themeService.init();
+      seoService.init();
 
       return languageService.init();
     })

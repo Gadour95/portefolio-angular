@@ -22,6 +22,18 @@ export const routes: Routes = [
         path: '',
         pathMatch: 'full',
 
+        data: {
+          seo: {
+            title:
+              'Abdelkader SNIHA — Ingénieur Logiciel Full Stack | Portfolio',
+            description:
+              'Portfolio d’Abdelkader SNIHA, ingénieur logiciel full stack à Tunis : projets Angular, Spring Boot, DevOps, cloud et IA, services et CV à télécharger.',
+            path: '/',
+            type: 'profile',
+            breadcrumb: [{ name: 'Accueil', path: '/' }]
+          }
+        },
+
         loadComponent: () =>
           import(
             './features/portfolio/pages/home/home.component'
@@ -32,6 +44,19 @@ export const routes: Routes = [
 
       {
         path: 'projects',
+
+        data: {
+          seo: {
+            title: 'Projets & réalisations — Abdelkader SNIHA',
+            description:
+              'Découvrez les projets et réalisations d’Abdelkader SNIHA : applications web Angular, API Spring Boot, DevOps, cloud et intelligence artificielle.',
+            path: '/projects',
+            breadcrumb: [
+              { name: 'Accueil', path: '/' },
+              { name: 'Projets', path: '/projects' }
+            ]
+          }
+        },
 
         loadComponent: () =>
           import(
@@ -44,6 +69,20 @@ export const routes: Routes = [
       {
         path: 'projects/:slug',
 
+        data: {
+          seo: {
+            title: 'Projet — Abdelkader SNIHA',
+            description:
+              'Projet réalisé par Abdelkader SNIHA, ingénieur logiciel full stack : technologies, rôle et résultats.',
+            path: '/projects',
+            type: 'article',
+            breadcrumb: [
+              { name: 'Accueil', path: '/' },
+              { name: 'Projets', path: '/projects' }
+            ]
+          }
+        },
+
         loadComponent: () =>
           import(
             './features/portfolio/pages/project-detail/project-detail.component'
@@ -54,6 +93,20 @@ export const routes: Routes = [
 
       {
         path: 'timeline',
+
+        data: {
+          seo: {
+            title: 'Parcours — Abdelkader SNIHA',
+            description:
+              'Parcours professionnel et formation d’Abdelkader SNIHA, ingénieur logiciel full stack.',
+            path: '/timeline',
+            robots: 'noindex, follow',
+            breadcrumb: [
+              { name: 'Accueil', path: '/' },
+              { name: 'Parcours', path: '/timeline' }
+            ]
+          }
+        },
 
         loadComponent: () =>
           import(
@@ -66,6 +119,20 @@ export const routes: Routes = [
       {
         path: 'skills',
 
+        data: {
+          seo: {
+            title: 'Compétences — Abdelkader SNIHA',
+            description:
+              'Compétences techniques d’Abdelkader SNIHA : Angular, TypeScript, Spring Boot, DevOps, cloud et intelligence artificielle.',
+            path: '/skills',
+            robots: 'noindex, follow',
+            breadcrumb: [
+              { name: 'Accueil', path: '/' },
+              { name: 'Compétences', path: '/skills' }
+            ]
+          }
+        },
+
         loadComponent: () =>
           import(
             './features/portfolio/pages/skills/skills.component'
@@ -76,6 +143,20 @@ export const routes: Routes = [
 
       {
         path: 'technologies',
+
+        data: {
+          seo: {
+            title: 'Technologies — Abdelkader SNIHA',
+            description:
+              'Technologies et outils utilisés par Abdelkader SNIHA au quotidien.',
+            path: '/technologies',
+            robots: 'noindex, follow',
+            breadcrumb: [
+              { name: 'Accueil', path: '/' },
+              { name: 'Technologies', path: '/technologies' }
+            ]
+          }
+        },
 
         loadComponent: () =>
           import(
@@ -88,6 +169,20 @@ export const routes: Routes = [
       {
         path: 'services',
 
+        data: {
+          seo: {
+            title:
+              'Services de développement web & logiciel — Abdelkader SNIHA',
+            description:
+              'Services d’Abdelkader SNIHA : développement d’applications web Angular, API et back-end Spring Boot, DevOps, cloud et conseil technique.',
+            path: '/services',
+            breadcrumb: [
+              { name: 'Accueil', path: '/' },
+              { name: 'Services', path: '/services' }
+            ]
+          }
+        },
+
         loadComponent: () =>
           import(
             './features/portfolio/pages/services/services.component'
@@ -98,6 +193,20 @@ export const routes: Routes = [
 
       {
         path: 'cv',
+
+        data: {
+          seo: {
+            title:
+              'CV — Abdelkader SNIHA, ingénieur logiciel full stack',
+            description:
+              'Consultez et téléchargez le CV d’Abdelkader SNIHA, ingénieur logiciel full stack : expérience, formation, compétences et coordonnées.',
+            path: '/cv',
+            breadcrumb: [
+              { name: 'Accueil', path: '/' },
+              { name: 'CV', path: '/cv' }
+            ]
+          }
+        },
 
         loadComponent: () =>
           import(
@@ -110,6 +219,20 @@ export const routes: Routes = [
       {
         path: 'design-system',
 
+        data: {
+          seo: {
+            title: 'Design system — Abdelkader SNIHA',
+            description:
+              'Documentation interne du design system du portfolio.',
+            path: '/design-system',
+            robots: 'noindex, nofollow',
+            breadcrumb: [
+              { name: 'Accueil', path: '/' },
+              { name: 'Design system', path: '/design-system' }
+            ]
+          }
+        },
+
         loadComponent: () =>
           import(
             './features/design-system/design-system.component'
@@ -120,6 +243,19 @@ export const routes: Routes = [
 
       {
         path: 'forbidden',
+
+        data: {
+          seo: {
+            title: 'Accès refusé — Abdelkader SNIHA',
+            description: 'Accès refusé.',
+            path: '/forbidden',
+            robots: 'noindex, nofollow',
+            breadcrumb: [
+              { name: 'Accueil', path: '/' },
+              { name: 'Accès refusé', path: '/forbidden' }
+            ]
+          }
+        },
 
         loadComponent: () =>
           import(
@@ -141,7 +277,15 @@ export const routes: Routes = [
     canActivate: [authGuard],
 
     data: {
-      roles: ['ADMIN']
+      roles: ['ADMIN'],
+
+      seo: {
+        title: 'Administration — Abdelkader SNIHA',
+        description: 'Espace d’administration privé du portfolio.',
+        path: '/admin',
+        robots: 'noindex, nofollow',
+        breadcrumb: [{ name: 'Administration', path: '/admin' }]
+      }
     },
 
     loadComponent: () =>

@@ -6,13 +6,21 @@ import {
 
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
+import { FormsModule } from '@angular/forms';
+
 import {
   ActivatedRoute,
   Router,
   RouterLink
 } from '@angular/router';
 
-import { TranslatePipe } from '@ngx-translate/core';
+import {
+  TranslatePipe,
+  TranslateService
+} from '@ngx-translate/core';
+
+import { CheckboxModule } from 'primeng/checkbox';
+import { SelectModule } from 'primeng/select';
 
 import { resolveMediaUrl } from '../../../../core/http/media-url';
 
@@ -31,7 +39,13 @@ import {
 @Component({
   selector: 'app-projects',
   standalone: true,
-  imports: [RouterLink, TranslatePipe],
+  imports: [
+    RouterLink,
+    TranslatePipe,
+    FormsModule,
+    SelectModule,
+    CheckboxModule
+  ],
 
   template: `
     <div class="app-container space-y-8 py-10 sm:py-14">
@@ -57,72 +71,86 @@ import {
 
       <!-- Filtres -->
       <section
-        class="flex flex-col gap-4 rounded-2xl border
-               border-[var(--app-border)] bg-[var(--app-surface)] p-4
-               sm:flex-row sm:items-center sm:justify-between"
+        class="rounded-2xl border border-[var(--app-border)]
+               bg-[var(--app-surface)] p-4 sm:p-5"
       >
-        <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
-          <label class="flex flex-col gap-1.5">
-            <span
-              class="text-xs font-semibold uppercase tracking-wide
-                     text-[var(--app-text-muted)]"
-            >
-              {{ 'publicPages.projects.technology' | translate }}
-            </span>
-
-            <select
-              class="app-control min-w-60"
-              [value]="technologyId() ?? ''"
-              (change)="onTechnologyChange($event)"
-            >
-              <option value="">
-                {{ 'publicPages.projects.allTechnologies' | translate }}
-              </option>
-
-              @for (
-                technology of technologies();
-                track technology.id
-              ) {
-                <option [value]="technology.id">
-                  {{ technology.name }}
-                </option>
-              }
-            </select>
-          </label>
-
-          <label
-            class="inline-flex cursor-pointer items-center gap-2
-                   self-end pb-3 text-sm font-medium sm:pb-0"
-          >
-            <input
-              type="checkbox"
-              class="h-4 w-4 cursor-pointer rounded
-                     border-[var(--app-border)]
-                     accent-[var(--p-primary-color)]"
-              [checked]="featuredOnly()"
-              (change)="onFeaturedChange($event)"
-            />
-
-            {{ 'publicPages.projects.featuredOnly' | translate }}
-          </label>
-        </div>
-
-        <button
-          type="button"
-          class="inline-flex min-h-10 items-center justify-center gap-2
-                 rounded-xl border border-[var(--app-border)] px-4
-                 py-2 text-sm font-semibold transition
-                 hover:border-[var(--p-primary-color)]
-                 hover:text-[var(--p-primary-color)]"
-          (click)="resetFilters()"
+        <div
+          class="flex flex-col gap-4
+                 sm:flex-row sm:items-end sm:justify-between"
         >
-          <i
-            class="pi pi-filter-slash text-xs"
-            aria-hidden="true"
-          ></i>
+          <div
+            class="flex flex-col gap-3
+                   sm:flex-row sm:items-end sm:gap-4"
+          >
+            <div class="flex flex-col gap-1.5 sm:w-64">
+              <span
+                class="text-xs font-semibold uppercase tracking-wide
+                       text-[var(--app-text-muted)]"
+              >
+                {{ 'publicPages.projects.technology' | translate }}
+              </span>
 
-          {{ 'common.reset' | translate }}
-        </button>
+              <p-select
+                styleClass="app-select"
+                panelStyleClass="app-select-panel"
+                [options]="technologyOptions()"
+                optionLabel="label"
+                optionValue="value"
+                [ngModel]="technologyId()"
+                (ngModelChange)="onTechnologyChange($event)"
+                [placeholder]="
+                  'publicPages.projects.allTechnologies' | translate
+                "
+                [filter]="technologies().length > 8"
+                [fluid]="true"
+                appendTo="body"
+                [ariaLabel]="
+                  'publicPages.projects.technology' | translate
+                "
+              />
+            </div>
+
+            <div
+              class="inline-flex min-h-11 items-center gap-2.5
+                     rounded-xl border border-[var(--app-border)]
+                     bg-[var(--app-surface)] px-3.5 py-2
+                     transition
+                     hover:border-[var(--p-primary-color)]"
+            >
+              <p-checkbox
+                inputId="projects-featured-only"
+                [binary]="true"
+                [ngModel]="featuredOnly()"
+                (ngModelChange)="onFeaturedChange($event)"
+              />
+
+              <label
+                for="projects-featured-only"
+                class="cursor-pointer select-none text-sm
+                       font-medium"
+              >
+                {{ 'publicPages.projects.featuredOnly' | translate }}
+              </label>
+            </div>
+          </div>
+
+          <button
+            type="button"
+            class="inline-flex min-h-11 items-center justify-center
+                   gap-2 rounded-xl border border-[var(--app-border)]
+                   px-4 py-2 text-sm font-semibold transition
+                   hover:border-[var(--p-primary-color)]
+                   hover:text-[var(--p-primary-color)]"
+            (click)="resetFilters()"
+          >
+            <i
+              class="pi pi-filter-slash text-xs"
+              aria-hidden="true"
+            ></i>
+
+            {{ 'common.reset' | translate }}
+          </button>
+        </div>
       </section>
 
       <!-- Contenu -->
@@ -372,6 +400,32 @@ import {
         }
       }
     </div>
+  `,
+
+  styles: `
+    :host ::ng-deep .app-select.p-select {
+      width: 100%;
+      min-height: 2.75rem;
+      border-radius: 0.75rem;
+      border-color: var(--app-border);
+      background: var(--app-surface);
+    }
+
+    :host ::ng-deep .app-select .p-select-label {
+      display: flex;
+      align-items: center;
+      padding-block: 0.6rem;
+      font-size: 0.875rem;
+      font-weight: 500;
+    }
+
+    :host ::ng-deep .app-select:not(.p-disabled):hover {
+      border-color: var(--p-primary-color);
+    }
+
+    :host ::ng-deep .app-select:not(.p-disabled).p-focus {
+      border-color: var(--p-primary-color);
+    }
   `
 })
 export class ProjectsComponent {
@@ -381,6 +435,7 @@ export class ProjectsComponent {
   );
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
+  private readonly translate = inject(TranslateService);
 
   private readonly pageSize = 9;
 
@@ -467,22 +522,35 @@ export class ProjectsComponent {
       });
   }
 
-  onTechnologyChange(event: Event): void {
-    const value = (event.target as HTMLSelectElement).value;
+  technologyOptions(): {
+    label: string;
+    value: string | null;
+  }[] {
+    return [
+      {
+        label: this.translate.instant(
+          'publicPages.projects.allTechnologies'
+        ),
+        value: null
+      },
+      ...this.technologies().map(technology => ({
+        label: technology.name,
+        value: technology.id
+      }))
+    ];
+  }
 
+  onTechnologyChange(value: string | null): void {
     this.navigate({
       page: 0,
       technologyId: value || null
     });
   }
 
-  onFeaturedChange(event: Event): void {
-    const checked = (event.target as HTMLInputElement)
-      .checked;
-
+  onFeaturedChange(value: boolean): void {
     this.navigate({
       page: 0,
-      featured: checked
+      featured: value
     });
   }
 

@@ -1,0 +1,18 @@
+# robots.txt — https://www.abdelkadersniha.tn/
+# Portfolio d'Abdelkader SNIHA — Ingénieur Logiciel Full Stack.
+
+User-agent: *
+Allow: /
+
+# Pages privées ou techniques : elles ne doivent jamais être indexées.
+Disallow: /admin/
+Disallow: /forbidden
+Disallow: /design-system
+Disallow: /silent-check-sso.html
+
+# Les robots publicitaires n'ont pas besoin d'explorer le portfolio.
+User-agent: AdsBot-Google
+Disallow: /
+
+# Sitemap public : Accueil, Projets, Services et CV.
+Sitemap: https://www.abdelkadersniha.tn/sitemap.xml
