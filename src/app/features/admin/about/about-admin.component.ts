@@ -11,6 +11,7 @@ import {
 } from '@angular/common/http';
 
 import {
+  FormArray,
   FormControl,
   FormGroup,
   ReactiveFormsModule,
@@ -48,10 +49,15 @@ import {
 
 import {
   AboutAdmin,
-  AboutAdminRequest
+  AboutAdminRequest,
+  AboutLink
 } from '../../../core/models/about.model';
 
 import { AboutService } from '../../../core/services/about.service';
+
+import { MediaService } from '../../../core/services/media.service';
+
+import { resolveMediaUrl } from '../../../core/http/media-url';
 
 type LocalizedGroup =
   | 'description'
@@ -63,6 +69,12 @@ interface LanguageOption {
   label: string;
   dir: 'ltr' | 'rtl';
 }
+
+type LinkGroup = FormGroup<{
+  image: FormControl<string | null>;
+  text: FormControl<string>;
+  url: FormControl<string>;
+}>;
 
 @Component({
   selector: 'app-admin-about',
@@ -228,6 +240,413 @@ interface LanguageOption {
                   >
                     {{ error }}
                   </p-message>
+                }
+              </div>
+
+              <div class="border-t border-[var(--app-border)] pt-5">
+                <div
+                  class="flex flex-wrap items-start justify-between gap-3"
+                >
+                  <div>
+                    <h3 class="text-sm font-semibold">
+                      {{ 'adminAbout.phones' | translate }}
+                    </h3>
+
+                    <p class="mt-1 text-xs app-muted">
+                      {{ 'adminAbout.phonesHelp' | translate }}
+                    </p>
+                  </div>
+
+                  <p-button
+                    type="button"
+                    icon="pi pi-plus"
+                    severity="secondary"
+                    [outlined]="true"
+                    [label]="'adminAbout.addPhone' | translate"
+                    [disabled]="saving() || phones.length >= 20"
+                    (onClick)="addPhone()"
+                  />
+                </div>
+
+                @if (phones.length === 0) {
+                  <p
+                    class="mt-3 rounded-xl border border-dashed
+                           border-[var(--app-border)] px-4 py-3
+                           text-xs app-muted"
+                  >
+                    {{ 'adminAbout.noPhones' | translate }}
+                  </p>
+                } @else {
+                  <div class="mt-3 space-y-3">
+                    @for (
+                      phone of phones.controls;
+                      track phone;
+                      let i = $index
+                    ) {
+                      <div class="flex items-start gap-2">
+                        <div class="min-w-0 flex-1">
+                          <input
+                            pInputText
+                            type="tel"
+                            dir="ltr"
+                            class="w-full"
+                            [formControl]="phone"
+                            [placeholder]="
+                              'adminAbout.phonePlaceholder'
+                                | translate
+                            "
+                            [readonly]="saving()"
+                            [class.ng-invalid]="
+                              phone.invalid && phone.touched
+                            "
+                            [class.ng-dirty]="phone.touched"
+                          />
+
+                          @if (phone.invalid && phone.touched) {
+                            <p-message
+                              severity="error"
+                              variant="simple"
+                              styleClass="mt-2"
+                            >
+                              {{
+                                phone.hasError('maxlength')
+                                  ? ('adminAbout.phoneTooLong'
+                                    | translate)
+                                  : ('adminAbout.phoneRequired'
+                                    | translate)
+                              }}
+                            </p-message>
+                          }
+                        </div>
+
+                        <p-button
+                          type="button"
+                          icon="pi pi-trash"
+                          severity="danger"
+                          [text]="true"
+                          [rounded]="true"
+                          [ariaLabel]="
+                            'adminAbout.removePhone' | translate
+                          "
+                          [disabled]="saving()"
+                          (onClick)="removePhone(i)"
+                        />
+                      </div>
+                    }
+                  </div>
+                }
+              </div>
+
+              <div class="border-t border-[var(--app-border)] pt-5">
+                <div
+                  class="flex flex-wrap items-start justify-between gap-3"
+                >
+                  <div>
+                    <h3 class="text-sm font-semibold">
+                      {{ 'adminAbout.links' | translate }}
+                    </h3>
+
+                    <p class="mt-1 text-xs app-muted">
+                      {{ 'adminAbout.linksHelp' | translate }}
+                    </p>
+                  </div>
+
+                  <p-button
+                    type="button"
+                    icon="pi pi-plus"
+                    severity="secondary"
+                    [outlined]="true"
+                    [label]="'adminAbout.addLink' | translate"
+                    [disabled]="saving() || links.length >= 30"
+                    (onClick)="addLink()"
+                  />
+                </div>
+
+                @if (links.length === 0) {
+                  <p
+                    class="mt-3 rounded-xl border border-dashed
+                           border-[var(--app-border)] px-4 py-3
+                           text-xs app-muted"
+                  >
+                    {{ 'adminAbout.noLinks' | translate }}
+                  </p>
+                } @else {
+                  <div class="mt-3 space-y-4">
+                    @for (
+                      link of links.controls;
+                      track link;
+                      let i = $index
+                    ) {
+                      <div
+                        class="rounded-2xl border
+                               border-[var(--app-border)] p-4"
+                      >
+                        <div
+                          class="flex items-start justify-between gap-3"
+                        >
+                          <p
+                            class="text-xs font-semibold app-muted"
+                          >
+                            #{{ i + 1 }}
+                          </p>
+
+                          <p-button
+                            type="button"
+                            icon="pi pi-trash"
+                            severity="danger"
+                            [text]="true"
+                            [rounded]="true"
+                            [ariaLabel]="
+                              'adminAbout.removeLink' | translate
+                            "
+                            [disabled]="saving()"
+                            (onClick)="removeLink(i)"
+                          />
+                        </div>
+
+                        <div
+                          class="mt-3 grid gap-4
+                                 md:grid-cols-[auto_minmax(0,1fr)]"
+                        >
+                          <div>
+                            <span class="app-label">
+                              {{
+                                'adminAbout.linkImage'
+                                  | translate
+                              }}
+                            </span>
+
+                            <div class="flex items-start gap-3">
+                              @if (
+                                linkAt(i).controls.image.value
+                              ) {
+                                <img
+                                  [src]="linkImageUrl(i)"
+                                  [alt]="
+                                    linkAt(i).controls.text.value
+                                      || ('adminAbout.linkImage'
+                                        | translate)
+                                  "
+                                  class="h-14 w-14 rounded-xl
+                                         border
+                                         border-[var(--app-border)]
+                                         object-cover"
+                                />
+                              } @else {
+                                <span
+                                  class="flex h-14 w-14
+                                         items-center justify-center
+                                         rounded-xl border
+                                         border-dashed
+                                         border-[var(--app-border)]"
+                                  aria-hidden="true"
+                                >
+                                  <i
+                                    class="pi pi-image text-lg
+                                           app-muted"
+                                  ></i>
+                                </span>
+                              }
+
+                              <div
+                                class="flex flex-col items-start
+                                       gap-2"
+                              >
+                                <input
+                                  #linkImageInput
+                                  type="file"
+                                  class="hidden"
+                                  accept="image/jpeg,image/jpg,image/png,image/webp,image/svg+xml"
+                                  (change)="
+                                    onLinkImageSelected(
+                                      i,
+                                      $event
+                                    )
+                                  "
+                                />
+
+                                <p-button
+                                  type="button"
+                                  icon="pi pi-upload"
+                                  severity="secondary"
+                                  [outlined]="true"
+                                  [label]="
+                                    'adminAbout.uploadImage'
+                                      | translate
+                                  "
+                                  [loading]="
+                                    uploadingLinkImage() === i
+                                  "
+                                  [disabled]="
+                                    saving() ||
+                                    uploadingLinkImage() !== null
+                                  "
+                                  (onClick)="linkImageInput.click()"
+                                />
+
+                                @if (
+                                  linkAt(i).controls.image.value
+                                ) {
+                                  <p-button
+                                    type="button"
+                                    icon="pi pi-times"
+                                    severity="danger"
+                                    [text]="true"
+                                    [label]="
+                                      'adminAbout.removeImage'
+                                        | translate
+                                    "
+                                    [disabled]="
+                                      saving() ||
+                                      uploadingLinkImage() !==
+                                        null
+                                    "
+                                    (onClick)="removeLinkImage(i)"
+                                  />
+                                }
+                              </div>
+                            </div>
+
+                            <p
+                              class="mt-2 max-w-52 text-xs
+                                     app-muted"
+                            >
+                              {{
+                                'adminAbout.linkImageHelp'
+                                  | translate
+                              }}
+                            </p>
+                          </div>
+
+                          <div class="grid gap-4">
+                            <div>
+                              <label
+                                class="app-label"
+                                [for]="'about-link-text-' + i"
+                              >
+                                {{
+                                  'adminAbout.linkText'
+                                    | translate
+                                }}
+                                <span
+                                  class="text-red-500"
+                                  aria-hidden="true"
+                                >*</span>
+                              </label>
+
+                              <input
+                                pInputText
+                                [id]="'about-link-text-' + i"
+                                type="text"
+                                class="w-full"
+                                [formControl]="
+                                  linkAt(i).controls.text
+                                "
+                                [placeholder]="
+                                  'adminAbout.linkTextPlaceholder'
+                                    | translate
+                                "
+                                [readonly]="saving()"
+                                [class.ng-invalid]="
+                                  linkAt(i).controls.text.invalid &&
+                                  linkAt(i).controls.text.touched
+                                "
+                                [class.ng-dirty]="
+                                  linkAt(i).controls.text.touched
+                                "
+                              />
+
+                              @if (
+                                linkAt(i).controls.text.invalid &&
+                                linkAt(i).controls.text.touched
+                              ) {
+                                <p-message
+                                  severity="error"
+                                  variant="simple"
+                                  styleClass="mt-2"
+                                >
+                                  {{
+                                    linkAt(i).controls.text.hasError(
+                                      'maxlength'
+                                    )
+                                      ? ('adminAbout.linkTextTooLong'
+                                        | translate)
+                                      : ('adminAbout.linkTextRequired'
+                                        | translate)
+                                  }}
+                                </p-message>
+                              }
+                            </div>
+
+                            <div>
+                              <label
+                                class="app-label"
+                                [for]="'about-link-url-' + i"
+                              >
+                                {{
+                                  'adminAbout.linkUrl'
+                                    | translate
+                                }}
+                                <span
+                                  class="text-red-500"
+                                  aria-hidden="true"
+                                >*</span>
+                              </label>
+
+                              <input
+                                pInputText
+                                [id]="'about-link-url-' + i"
+                                type="url"
+                                dir="ltr"
+                                class="w-full"
+                                [formControl]="
+                                  linkAt(i).controls.url
+                                "
+                                [placeholder]="
+                                  'adminAbout.linkUrlPlaceholder'
+                                    | translate
+                                "
+                                [readonly]="saving()"
+                                [class.ng-invalid]="
+                                  linkAt(i).controls.url.invalid &&
+                                  linkAt(i).controls.url.touched
+                                "
+                                [class.ng-dirty]="
+                                  linkAt(i).controls.url.touched
+                                "
+                              />
+
+                              @if (
+                                linkAt(i).controls.url.invalid &&
+                                linkAt(i).controls.url.touched
+                              ) {
+                                <p-message
+                                  severity="error"
+                                  variant="simple"
+                                  styleClass="mt-2"
+                                >
+                                  {{
+                                    linkAt(i).controls.url.hasError(
+                                      'maxlength'
+                                    )
+                                      ? ('adminAbout.linkUrlTooLong'
+                                        | translate)
+                                      : linkAt(i).controls.url.hasError(
+                                            'pattern'
+                                          )
+                                        ? ('adminAbout.linkUrlInvalid'
+                                          | translate)
+                                        : ('adminAbout.linkUrlRequired'
+                                          | translate)
+                                  }}
+                                </p-message>
+                              }
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    }
+                  </div>
                 }
               </div>
             </section>
@@ -441,6 +860,7 @@ interface LanguageOption {
 })
 export class AboutAdminComponent implements OnInit {
   private readonly api = inject(AboutService);
+  private readonly media = inject(MediaService);
   private readonly translate = inject(TranslateService);
   private readonly messages = inject(MessageService);
   private readonly destroyRef = inject(DestroyRef);
@@ -481,6 +901,7 @@ export class AboutAdminComponent implements OnInit {
   readonly saving = signal(false);
   readonly loadError = signal<string | null>(null);
   readonly notConfigured = signal(false);
+  readonly uploadingLinkImage = signal<number | null>(null);
 
   readonly formError = signal<string | null>(null);
 
@@ -499,8 +920,19 @@ export class AboutAdminComponent implements OnInit {
         Validators.email,
         Validators.maxLength(180)
       ]
-    })
+    }),
+
+    phones: new FormArray<FormControl<string>>([]),
+    links: new FormArray<LinkGroup>([])
   });
+
+  get phones(): FormArray<FormControl<string>> {
+    return this.form.controls.phones;
+  }
+
+  get links(): FormArray<LinkGroup> {
+    return this.form.controls.links;
+  }
 
   ngOnInit(): void {
     this.load();
@@ -544,6 +976,111 @@ export class AboutAdminComponent implements OnInit {
       errors[group] ??
       null
     );
+  }
+
+  addPhone(value = ''): void {
+    if (this.phones.length >= 20) {
+      return;
+    }
+
+    this.phones.push(this.phoneControl(value));
+  }
+
+  removePhone(index: number): void {
+    if (index < 0 || index >= this.phones.length) {
+      return;
+    }
+
+    this.phones.removeAt(index);
+  }
+
+  addLink(link?: AboutLink): void {
+    if (this.links.length >= 30) {
+      return;
+    }
+
+    this.links.push(this.linkGroup(link));
+  }
+
+  removeLink(index: number): void {
+    if (index < 0 || index >= this.links.length) {
+      return;
+    }
+
+    this.links.removeAt(index);
+  }
+
+  linkAt(index: number): LinkGroup {
+    return this.links.at(index);
+  }
+
+  linkImageUrl(index: number): string {
+    return (
+      resolveMediaUrl(this.linkAt(index).controls.image.value) ??
+      ''
+    );
+  }
+
+  onLinkImageSelected(index: number, event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0] ?? null;
+
+    input.value = '';
+
+    if (!file || this.uploadingLinkImage() !== null) {
+      return;
+    }
+
+    this.uploadingLinkImage.set(index);
+
+    this.media.uploadImages([file]).pipe(
+      takeUntilDestroyed(this.destroyRef),
+      finalize(() => this.uploadingLinkImage.set(null))
+    ).subscribe({
+      next: media => {
+        const path = media[0]?.path;
+
+        if (!path || index >= this.links.length) {
+          return;
+        }
+
+        const control = this.linkAt(index).controls.image;
+
+        control.setValue(path);
+        control.markAsDirty();
+      },
+
+      error: (error: unknown) => {
+        if (
+          error instanceof HttpErrorResponse &&
+          (error.status === 401 || error.status === 403)
+        ) {
+          return;
+        }
+
+        this.messages.add({
+          severity: 'error',
+          summary: this.translate.instant(
+            'adminAbout.imageUploadError'
+          ),
+          detail: this.translate.instant(
+            'adminAbout.imageUploadErrorDetail'
+          ),
+          life: 6000
+        });
+      }
+    });
+  }
+
+  removeLinkImage(index: number): void {
+    if (index < 0 || index >= this.links.length) {
+      return;
+    }
+
+    const control = this.linkAt(index).controls.image;
+
+    control.setValue(null);
+    control.markAsDirty();
   }
 
   load(): void {
@@ -603,7 +1140,19 @@ export class AboutAdminComponent implements OnInit {
       description: this.cleanLocalized(values.description),
       location: this.cleanLocalized(values.location),
       availability: this.cleanLocalized(values.availability),
-      email: values.email.trim()
+      email: values.email.trim(),
+      phones: values.phones
+        .map(phone => phone.trim())
+        .filter(phone => phone.length > 0),
+      links: values.links
+        .map(link => ({
+          image: link.image?.trim() || null,
+          text: link.text.trim(),
+          url: link.url.trim()
+        }))
+        .filter(
+          link => link.text.length > 0 && link.url.length > 0
+        )
     };
 
     this.api.upsertAdminAbout(payload).pipe(
@@ -646,6 +1195,9 @@ export class AboutAdminComponent implements OnInit {
       email: about.email ?? ''
     });
 
+    this.setPhones(about.phones ?? []);
+    this.setLinks(about.links ?? []);
+
     this.formError.set(null);
     this.serverFieldErrors.set({});
   }
@@ -658,8 +1210,67 @@ export class AboutAdminComponent implements OnInit {
       email: ''
     });
 
+    this.setPhones([]);
+    this.setLinks([]);
+
     this.formError.set(null);
     this.serverFieldErrors.set({});
+  }
+
+  private setPhones(phones: string[]): void {
+    this.phones.clear();
+
+    phones.forEach(phone => {
+      this.phones.push(this.phoneControl(phone));
+    });
+  }
+
+  private setLinks(links: AboutLink[]): void {
+    this.links.clear();
+
+    links.forEach(link => {
+      this.links.push(this.linkGroup(link));
+    });
+  }
+
+  private phoneControl(value = ''): FormControl<string> {
+    return new FormControl(value, {
+      nonNullable: true,
+      validators: [
+        Validators.required,
+        Validators.pattern(/\S/),
+        Validators.maxLength(40)
+      ]
+    });
+  }
+
+  private linkGroup(link?: AboutLink): LinkGroup {
+    return new FormGroup({
+      image: new FormControl<string | null>(
+        link?.image ?? null,
+        {
+          validators: [Validators.maxLength(500)]
+        }
+      ),
+
+      text: new FormControl(link?.text ?? '', {
+        nonNullable: true,
+        validators: [
+          Validators.required,
+          Validators.pattern(/\S/),
+          Validators.maxLength(120)
+        ]
+      }),
+
+      url: new FormControl(link?.url ?? '', {
+        nonNullable: true,
+        validators: [
+          Validators.required,
+          Validators.pattern(/^(https?:\/\/|\/\/)/i),
+          Validators.maxLength(500)
+        ]
+      })
+    });
   }
 
   private localizedGroup(maxLength: number) {

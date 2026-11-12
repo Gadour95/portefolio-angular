@@ -240,11 +240,9 @@ export class AppHeaderComponent {
       target: '_blank'
     });
 
-    if (items.length > 0) {
-      items.push({
-        separator: true
-      });
-    }
+    items.push({
+      separator: true
+    });
 
     items.push({
       label: this.translate.instant(
@@ -317,25 +315,6 @@ export class AppHeaderComponent {
   selectTheme(mode: ThemeMode): void {
     this.themeMenu?.hide();
     this.themeService.setMode(mode);
-  }
-
-  async login(): Promise<void> {
-    if (this.authBusy()) {
-      return;
-    }
-
-    this.hideMenus();
-    this.authBusy.set(true);
-
-    try {
-      await this.auth.login('/');
-    } catch {
-      this.notifyError(
-        'auth.actionError'
-      );
-    } finally {
-      this.authBusy.set(false);
-    }
   }
 
   async logout(): Promise<void> {

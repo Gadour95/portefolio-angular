@@ -23,6 +23,10 @@ import {
 } from '../../../../core/models/about.model';
 
 import {
+  resolveMediaUrl
+} from '../../../../core/http/media-url';
+
+import {
   ContactMessageService
 } from '../../../../core/services/contact-message.service';
 
@@ -123,31 +127,39 @@ type ContactControlName =
               </a>
             }
 
-            <!-- Téléphone -->
-            <a
-              [href]="contact.phoneHref"
-              class="contact-link"
-            >
-              <span class="contact-icon" aria-hidden="true">
-                <i class="pi pi-phone text-lg"></i>
-              </span>
-
-              <span class="min-w-0 flex-1">
-                <span class="contact-label">
-                  {{ 'publicPages.contact.phoneLabel' | translate }}
+            <!-- Téléphones -->
+            @for (
+              phone of about()?.phones ?? [];
+              track $index
+            ) {
+              <a
+                [href]="phoneHref(phone)"
+                class="contact-link"
+              >
+                <span class="contact-icon" aria-hidden="true">
+                  <i class="pi pi-phone text-lg"></i>
                 </span>
 
-                <span class="contact-value">
-                  <bdi dir="ltr">{{ contact.phone }}</bdi>
-                </span>
-              </span>
+                <span class="min-w-0 flex-1">
+                  <span class="contact-label">
+                    {{
+                      'publicPages.contact.phoneLabel'
+                        | translate
+                    }}
+                  </span>
 
-              <i
-                class="pi pi-arrow-up-right contact-arrow
-                       rtl:-rotate-90"
-                aria-hidden="true"
-              ></i>
-            </a>
+                  <span class="contact-value">
+                    <bdi dir="ltr">{{ phone }}</bdi>
+                  </span>
+                </span>
+
+                <i
+                  class="pi pi-arrow-up-right contact-arrow
+                         rtl:-rotate-90"
+                  aria-hidden="true"
+                ></i>
+              </a>
+            }
 
             <!-- Localisation -->
             @if (about()?.location; as location) {
@@ -173,66 +185,64 @@ type ContactControlName =
           </div>
 
           <!-- Réseaux sociaux -->
-          <div
-            class="mt-8 border-t border-[var(--app-border)] pt-6"
-          >
-            <p
-              class="text-xs font-semibold
-                     text-[var(--app-text-muted)]"
+          @if ((about()?.links?.length ?? 0) > 0) {
+            <div
+              class="mt-8 border-t border-[var(--app-border)] pt-6"
             >
-              {{ 'publicPages.contact.socialTitle' | translate }}
-            </p>
-
-            <div class="mt-3 flex flex-wrap gap-3">
-              <a
-                [href]="contact.github"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="social-link"
-                [attr.aria-label]="
-                  'GitHub — ' +
-                  ('publicPages.contact.opensNewTab' | translate)
-                "
+              <p
+                class="text-xs font-semibold
+                       text-[var(--app-text-muted)]"
               >
-                <i
-                  class="pi pi-github text-lg"
-                  aria-hidden="true"
-                ></i>
+                {{
+                  'publicPages.contact.socialTitle' | translate
+                }}
+              </p>
 
-                <span>GitHub</span>
+              <div class="mt-3 flex flex-wrap gap-3">
+                @for (
+                  link of about()?.links ?? [];
+                  track $index
+                ) {
+                  <a
+                    [href]="link.url"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="social-link"
+                    [attr.aria-label]="
+                      link.text + ' — ' +
+                      ('publicPages.contact.opensNewTab'
+                        | translate)
+                    "
+                  >
+                    @if (
+                      resolveLinkImage(link.imageUrl);
+                      as imageUrl
+                    ) {
+                      <img
+                        [src]="imageUrl"
+                        [alt]="link.text"
+                        class="h-5 w-5 rounded object-contain"
+                        loading="lazy"
+                      />
+                    } @else {
+                      <i
+                        class="pi pi-link text-lg"
+                        aria-hidden="true"
+                      ></i>
+                    }
 
-                <i
-                  class="pi pi-arrow-up-right text-[0.65rem]
-                         opacity-60 rtl:-rotate-90"
-                  aria-hidden="true"
-                ></i>
-              </a>
+                    <span>{{ link.text }}</span>
 
-              <a
-                [href]="contact.linkedin"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="social-link"
-                [attr.aria-label]="
-                  'LinkedIn — ' +
-                  ('publicPages.contact.opensNewTab' | translate)
-                "
-              >
-                <i
-                  class="pi pi-linkedin text-lg"
-                  aria-hidden="true"
-                ></i>
-
-                <span>LinkedIn</span>
-
-                <i
-                  class="pi pi-arrow-up-right text-[0.65rem]
-                         opacity-60 rtl:-rotate-90"
-                  aria-hidden="true"
-                ></i>
-              </a>
+                    <i
+                      class="pi pi-arrow-up-right text-[0.65rem]
+                             opacity-60 rtl:-rotate-90"
+                      aria-hidden="true"
+                    ></i>
+                  </a>
+                }
+              </div>
             </div>
-          </div>
+          }
 
           <!-- Délai de réponse -->
           <div
@@ -857,14 +867,6 @@ export class ContactSectionComponent {
   readonly submitting = signal(false);
   readonly success = signal(false);
 
-  readonly contact = {
-    phone: '+216 55 681 691',
-    phoneHref: 'tel:+21655681691',
-    github: 'https://github.com/Gadour95',
-    linkedin:
-      'https://www.linkedin.com/in/abdelkader-sniha-124651326/'
-  } as const;
-
   readonly form = this.formBuilder.nonNullable.group({
     fullName: [
       '',
@@ -900,6 +902,18 @@ export class ContactSectionComponent {
       ]
     ]
   });
+
+  phoneHref(phone: string): string {
+    const normalized = phone.replace(/[^\d+]/g, '');
+
+    return normalized ? `tel:${normalized}` : 'tel:';
+  }
+
+  resolveLinkImage(
+    imageUrl: string | null | undefined
+  ): string | null {
+    return resolveMediaUrl(imageUrl);
+  }
 
   submit(): void {
     if (this.submitting()) {

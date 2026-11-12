@@ -1,8 +1,8 @@
 <header
   class="sticky top-0 z-40 border-b
-         border-[var(--app-border)]
-         bg-[var(--app-surface)]
-         shadow-[0_4px_24px_-20px_rgba(15,23,42,0.45)]"
+        border-[var(--app-border)]
+        bg-[var(--app-surface)]
+        shadow-[0_4px_24px_-20px_rgba(15,23,42,0.45)]"
 >
   <div class="app-container siw-header-content">
     <a
@@ -11,13 +11,13 @@
       [attr.aria-label]="'app.name' | translate"
     >
       <span class="siw-header-brand-icon">
-  <span
-    class="siw-header-brand-code"
-    aria-hidden="true"
-  >
-    &lt;/&gt;
-  </span>
-</span>
+        <span
+          class="siw-header-brand-code"
+          aria-hidden="true"
+        >
+          &lt;/&gt;
+        </span>
+      </span>
 
       <span class="siw-header-brand-copy">
         <span class="siw-header-brand-name">
@@ -87,8 +87,7 @@
     </nav>
 
     <div class="siw-header-actions">
-      <!-- Langue -->
-
+  <!-- Langue -->
       <p-button
         type="button"
         icon="pi pi-language"
@@ -101,7 +100,6 @@
       />
 
       <!-- Apparence -->
-
       <p-button
         type="button"
         [icon]="themeIcon()"
@@ -113,16 +111,13 @@
         (onClick)="togglePopup(themeMenu, $event)"
       />
 
-      <!-- Séparation -->
-
-      <span
-        class="mx-1 h-6 w-px bg-[var(--app-border)]"
-        aria-hidden="true"
-      ></span>
-
-      <!-- Compte ou connexion -->
-
+      <!-- Séparation et compte : uniquement si connecté -->
       @if (auth.authenticated()) {
+        <span
+          class="mx-1 h-6 w-px bg-[var(--app-border)]"
+          aria-hidden="true"
+        ></span>
+
         <p-button
           type="button"
           icon="pi pi-user"
@@ -134,34 +129,19 @@
           [disabled]="authBusy()"
           (onClick)="togglePopup(accountMenu, $event)"
         />
-      } @else {
-        <p-button
-          type="button"
-          icon="pi pi-sign-in"
-          severity="secondary"
-          styleClass="siw-icon-button siw-account-button"
-          [ariaLabel]="'auth.login' | translate"
-          [pTooltip]="'auth.login' | translate"
-          tooltipPosition="bottom"
-          [loading]="authBusy()"
-          [disabled]="authBusy()"
-          (onClick)="login()"
-        />
       }
     </div>
   </div>
 
   <!-- Ligne décorative -->
-
   <div
     class="h-px bg-gradient-to-r
-           from-transparent via-indigo-500/30 to-transparent"
+          from-transparent via-indigo-500/30 to-transparent"
     aria-hidden="true"
   ></div>
 </header>
 
 <!-- Menu des langues -->
-
 <p-menu
   #languageMenu
   id="siw-language-menu"
@@ -174,7 +154,6 @@
 />
 
 <!-- Menu d’apparence -->
-
 <p-menu
   #themeMenu
   id="siw-theme-menu"
@@ -187,7 +166,6 @@
 />
 
 <!-- Menu du compte -->
-
 <p-menu
   #accountMenu
   id="siw-account-menu"
